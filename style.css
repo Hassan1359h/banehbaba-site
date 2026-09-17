@@ -1230,3 +1230,48 @@ body {
 .badge.pulse {
   animation: pulse 0.5s ease;
 }
+// ============================================
+// 📞 فرم تماس با ما
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  const contactForm = document.getElementById('contactForm');
+  
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('contactName').value.trim();
+      const phone = document.getElementById('contactPhone').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const subject = document.getElementById('contactSubject').value;
+      const message = document.getElementById('contactMessage').value.trim();
+      
+      if (!name || !phone || !message) {
+        showToast('لطفاً فیلدهای ستاره‌دار را پر کنید', 'error');
+        return;
+      }
+      
+      if (phone.length < 10) {
+        showToast('شماره موبایل معتبر نیست', 'error');
+        return;
+      }
+      
+      // ذخیره پیام
+      const messages = JSON.parse(localStorage.getItem('banehbaba_messages') || '[]');
+      messages.push({
+        id: Date.now(),
+        name,
+        phone,
+        email,
+        subject,
+        message,
+        date: getPersianDate(),
+        dateTime: getPersianDateTime()
+      });
+      localStorage.setItem('banehbaba_messages', JSON.stringify(messages));
+      
+      showToast(`✅ پیام شما ثبت شد - ${getPersianDateShort()}`, 'success');
+      contactForm.reset();
+    });
+  }
+});
