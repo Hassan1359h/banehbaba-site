@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بانه بابا | فروشگاه آنلاین</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="main-header">
+    <div class="header-container">
+      
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle">☰</button>
+
+      <nav class="main-nav" id="mainNav">
+        <div class="dropdown">
+          <a href="#" class="nav-link">دسته‌بندی ▾</a>
+          <div class="dropdown-content">
+            
+            <!-- دسته ۱: لوازم کوهنوردی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏔️ لوازم کوهنوردی و کمپ ▸</a>
+              <div class="submenu">
+                <a href="#">عینک</a>
+                <a href="#">چادر کوهنوردی</a>
+                <a href="#">کیسه خواب</a>
+                <a href="#">چراغ پیشانی و روشنایی</a>
+                <a href="#">باتوم</a>
+                <a href="#">اجاق و سرشعله کمپ</a>
+                <a href="#">ابزار کوه</a>
+                <a href="#">شکار</a>
+              </div>
+            </div>
+
+            <!-- دسته ۲: لوازم خانگی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏠 لوازم خانگی ▸</a>
+              <div class="submenu">
+                <a href="#">تلویزیون</a>
+                <a href="#">لباسشویی</a>
+                <a href="#">ظرفشویی</a>
+                <a href="#">کولر گازی</a>
+                <a href="#">سرخ کن</a>
+                <a href="#">اتو بخار</a>
+                <a href="#">آبمیوه گیری</a>
+              </div>
+            </div>
+
+            <!-- دسته ۳: سلامت و زیبایی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">💄 سلامت و زیبایی ▸</a>
+              <div class="submenu">
+                <a href="#">سفید کننده دندان</a>
+                <a href="#">لمینت دندان</a>
+                <a href="#">پوست</a>
+                <a href="#">مو</a>
+              </div>
+            </div>
+
+            <!-- دسته ۴: لوازم یدکی خودرو -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🚗 لوازم یدکی خودرو ▸</a>
+              <div class="submenu">
+                <a href="#">لنت</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">تماس با ما</a>
+      </nav>
+
+      <div class="user-actions">
+        <button class="cart-btn" id="cartBtn">
+          🛒 <span class="cart-text">سبد خرید</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="registerBtn">
+          👤 <span class="register-text">ثبت‌نام</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>به بانه بابا خوش آمدید 🎉</h1>
+      <p>بهترین محصولات با بهترین قیمت، ارسال رایگان به سراسر کشور</p>
+      <button class="hero-btn" onclick="scrollToProducts()">مشاهده محصولات</button>
+    </div>
+  </section>
+
+  <!-- ============ محصولات ============ -->
+  <section class="products-section" id="productsSection">
+    <div class="section-header">
+      <h2>محصولات ویژه ⭐</h2>
+      <p>جدیدترین و پرطرفدارترین کالاها</p>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>🏪 بانه بابا</h3>
+        <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
+      </div>
+      <div class="footer-col">
+        <h4>لینک‌های سریع</h4>
+        <a href="#">درباره ما</a>
+        <a href="#">تماس با ما</a>
+        <a href="#">قوانین و مقررات</a>
+      </div>
+      <div class="footer-col">
+        <h4>خدمات مشتریان</h4>
+        <a href="#">پیگیری سفارش</a>
+        <a href="#">رویه بازگشت کالا</a>
+        <a href="#">سوالات متداول</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
+      <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
+    </div>
+  </footer>
+
+  <!-- ============ MODAL ثبت‌نام ============ -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal">
+      <button class="modal-close" id="closeRegister">✕</button>
+      <h2>ثبت‌نام / ورود</h2>
+      <p class="modal-subtitle">به بانه بابا خوش آمدید</p>
+      <form id="registerForm">
+        <div class="form-group">
+          <label>نام و نام خانوادگی</label>
+          <input type="text" id="regName" placeholder="مثلاً: علی محمدی" required>
+        </div>
+        <div class="form-group">
+          <label>شماره موبایل</label>
+          <input type="tel" id="regPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
+        </div>
+        <div class="form-group">
+          <label>ایمیل (اختیاری)</label>
+          <input type="email" id="regEmail" placeholder="example@email.com">
+        </div>
+        <div class="form-group">
+          <label>رمز عبور</label>
+          <input type="password" id="regPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary">ثبت‌نام</button>
+      </form>
+      <p class="modal-footer-text">قبلاً ثبت‌نام کرده‌اید؟ <a href="#">ورود</a></p>
+    </div>
+  </div>
+
+  <!-- ============ MODAL سبد خرید ============ -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal cart-modal">
+      <button class="modal-close" id="closeCart">✕</button>
+      <h2>🛒 سبد خرید شما</h2>
+      <p class="modal-subtitle" id="cartDateInfo">📅 امروز: ...</p>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-summary" id="cartSummary">
+        <div class="summary-row">
+          <span>جمع کل:</span>
+          <strong id="cartTotal">۰ تومان</strong>
+        </div>
+        <button class="btn-primary" onclick="checkout()">💳 پرداخت و تکمیل خرید</button>
+      </div>
+      <div class="cart-empty" id="cartEmpty">
+        <div class="empty-icon">🛒</div>
+        <p>سبد خرید شما خالی است</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL پرداخت ============ -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal">
+      <button class="modal-close" id="closeCheckout">✕</button>
+      <h2>💳 پرداخت کارت به کارت</h2>
+      <p class="modal-subtitle">مبلغ را به کارت زیر واریز کنید</p>
+      <div class="card-info">
+        <div class="card-row">
+          <span>شماره کارت:</span>
+          <strong>۶۰۳۷ - ۹۹۷۵ - ۱۲۳۴ - ۵۶۷۸</strong>
+        </div>
+        <div class="card-row">
+          <span>به نام:</span>
+          <strong>علی محمدی</strong>
+        </div>
+        <div class="card-row">
+          <span>مبلغ قابل پرداخت:</span>
+          <strong class="price-highlight" id="checkoutAmount">۰ تومان</strong>
+        </div>
+        <div class="card-row">
+          <span>تاریخ پرداخت:</span>
+          <strong id="orderDateTime">-</strong>
+        </div>
+      </div>
+      <form id="checkoutForm">
+        <div class="form-group">
+          <label>شماره پیگیری تراکنش</label>
+          <input type="text" id="trackingCode" placeholder="شماره پیگیری را وارد کنید" required>
+        </div>
+        <button type="submit" class="btn-primary">✅ تأیید پرداخت</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
