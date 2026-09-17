@@ -1,0 +1,1232 @@
+/* ============================================
+   بانه بابا - فروشگاه آنلاین
+   فایل استایل کامل و ریسپانسیو
+   ============================================ */
+
+/* ============ RESET ============ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+}
+
+:root {
+  --primary: #FF6B35;
+  --primary-dark: #e55a25;
+  --secondary: #004E89;
+  --bg: #F7F7F7;
+  --text: #333;
+  --text-light: #777;
+  --white: #fff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  direction: rtl;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============ HEADER ============ */
+.main-header {
+  background: var(--white);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  transition: transform 0.3s;
+  white-space: nowrap;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-icon {
+  font-size: 28px;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 5px;
+  line-height: 1;
+}
+
+/* ============ نویگیشن ============ */
+.main-nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: #FFF5F0;
+}
+
+/* ============ منوی دسته‌بندی چندسطحی ============ */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  min-width: 260px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border-radius: var(--radius);
+  padding: 12px 0;
+  z-index: 50;
+  margin-top: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-category {
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-category:last-child {
+  border-bottom: none;
+}
+
+.category-title {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  font-size: 14px !important;
+}
+
+.category-title:hover {
+  background: #FFF5F0 !important;
+  color: var(--primary) !important;
+}
+
+/* زیرمنو (Submenu) */
+.submenu {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 100%;
+  background: white;
+  min-width: 200px;
+  box-shadow: -8px 8px 25px rgba(0,0,0,0.12);
+  border-radius: var(--radius);
+  padding: 10px 0;
+  margin-right: 5px;
+  z-index: 60;
+}
+
+.dropdown-category:hover .submenu {
+  display: block;
+}
+
+.submenu a {
+  display: block;
+  padding: 9px 18px !important;
+  font-size: 13px !important;
+  color: var(--text) !important;
+  transition: all 0.3s;
+}
+
+.submenu a:hover {
+  background: #FFF5F0 !important;
+  color: var(--primary) !important;
+  padding-right: 25px !important;
+}
+
+/* ============ دکمه‌های کاربر ============ */
+.user-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cart-btn,
+.register-btn {
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+  font-family: inherit;
+  position: relative;
+}
+
+.cart-btn {
+  background: #f0f0f0;
+  color: var(--text);
+}
+
+.cart-btn:hover {
+  background: #e0e0e0;
+}
+
+.register-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.register-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.badge {
+  background: var(--primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+  display: inline-block;
+}
+
+/* ============ HERO ============ */
+.hero {
+  background: linear-gradient(135deg, #FF6B35 0%, #004E89 100%);
+  color: white;
+  padding: 80px 25px;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-content h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+  animation: fadeInUp 0.8s ease;
+  line-height: 1.3;
+}
+
+.hero-content p {
+  font-size: 18px;
+  opacity: 0.95;
+  margin-bottom: 30px;
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.hero-btn {
+  background: white;
+  color: var(--primary);
+  padding: 14px 35px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+
+.hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============ بخش محصولات ============ */
+.products-section {
+  max-width: 1300px;
+  margin: 60px auto;
+  padding: 0 25px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+/* ============ کارت محصول ============ */
+.product-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.product-image {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-info h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--text);
+  min-height: 44px;
+  line-height: 1.4;
+}
+
+.product-info .description {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.6;
+}
+
+.product-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.product-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.product-rating {
+  color: #FFB800;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-add-to-cart {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  width: 100%;
+}
+
+.btn-add-to-cart:hover {
+  background: var(--primary-dark);
+}
+
+.btn-add-to-cart:active {
+  transform: scale(0.98);
+}
+
+/* ============ FOOTER ============ */
+.main-footer {
+  background: #1a1a1a;
+  color: #ccc;
+  padding: 50px 25px 20px;
+  margin-top: 80px;
+}
+
+.footer-content {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.footer-col h3,
+.footer-col h4 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer-col p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.footer-col a {
+  display: block;
+  color: #aaa;
+  text-decoration: none;
+  padding: 5px 0;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.footer-col a:hover {
+  color: var(--primary);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid #333;
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #f0f0f0;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: var(--primary);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.modal-subtitle {
+  color: var(--text-light);
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* ============ فرم‌ها ============ */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+  direction: rtl;
+  background: #fafafa;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+  background: white;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.modal-footer-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.modal-footer-text a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ============ سبد خرید ============ */
+.cart-modal {
+  max-width: 550px;
+}
+
+.cart-items {
+  max-height: 350px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-left: 5px;
+}
+
+.cart-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 3px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.cart-item-image {
+  width: 60px;
+  height: 60px;
+  background: #eee;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-info h4 {
+  font-size: 14px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cart-item-info .price {
+  font-size: 13px;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+  padding: 0;
+}
+
+.qty-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.qty-display {
+  min-width: 25px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.remove-item {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  transition: transform 0.2s;
+  font-family: inherit;
+}
+
+.remove-item:hover {
+  transform: scale(1.2);
+}
+
+.cart-summary {
+  border-top: 2px solid #f0f0f0;
+  padding-top: 18px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.summary-row strong {
+  font-size: 20px;
+  color: var(--secondary);
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 40px 20px;
+  display: none;
+}
+
+.cart-empty.active {
+  display: block;
+}
+
+.empty-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+  opacity: 0.4;
+}
+
+.cart-empty p {
+  color: var(--text-light);
+}
+
+/* ============ کارت به کارت ============ */
+.card-info {
+  background: linear-gradient(135deg, #004E89, #0066b3);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  font-size: 14px;
+  gap: 10px;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-row strong {
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-align: left;
+  direction: ltr;
+}
+
+.price-highlight {
+  color: #FFB800 !important;
+  font-size: 18px !important;
+}
+
+/* ============ Toast ============ */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #333;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.4s;
+  z-index: 2000;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  max-width: 90%;
+  text-align: center;
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast.success {
+  background: #27ae60;
+}
+
+.toast.error {
+  background: #e74c3c;
+}
+
+/* ============================================
+   🗓️ استایل تاریخ شمسی
+   ============================================ */
+.today-date {
+  font-size: 13px;
+  color: #aaa;
+  background: rgba(255,255,255,0.05);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.today-date:hover {
+  background: rgba(255,107,53,0.15);
+  color: var(--primary);
+}
+
+#cartDateInfo {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-light);
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* ============================================
+   RESPONSIVE - تبلت
+   ============================================ */
+@media (max-width: 900px) {
+  .hero-content h1 {
+    font-size: 32px;
+  }
+  
+  .hero-content p {
+    font-size: 15px;
+  }
+  
+  .section-header h2 {
+    font-size: 26px;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - موبایل
+   ============================================ */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    order: 2;
+  }
+  
+  .header-container {
+    flex-wrap: wrap;
+    padding: 12px 15px;
+  }
+  
+  .logo {
+    order: 1;
+    flex: 1;
+  }
+  
+  .main-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    background: white;
+    flex-direction: column;
+    padding: 15px;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transform: translateY(-150%);
+    transition: transform 0.3s ease;
+    z-index: 90;
+    visibility: hidden;
+  }
+  
+  .main-nav.active {
+    transform: translateY(0);
+    visibility: visible;
+  }
+  
+  .main-nav .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+  }
+  
+  /* منوی موبایل - زیرمنو */
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+    background: #f9f9f9;
+    display: none;
+    margin-top: 5px;
+    padding: 5px 0;
+  }
+  
+  .dropdown:hover .dropdown-content,
+  .dropdown.active .dropdown-content {
+    display: block;
+  }
+  
+  .dropdown-category {
+    border-bottom: none;
+  }
+  
+  .category-title {
+    padding: 10px 15px !important;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 3px;
+  }
+  
+  .submenu {
+    position: static;
+    box-shadow: none;
+    padding: 5px 0 5px 20px;
+    margin: 0;
+    background: #f0f0f0;
+    display: none;
+    border-radius: 8px;
+  }
+  
+  .dropdown-category:hover .submenu,
+  .dropdown-category.active .submenu {
+    display: block;
+  }
+  
+  .submenu a {
+    padding: 8px 15px !important;
+    font-size: 13px !important;
+  }
+  
+  .user-actions {
+    order: 3;
+    gap: 8px;
+  }
+  
+  .cart-text,
+  .register-text {
+    display: none;
+  }
+  
+  .cart-btn,
+  .register-btn {
+    padding: 0;
+    font-size: 18px;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .badge {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    font-size: 10px;
+    padding: 2px 6px;
+    min-width: 18px;
+  }
+  
+  .hero {
+    padding: 50px 20px;
+  }
+  
+  .hero-content h1 {
+    font-size: 26px;
+  }
+  
+  .hero-content p {
+    font-size: 14px;
+  }
+  
+  .hero-btn {
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+  
+  .products-section {
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+  
+  .section-header {
+    margin-bottom: 25px;
+  }
+  
+  .section-header h2 {
+    font-size: 22px;
+  }
+  
+  .section-header p {
+    font-size: 14px;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  
+  .product-image {
+    height: 150px;
+    font-size: 50px;
+  }
+  
+  .product-info {
+    padding: 12px;
+  }
+  
+  .product-info h3 {
+    font-size: 14px;
+    min-height: auto;
+    margin-bottom: 6px;
+  }
+  
+  .product-info .description {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .product-price {
+    font-size: 15px;
+  }
+  
+  .product-rating {
+    font-size: 12px;
+  }
+  
+  .btn-add-to-cart {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .modal {
+    padding: 22px;
+    border-radius: 12px;
+    max-width: 95%;
+  }
+  
+  .modal h2 {
+    font-size: 20px;
+  }
+  
+  .modal-subtitle {
+    font-size: 13px;
+  }
+  
+  .cart-item {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .cart-item-image {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+  
+  .cart-item-info h4 {
+    font-size: 13px;
+  }
+  
+  .cart-item-info .price {
+    font-size: 12px;
+  }
+  
+  .card-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .card-row strong {
+    text-align: right;
+  }
+  
+  .main-footer {
+    padding: 35px 20px 15px;
+    margin-top: 50px;
+  }
+  
+  .footer-content {
+    gap: 25px;
+  }
+  
+  .toast {
+    bottom: 20px;
+    padding: 12px 22px;
+    font-size: 13px;
+  }
+  
+  .today-date {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+  
+  #cartDateInfo {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - موبایل کوچک
+   ============================================ */
+@media (max-width: 400px) {
+  .header-container {
+    padding: 10px 12px;
+  }
+  
+  .logo-text {
+    font-size: 17px;
+  }
+  
+  .logo-icon {
+    font-size: 22px;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .product-image {
+    height: 130px;
+    font-size: 40px;
+  }
+  
+  .product-info {
+    padding: 10px;
+  }
+  
+  .product-info h3 {
+    font-size: 13px;
+  }
+  
+  .product-price {
+    font-size: 14px;
+  }
+  
+  .hero-content h1 {
+    font-size: 22px;
+  }
+}
+
+/* ============================================
+   انیمیشن‌های اضافی
+   ============================================ */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.badge.pulse {
+  animation: pulse 0.5s ease;
+}
