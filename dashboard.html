@@ -72,7 +72,6 @@
     <!-- ============ MAIN ============ -->
     <main class="main-content">
 
-      <!-- HEADER -->
       <header class="top-header">
         <div style="display: flex; align-items: center; gap: 12px;">
           <button class="mobile-menu-toggle" id="menuToggle">☰</button>
@@ -83,53 +82,47 @@
         </div>
         <div class="header-actions">
           <a href="index.html" class="header-btn" title="مشاهده سایت">🌐</a>
-          <button class="header-btn" onclick="showToast('🔔 اعلان جدیدی نیست', 'info')" title="اعلان‌ها">🔔</button>
+          <button class="header-btn" onclick="showToast('🔔 اعلان جدیدی نیست')" title="اعلان‌ها">🔔</button>
         </div>
       </header>
 
-      <!-- PAGE CONTENT -->
-      <div class="page-content" id="pageContent">
-        <!-- محتوا با JS لود میشه -->
-      </div>
+      <div class="page-content" id="pageContent"></div>
 
     </main>
 
   </div>
 
-  <!-- MODAL: محصول -->
+  <!-- ============ MODAL: محصول ============ -->
   <div class="admin-modal" id="productModal">
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modalTitle">افزودن محصول جدید</h3>
-        <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+        <button class="modal-close-btn" onclick="closeModal('productModal')">✕</button>
       </div>
 
       <form class="admin-form" id="productForm">
         <input type="hidden" id="productId">
         
         <div class="form-group">
-          <label>نام محصول *</label>
+          <label>نام محصول <span class="required">*</span></label>
           <input type="text" id="productName" placeholder="مثلاً: گوشی سامسونگ S24" required>
         </div>
 
         <div class="form-group">
-          <label>توضیحات کوتاه</label>
+          <label>توضیحات</label>
           <textarea id="productDescription" placeholder="توضیحات محصول..."></textarea>
         </div>
 
-        <div class="form-group">
-          <label>قیمت (تومان) *</label>
-          <input type="number" id="productPrice" placeholder="مثلاً: 45000000" required>
-        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>قیمت (تومان) <span class="required">*</span></label>
+            <input type="number" id="productPrice" placeholder="45000000" required>
+          </div>
 
-        <div class="form-group">
-          <label>آیکون (ایموجی)</label>
-          <input type="text" id="productEmoji" placeholder="📱" maxlength="4" value="📦">
-        </div>
-
-        <div class="form-group">
-          <label>امتیاز (از ۵)</label>
-          <input type="number" id="productRating" step="0.1" min="0" max="5" value="4.5">
+          <div class="form-group">
+            <label>امتیاز (از ۵)</label>
+            <input type="number" id="productRating" step="0.1" min="0" max="5" value="4.5">
+          </div>
         </div>
 
         <div class="form-group">
@@ -142,18 +135,78 @@
           </select>
         </div>
 
+        <div class="form-group">
+          <label>تصویر محصول</label>
+          <div class="image-upload" onclick="document.getElementById('productImage').click()">
+            <div class="image-upload-icon">📸</div>
+            <div class="image-upload-text">برای آپلود کلیک کنید یا تصویر را بکشید</div>
+            <input type="file" id="productImage" accept="image/*">
+          </div>
+          <img id="imagePreview" class="image-preview" style="display: none;">
+          <input type="hidden" id="productImageData">
+        </div>
+
+        <div class="form-group">
+          <label>یا آیکون (ایموجی)</label>
+          <input type="text" id="productEmoji" placeholder="📱" maxlength="4" value="📦">
+        </div>
+
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">انصراف</button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('productModal')">انصراف</button>
           <button type="submit" class="btn btn-primary">💾 ذخیره</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- TOAST -->
+  <!-- ============ MODAL: دسته‌بندی ============ -->
+  <div class="admin-modal" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="categoryModalTitle">افزودن دسته‌بندی</h3>
+        <button class="modal-close-btn" onclick="closeModal('categoryModal')">✕</button>
+      </div>
+
+      <form class="admin-form" id="categoryForm">
+        <input type="hidden" id="categoryId">
+        
+        <div class="form-group">
+          <label>نام دسته‌بندی <span class="required">*</span></label>
+          <input type="text" id="categoryName" placeholder="مثلاً: لوازم ورزشی" required>
+        </div>
+
+        <div class="form-group">
+          <label>آیکون (ایموجی)</label>
+          <input type="text" id="categoryIcon" placeholder="🏃" maxlength="4" value="📂">
+        </div>
+
+        <div class="form-group">
+          <label>زیردسته‌ها (با کاما جدا کنید)</label>
+          <textarea id="categorySubs" placeholder="مثلاً: کفش، لباس، توپ"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">انصراف</button>
+          <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: سفارش ============ -->
+  <div class="admin-modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>جزئیات سفارش</h3>
+        <button class="modal-close-btn" onclick="closeModal('orderModal')">✕</button>
+      </div>
+      <div id="orderDetails"></div>
+    </div>
+  </div>
+
   <div class="admin-toast" id="toast"></div>
 
   <script src="admin.js"></script>
 
 </body>
-            </html>
+  </html>
