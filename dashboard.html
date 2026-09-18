@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت | بانه بابا</title>
+  <link rel="stylesheet" href="admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+      
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <span class="icon">🏪</span>
+          <span class="text">بانه بابا</span>
+        </a>
+        <p class="sidebar-subtitle">پنل مدیریت</p>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a class="menu-item active" data-page="dashboard">
+          <span class="icon">📊</span>
+          <span>داشبورد</span>
+        </a>
+        <a class="menu-item" data-page="products">
+          <span class="icon">📦</span>
+          <span>محصولات</span>
+          <span class="badge-count" id="productsCount">۰</span>
+        </a>
+        <a class="menu-item" data-page="categories">
+          <span class="icon">📂</span>
+          <span>دسته‌بندی‌ها</span>
+        </a>
+        <a class="menu-item" data-page="orders">
+          <span class="icon">🛒</span>
+          <span>سفارشات</span>
+          <span class="badge-count" id="ordersCount">۰</span>
+        </a>
+        <a class="menu-item" data-page="customers">
+          <span class="icon">👥</span>
+          <span>مشتریان</span>
+        </a>
+        <a class="menu-item" data-page="messages">
+          <span class="icon">💬</span>
+          <span>پیام‌ها</span>
+          <span class="badge-count" id="messagesCount">۰</span>
+        </a>
+        <a class="menu-item" data-page="settings">
+          <span class="icon">⚙️</span>
+          <span>تنظیمات</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">ا</div>
+          <div>
+            <div class="user-name">ادمین</div>
+            <div class="user-role">مدیر کل</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 خروج از حساب</button>
+      </div>
+
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main-content">
+
+      <!-- HEADER -->
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <div class="header-title">
+            <h1 id="pageTitle">داشبورد</h1>
+            <p id="pageSubtitle">خوش آمدید به پنل مدیریت</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="index.html" class="header-btn" title="مشاهده سایت">🌐</a>
+          <button class="header-btn" onclick="showToast('🔔 اعلان جدیدی نیست', 'info')" title="اعلان‌ها">🔔</button>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <div class="page-content" id="pageContent">
+        <!-- محتوا با JS لود میشه -->
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: محصول -->
+  <div class="admin-modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">افزودن محصول جدید</h3>
+        <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+      </div>
+
+      <form class="admin-form" id="productForm">
+        <input type="hidden" id="productId">
+        
+        <div class="form-group">
+          <label>نام محصول *</label>
+          <input type="text" id="productName" placeholder="مثلاً: گوشی سامسونگ S24" required>
+        </div>
+
+        <div class="form-group">
+          <label>توضیحات کوتاه</label>
+          <textarea id="productDescription" placeholder="توضیحات محصول..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>قیمت (تومان) *</label>
+          <input type="number" id="productPrice" placeholder="مثلاً: 45000000" required>
+        </div>
+
+        <div class="form-group">
+          <label>آیکون (ایموجی)</label>
+          <input type="text" id="productEmoji" placeholder="📱" maxlength="4" value="📦">
+        </div>
+
+        <div class="form-group">
+          <label>امتیاز (از ۵)</label>
+          <input type="number" id="productRating" step="0.1" min="0" max="5" value="4.5">
+        </div>
+
+        <div class="form-group">
+          <label>دسته‌بندی</label>
+          <select id="productCategory">
+            <option value="camping">🏔️ لوازم کوهنوردی و کمپ</option>
+            <option value="home">🏠 لوازم خانگی</option>
+            <option value="beauty">💄 سلامت و زیبایی</option>
+            <option value="car">🚗 لوازم یدکی خودرو</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">انصراف</button>
+          <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="admin-toast" id="toast"></div>
+
+  <script src="admin.js"></script>
+
+</body>
+            </html>
