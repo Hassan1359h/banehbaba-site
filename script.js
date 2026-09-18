@@ -1,157 +1,86 @@
 /* ============================================
    بانه بابا - فروشگاه آنلاین
-   فایل جاوااسکریپت کامل با تاریخ شمسی
+   با همگام‌سازی پنل مدیریت
    ============================================ */
 
 // ============================================
-// 📦 داده محصولات
+// 📦 داده‌های پیش‌فرض (اگه پنل خالی بود)
 // ============================================
-const products = [
-  { 
-    id: 1, 
-    name: "گوشی سامسونگ Galaxy S24", 
-    description: "حافظه ۲۵۶ گیگ، دوربین ۲۰۰ مگاپیکسل، باتری ۵۰۰۰ میلی‌آمپر", 
-    price: 45000000, 
-    emoji: "📱", 
-    rating: 4.8 
-  },
-  { 
-    id: 2, 
-    name: "لپ‌تاپ ایسوس ROG", 
-    description: "پردازنده Core i9، رم ۳۲ گیگ، کارت گرافیک RTX 4070", 
-    price: 95000000, 
-    emoji: "💻", 
-    rating: 4.9 
-  },
-  { 
-    id: 3, 
-    name: "هدفون سونی WH-1000XM5", 
-    description: "نویز کنسلینگ فوق‌العاده، ۳۰ ساعت شارژ مداوم", 
-    price: 15000000, 
-    emoji: "🎧", 
-    rating: 4.7 
-  },
-  { 
-    id: 4, 
-    name: "ساعت هوشمند Apple Watch 9", 
-    description: "نمایشگر رتینا، ضدآب، GPS داخلی، پایش سلامت", 
-    price: 22000000, 
-    emoji: "⌚", 
-    rating: 4.6 
-  },
-  { 
-    id: 5, 
-    name: "پلی‌استیشن 5", 
-    description: "نسخه دیسک‌خور، همراه با ۲ دسته بی‌سیم DualSense", 
-    price: 42000000, 
-    emoji: "🎮", 
-    rating: 4.9 
-  },
-  { 
-    id: 6, 
-    name: "ایرپاد پرو نسل ۲", 
-    description: "نویز کنسلینگ فعال، شارژ مغناطیسی، ضدآب", 
-    price: 8500000, 
-    emoji: "🎵", 
-    rating: 4.5 
-  },
-  { 
-    id: 7, 
-    name: "تبلت آیپد ایر", 
-    description: "نمایشگر ۱۱ اینچ، تراشه M2، پشتیبانی از Apple Pencil", 
-    price: 38000000, 
-    emoji: "📲", 
-    rating: 4.8 
-  },
-  { 
-    id: 8, 
-    name: "دوربین کنون EOS R6", 
-    description: "سنسور فول‌فریم، فیلم‌برداری 4K، لرزشگیر داخلی", 
-    price: 120000000, 
-    emoji: "📷", 
-    rating: 4.9 
-  }
+const defaultProducts = [
+  { id: 1, name: "گوشی سامسونگ Galaxy S24", description: "حافظه ۲۵۶ گیگ، دوربین ۲۰۰ مگاپیکسل", price: 45000000, emoji: "📱", rating: 4.8, category: "home", image: "" },
+  { id: 2, name: "لپ‌تاپ ایسوس ROG", description: "پردازنده i9، رم ۳۲ گیگ", price: 95000000, emoji: "💻", rating: 4.9, category: "home", image: "" },
+  { id: 3, name: "هدفون سونی WH-1000XM5", description: "نویز کنسلینگ، ۳۰ ساعت شارژ", price: 15000000, emoji: "🎧", rating: 4.7, category: "home", image: "" },
+  { id: 4, name: "ساعت هوشمند Apple Watch 9", description: "نمایشگر رتینا، ضدآب", price: 22000000, emoji: "⌚", rating: 4.6, category: "home", image: "" },
+  { id: 5, name: "پلی‌استیشن 5", description: "دیسک‌خور، ۲ دسته بی‌سیم", price: 42000000, emoji: "🎮", rating: 4.9, category: "home", image: "" },
+  { id: 6, name: "ایرپاد پرو نسل ۲", description: "نویز کنسلینگ، شارژ مغناطیسی", price: 8500000, emoji: "🎵", rating: 4.5, category: "home", image: "" },
+  { id: 7, name: "تبلت آیپد ایر", description: "۱۱ اینچ، تراشه M2", price: 38000000, emoji: "📲", rating: 4.8, category: "home", image: "" },
+  { id: 8, name: "دوربین کنون EOS R6", description: "سنسور فول‌فریم، 4K", price: 120000000, emoji: "📷", rating: 4.9, category: "home", image: "" }
 ];
+
+// ============================================
+// 📦 خواندن محصولات از پنل (localStorage)
+// ============================================
+function getProducts() {
+  const stored = localStorage.getItem('banehbaba_products');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) { console.error('خطا در خواندن محصولات:', e); }
+  }
+  return defaultProducts;
+}
 
 // ============================================
 // 🗓️ توابع تاریخ شمسی
 // ============================================
 function getPersianDate() {
   return new Date().toLocaleDateString('fa-IR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 }
-
 function getPersianDateShort() {
-  return new Date().toLocaleDateString('fa-IR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
+  return new Date().toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
-
 function getPersianDateTime() {
   return new Date().toLocaleString('fa-IR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
 }
-
 function getPersianTime() {
-  return new Date().toLocaleTimeString('fa-IR', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
 }
-
 function displayTodayDate() {
   const dateEl = document.getElementById('todayDate');
-  if (dateEl) {
-    dateEl.textContent = '📅 امروز: ' + getPersianDate();
-  }
-  
+  if (dateEl) dateEl.textContent = '📅 امروز: ' + getPersianDate();
   const cartDateEl = document.getElementById('cartDateInfo');
-  if (cartDateEl) {
-    cartDateEl.textContent = '📅 امروز: ' + getPersianDate();
-  }
+  if (cartDateEl) cartDateEl.textContent = '📅 امروز: ' + getPersianDate();
 }
 
 // ============================================
-// 💾 وضعیت برنامه
+// 💾 State
 // ============================================
+let products = getProducts();
 let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
 let currentUser = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
 let orders = JSON.parse(localStorage.getItem('banehbaba_orders') || '[]');
 
 // ============================================
-// 🛠 ابزارهای کمکی
+// 🛠 توابع کمکی
 // ============================================
 function formatPrice(num) {
-  return num.toLocaleString('fa-IR') + ' تومان';
+  return Number(num).toLocaleString('fa-IR') + ' تومان';
 }
-
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
   if (!toast) return;
-  
   toast.textContent = message;
   toast.className = 'toast show ' + type;
-  
-  setTimeout(() => {
-    toast.className = 'toast ' + type;
-  }, 2500);
+  setTimeout(() => { toast.className = 'toast ' + type; }, 2500);
 }
-
 function updateCartBadge() {
   const badge = document.getElementById('cartBadge');
   if (!badge) return;
-  
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   badge.textContent = count.toLocaleString('fa-IR');
 }
@@ -162,43 +91,63 @@ function updateCartBadge() {
 function renderProducts() {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
-  
-  grid.innerHTML = products.map(p => `
-    <div class="product-card">
-      <div class="product-image">${p.emoji}</div>
-      <div class="product-info">
-        <h3>${p.name}</h3>
-        <p class="description">${p.description}</p>
-        <div class="product-price-row">
-          <span class="product-price">${formatPrice(p.price)}</span>
-          <span class="product-rating">⭐ ${p.rating}</span>
-        </div>
-        <button class="btn-add-to-cart" onclick="addToCart(${p.id})">
-          🛒 افزودن به سبد
-        </button>
+
+  // خواندن مجدد از localStorage (برای اطمینان)
+  products = getProducts();
+
+  if (products.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #999;">
+        <div style="font-size: 60px; margin-bottom: 15px;">📦</div>
+        <h3>هیچ محصولی موجود نیست</h3>
+        <p style="font-size: 14px;">به‌زودی محصولات جدید اضافه می‌شوند</p>
       </div>
-    </div>
-  `).join('');
+    `;
+    return;
+  }
+
+  grid.innerHTML = products.map(p => {
+    const imageHtml = p.image 
+      ? `<img src="${p.image}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;">`
+      : p.emoji || '📦';
+
+    return `
+      <div class="product-card">
+        <div class="product-image">${imageHtml}</div>
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="description">${p.description || ''}</p>
+          <div class="product-price-row">
+            <span class="product-price">${formatPrice(p.price)}</span>
+            <span class="product-rating">⭐ ${p.rating || 4.5}</span>
+          </div>
+          <button class="btn-add-to-cart" onclick="addToCart(${p.id})">
+            🛒 افزودن به سبد
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ============================================
-// 🛒 عملیات سبد خرید
+// 🛒 سبد خرید
 // ============================================
 function addToCart(productId) {
+  products = getProducts();
   const product = products.find(p => p.id === productId);
   if (!product) return;
-  
+
   const existing = cart.find(item => item.id === productId);
-  
   if (existing) {
     existing.quantity++;
   } else {
     cart.push({ ...product, quantity: 1 });
   }
-  
+
   saveCart();
   updateCartBadge();
-  showToast(`✅ ${product.name} به سبد اضافه شد`, 'success');
+  showToast(`✅ ${product.name} به سبد اضافه شد`);
 }
 
 function saveCart() {
@@ -209,35 +158,40 @@ function renderCart() {
   const container = document.getElementById('cartItems');
   const empty = document.getElementById('cartEmpty');
   const summary = document.getElementById('cartSummary');
-  
   if (!container) return;
-  
+
   if (cart.length === 0) {
     container.innerHTML = '';
     if (empty) empty.classList.add('active');
     if (summary) summary.style.display = 'none';
     return;
   }
-  
+
   if (empty) empty.classList.remove('active');
   if (summary) summary.style.display = 'block';
-  
-  container.innerHTML = cart.map(item => `
-    <div class="cart-item">
-      <div class="cart-item-image">${item.emoji}</div>
-      <div class="cart-item-info">
-        <h4>${item.name}</h4>
-        <span class="price">${formatPrice(item.price * item.quantity)}</span>
+
+  container.innerHTML = cart.map(item => {
+    const imageHtml = item.image
+      ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`
+      : item.emoji || '📦';
+
+    return `
+      <div class="cart-item">
+        <div class="cart-item-image">${imageHtml}</div>
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <span class="price">${formatPrice(item.price * item.quantity)}</span>
+        </div>
+        <div class="cart-item-actions">
+          <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+          <span class="qty-display">${item.quantity.toLocaleString('fa-IR')}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+          <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
+        </div>
       </div>
-      <div class="cart-item-actions">
-        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
-        <span class="qty-display">${item.quantity.toLocaleString('fa-IR')}</span>
-        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
-        <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
-      </div>
-    </div>
-  `).join('');
-  
+    `;
+  }).join('');
+
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const totalEl = document.getElementById('cartTotal');
   if (totalEl) totalEl.textContent = formatPrice(total);
@@ -246,14 +200,8 @@ function renderCart() {
 function changeQty(productId, delta) {
   const item = cart.find(i => i.id === productId);
   if (!item) return;
-  
   item.quantity += delta;
-  
-  if (item.quantity <= 0) {
-    removeFromCart(productId);
-    return;
-  }
-  
+  if (item.quantity <= 0) { removeFromCart(productId); return; }
   saveCart();
   updateCartBadge();
   renderCart();
@@ -262,14 +210,10 @@ function changeQty(productId, delta) {
 function removeFromCart(productId) {
   const item = cart.find(i => i.id === productId);
   cart = cart.filter(i => i.id !== productId);
-  
   saveCart();
   updateCartBadge();
   renderCart();
-  
-  if (item) {
-    showToast(`❌ ${item.name} از سبد حذف شد`, 'error');
-  }
+  if (item) showToast(`❌ ${item.name} از سبد حذف شد`, 'error');
 }
 
 // ============================================
@@ -280,27 +224,23 @@ function checkout() {
     showToast('سبد خرید شما خالی است!', 'error');
     return;
   }
-  
   if (!currentUser) {
     showToast('لطفاً ابتدا ثبت‌نام کنید', 'error');
     closeModal('cartModal');
     setTimeout(() => openModal('registerModal'), 300);
     return;
   }
-  
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const amountEl = document.getElementById('checkoutAmount');
   if (amountEl) amountEl.textContent = formatPrice(total);
-  
   const dateEl = document.getElementById('orderDateTime');
   if (dateEl) dateEl.textContent = getPersianDateTime();
-  
   closeModal('cartModal');
   setTimeout(() => openModal('checkoutModal'), 300);
 }
 
 // ============================================
-// 🪟 مدیریت Modal‌ها
+// 🪟 Modal
 // ============================================
 function openModal(modalId) {
   const modal = document.getElementById(modalId);
@@ -309,7 +249,6 @@ function openModal(modalId) {
     document.body.style.overflow = 'hidden';
   }
 }
-
 function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
@@ -319,165 +258,110 @@ function closeModal(modalId) {
 }
 
 // ============================================
-// 📱 منوی موبایل و دسته‌بندی
+// 📱 منوی موبایل
 // ============================================
 function initMobileMenu() {
   const menuToggle = document.getElementById('menuToggle');
   const mainNav = document.getElementById('mainNav');
-  
   if (menuToggle && mainNav) {
-    menuToggle.addEventListener('click', () => {
-      mainNav.classList.toggle('active');
-    });
+    menuToggle.addEventListener('click', () => mainNav.classList.toggle('active'));
   }
-  
-  // زیرمنو در موبایل - با کلیک باز بشه
-  const categoryTitles = document.querySelectorAll('.category-title');
-  categoryTitles.forEach(title => {
+  document.querySelectorAll('.category-title').forEach(title => {
     title.addEventListener('click', (e) => {
       if (window.innerWidth <= 768) {
         e.preventDefault();
-        const category = title.parentElement;
-        category.classList.toggle('active');
+        title.parentElement.classList.toggle('active');
       }
     });
   });
 }
 
 // ============================================
-// 🎬 رویدادها
+// 🎬 اجرا
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // نمایش محصولات
   renderProducts();
   updateCartBadge();
   displayTodayDate();
   initMobileMenu();
-  
-  // نمایش تاریخ شمسی در همه عناصر با کلاس persian-date
-  document.querySelectorAll('.persian-date').forEach(el => {
-    el.textContent = getPersianDateShort();
-  });
-  
-  // دکمه سبد خرید
+
+  // دکمه‌ها
   const cartBtn = document.getElementById('cartBtn');
-  if (cartBtn) {
-    cartBtn.addEventListener('click', () => {
-      renderCart();
-      openModal('cartModal');
-    });
-  }
-  
-  // دکمه ثبت‌نام
+  if (cartBtn) cartBtn.addEventListener('click', () => { renderCart(); openModal('cartModal'); });
+
   const registerBtn = document.getElementById('registerBtn');
   if (registerBtn) {
     registerBtn.addEventListener('click', () => {
-      if (currentUser) {
-        showToast(`خوش آمدید ${currentUser.name} 👋`, 'success');
-        return;
-      }
+      if (currentUser) { showToast(`خوش آمدید ${currentUser.name} 👋`); return; }
       openModal('registerModal');
     });
   }
-  
+
   // بستن Modal‌ها
-  const closeRegister = document.getElementById('closeRegister');
-  const closeCart = document.getElementById('closeCart');
-  const closeCheckout = document.getElementById('closeCheckout');
-  
-  if (closeRegister) closeRegister.addEventListener('click', () => closeModal('registerModal'));
-  if (closeCart) closeCart.addEventListener('click', () => closeModal('cartModal'));
-  if (closeCheckout) closeCheckout.addEventListener('click', () => closeModal('checkoutModal'));
-  
-  // بستن Modal با کلیک روی پس‌زمینه
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-      }
+  ['closeRegister', 'closeCart', 'closeCheckout'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', () => {
+      closeModal(id.replace('close', '').toLowerCase() + 'Modal');
     });
   });
-  
-  // بستن Modal با کلید Escape
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) { overlay.classList.remove('active'); document.body.style.overflow = ''; }
+    });
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.active').forEach(m => {
-        m.classList.remove('active');
-      });
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
       document.body.style.overflow = '';
     }
   });
-  
+
   // فرم ثبت‌نام
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
-      
-      if (!name || !phone || !password) {
-        showToast('لطفاً همه فیلدهای لازم را پر کنید', 'error');
-        return;
-      }
-      
-      if (phone.length < 10) {
-        showToast('شماره موبایل معتبر نیست', 'error');
-        return;
-      }
-      
-      if (password.length < 4) {
-        showToast('رمز عبور باید حداقل ۴ کاراکتر باشد', 'error');
-        return;
-      }
-      
-      currentUser = { 
-        name, 
-        phone, 
-        email,
-        registerDate: getPersianDate(),
-        registerDateTime: getPersianDateTime()
-      };
+
+      if (!name || !phone || !password) { showToast('لطفاً همه فیلدها را پر کنید', 'error'); return; }
+      if (phone.length < 10) { showToast('شماره موبایل معتبر نیست', 'error'); return; }
+      if (password.length < 4) { showToast('رمز عبور حداقل ۴ کاراکتر', 'error'); return; }
+
+      currentUser = { name, phone, email, registerDate: getPersianDate(), registerDateTime: getPersianDateTime() };
       localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
-      
-      showToast(`🎉 ثبت‌نام موفق! خوش آمدید ${name}`, 'success');
+
+      // ذخیره در لیست مشتریان
+      const customers = JSON.parse(localStorage.getItem('banehbaba_customers') || '[]');
+      customers.push(currentUser);
+      localStorage.setItem('banehbaba_customers', JSON.stringify(customers));
+
+      showToast(`🎉 ثبت‌نام موفق! خوش آمدید ${name}`);
       registerForm.reset();
       closeModal('registerModal');
-      
       const regText = registerBtn.querySelector('.register-text');
       if (regText) regText.textContent = name.split(' ')[0];
     });
   }
-  
+
   // فرم پرداخت
   const checkoutForm = document.getElementById('checkoutForm');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
       const trackingCode = document.getElementById('trackingCode').value.trim();
-      
-      if (!trackingCode) {
-        showToast('لطفاً شماره پیگیری را وارد کنید', 'error');
-        return;
-      }
-      
-      if (trackingCode.length < 5) {
+      if (!trackingCode || trackingCode.length < 5) {
         showToast('شماره پیگیری معتبر نیست', 'error');
         return;
       }
-      
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      
-      // ثبت سفارش با تاریخ شمسی
       const order = {
         id: Date.now(),
-        trackingCode: trackingCode,
+        trackingCode,
         date: getPersianDate(),
         dateTime: getPersianDateTime(),
         shortDate: getPersianDateShort(),
@@ -486,92 +370,22 @@ document.addEventListener('DOMContentLoaded', () => {
         items: [...cart],
         user: { ...currentUser }
       };
-      
       orders.push(order);
       localStorage.setItem('banehbaba_orders', JSON.stringify(orders));
-      
-      showToast(`✅ پرداخت ثبت شد - ${getPersianDateShort()}`, 'success');
-      
+
+      showToast(`✅ پرداخت ثبت شد - ${getPersianDateShort()}`);
       cart = [];
       saveCart();
       updateCartBadge();
-      
-      setTimeout(() => {
-        closeModal('checkoutModal');
-        checkoutForm.reset();
-      }, 1500);
-    });
-  }
-  
-  // لینک ورود در فرم
-  const loginLink = document.querySelector('.modal-footer-text a');
-  if (loginLink) {
-    loginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('سیستم ورود به‌زودی اضافه می‌شود', 'success');
+      setTimeout(() => { closeModal('checkoutModal'); checkoutForm.reset(); }, 1500);
     });
   }
 });
 
 // ============================================
-// 🎯 اسکرول به محصولات
+// 🎯 اسکرول
 // ============================================
 function scrollToProducts() {
   const section = document.getElementById('productsSection');
-  if (section) {
-    section.scrollIntoView({ behavior: 'smooth' });
-  }
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
 }
-// ============================================
-// 📞 فرم تماس با ما          ← جدید
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  const contactForm = document.getElementById('contactForm');
-  
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('contactName').value.trim();
-      const phone = document.getElementById('contactPhone').value.trim();
-      const email = document.getElementById('contactEmail').value.trim();
-      const subject = document.getElementById('contactSubject').value;
-      const message = document.getElementById('contactMessage').value.trim();
-      
-      if (!name || !phone || !message) {
-        showToast('لطفاً فیلدهای ستاره‌دار را پر کنید', 'error');
-        return;
-      }
-      
-      if (phone.length < 10) {
-        showToast('شماره موبایل معتبر نیست', 'error');
-        return;
-      }
-      
-      // ذخیره پیام
-      const messages = JSON.parse(localStorage.getItem('banehbaba_messages') || '[]');
-      messages.push({
-        id: Date.now(),
-        name,
-        phone,
-        email,
-        subject,
-        message,
-        date: getPersianDate(),
-        dateTime: getPersianDateTime()
-      });
-      localStorage.setItem('banehbaba_messages', JSON.stringify(messages));
-      
-      showToast(`✅ پیام شما ثبت شد - ${getPersianDateShort()}`, 'success');
-      contactForm.reset();
-    });
-  }
-});
-
-// ============================================
-// 📅 خروجی توابع
-// ============================================
-window.getPersianDate = getPersianDate;
-window.getPersianDateShort = getPersianDateShort;
-window.getPersianDateTime = getPersianDateTime;
-window.getPersianTime = getPersianTime;
