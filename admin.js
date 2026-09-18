@@ -699,4 +699,4 @@ document.addEventListener('DOMContentLoaded', () => {
   switchPage('dashboard');
   showToast('👋 خوش آمدید به پنل مدیریت', 'info');
 });
-``
+
