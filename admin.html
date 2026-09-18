@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود ادمین | بانه بابا</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+    
+    body {
+      background: linear-gradient(135deg, #004E89 0%, #001a33 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      direction: rtl;
+      padding: 20px;
+    }
+    
+    .login-box {
+      background: white;
+      border-radius: 20px;
+      padding: 45px 35px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      animation: slideUp 0.5s ease;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .login-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-logo .icon {
+      font-size: 60px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .login-logo h1 {
+      color: #FF6B35;
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+    
+    .login-logo p {
+      color: #777;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s;
+      direction: rtl;
+      background: #fafafa;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+      background: white;
+    }
+    
+    .login-btn {
+      width: 100%;
+      background: #FF6B35;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      margin-top: 10px;
+    }
+    
+    .login-btn:hover {
+      background: #e55a25;
+      transform: translateY(-2px);
+    }
+    
+    .error-msg {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .error-msg.show {
+      display: block;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .back-link a {
+      color: #777;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    
+    .back-link a:hover {
+      color: #FF6B35;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="icon">🔐</span>
+      <h1>پنل مدیریت بانه بابا</h1>
+      <p>فقط برای مدیران مجاز</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label>نام کاربری</label>
+        <input type="text" id="username" placeholder="admin" required autocomplete="off">
+      </div>
+      
+      <div class="form-group">
+        <label>رمز عبور</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="login-btn">🚀 ورود به پنل</button>
+      
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+
+    <div class="back-link">
+      <a href="index.html">← بازگشت به سایت</a>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_USERNAME = 'admin';
+    const ADMIN_PASSWORD = 'banehbaba2024';
+
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        sessionStorage.setItem('banehbaba_admin', 'logged_in');
+        localStorage.setItem('banehbaba_admin_login', new Date().toISOString());
+        window.location.href = 'dashboard.html';
+      } else {
+        errorMsg.textContent = '❌ نام کاربری یا رمز عبور اشتباه است';
+        errorMsg.classList.add('show');
+        setTimeout(() => {
+          errorMsg.classList.remove('show');
+        }, 3000);
+      }
+    });
+  </script>
+
+</body>
+        </html>
