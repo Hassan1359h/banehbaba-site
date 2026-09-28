@@ -1,5 +1,5 @@
 /* ============================================
-   بانه بابا - پنل مدیریت (نسخه نهایی)
+   بانه بابا - پنل مدیریت (نسخه نهایی و تست‌شده)
    ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
@@ -10,10 +10,6 @@ const API_URL = 'https://banehbaba-backend.vercel.app/api';
 const adminToken = sessionStorage.getItem('banehbaba_token');
 const isAdmin = sessionStorage.getItem('banehbaba_admin');
 
-console.log('🚀 Admin.js شروع شد');
-console.log('Token:', adminToken ? '✅ دارد' : '❌ ندارد');
-
-// اگه لاگین نیست
 if (isAdmin !== 'logged_in' || !adminToken) {
   window.location.replace('login.html');
 }
@@ -25,6 +21,7 @@ let products = [];
 let orders = [];
 let messages = [];
 let currentPage = 'dashboard';
+let selectedImageFile = null;
 
 const categories = [
   { id: 'camping', name: 'لوازم کوهنوردی و کمپ', icon: '🏔️' },
@@ -47,7 +44,7 @@ function showToast(message, type = 'success') {
   if (!toast) return;
   toast.textContent = message;
   toast.className = 'admin-toast show ' + (type === 'info' ? '' : type);
-  setTimeout(() => { toast.className = 'admin-toast'; }, 2500);
+  setTimeout(() => { toast.className = 'admin-toast'; }, 3000);
 }
 function showLoading(show = true) {
   const el = document.getElementById('loadingOverlay');
@@ -80,12 +77,8 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  console.log(`📡 ${method} ${API_URL + endpoint}`);
-
   const response = await fetch(API_URL + endpoint, options);
   const data = await response.json();
-
-  console.log(`📥 Response:`, data);
 
   if (response.status === 401) {
     showToast('دسترسی منقضی شد', 'error');
@@ -373,6 +366,8 @@ function openProductModal(productId = null) {
   const form = document.getElementById('productForm');
   if (form) form.reset();
   
+  selectedImageFile = null;
+  
   const idEl = document.getElementById('productId');
   const existingEl = document.getElementById('productExistingImage');
   if (idEl) idEl.value = '';
@@ -395,8 +390,10 @@ function openProductModal(productId = null) {
       
       if (p.image) {
         document.getElementById('productExistingImage').value = p.image;
-        document.getElementById('imagePreview').src = p.image;
-        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
+        const imgEl = document.getElementById('imagePreview');
+        if (imgEl) imgEl.src = p.image;
+        const wrap = document.getElementById('imagePreviewWrapper');
+        if (wrap) wrap.style.display = 'inline-block';
       }
     }
   } else {
@@ -428,18 +425,22 @@ async function deleteProduct(id) {
 }
 
 function removeImage() {
-  document.getElementById('productImage').value = '';
-  document.getElementById('imagePreview').src = '';
-  document.getElementById('imagePreviewWrapper').style.display = 'none';
-  document.getElementById('productExistingImage').value = '';
+  selectedImageFile = null;
+  const input = document.getElementById('productImage');
+  if (input) input.value = '';
+  const img = document.getElementById('imagePreview');
+  if (img) img.src = '';
+  const wrap = document.getElementById('imagePreviewWrapper');
+  if (wrap) wrap.style.display = 'none';
+  const existing = document.getElementById('productExistingImage');
+  if (existing) existing.value = '';
 }
 
 // ============================================
 // 🎬 رویدادها
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('✅ DOM لود شد');
-
+  
   // منوی موبایل
   const menuToggle = document.getElementById('menuToggle');
   if (menuToggle) {
@@ -454,36 +455,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     item.addEventListener('click', () => switchPage(item.dataset.page));
   });
 
-  // آپلود تصویر
+  // ============================================
+  // 📸 آپلود تصویر - انتخاب فایل
+  // ============================================
   const imageInput = document.getElementById('productImage');
   if (imageInput) {
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       
-      console.log('📸 عکس انتخاب شد:', file.name, file.size, 'bytes');
+      console.log('📸 فایل انتخاب شد:', file.name);
       
       if (file.size > 5 * 1024 * 1024) {
         showToast('حجم عکس باید کمتر از ۵ مگابایت باشه', 'error');
         return;
       }
       
+      selectedImageFile = file;
+      
+      // پیش‌نمایش
       const reader = new FileReader();
       reader.onload = (ev) => {
-        document.getElementById('imagePreview').src = ev.target.result;
-        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
-        console.log('✅ پیش‌نمایش ساخته شد');
+        const img = document.getElementById('imagePreview');
+        if (img) {
+          img.src = ev.target.result;
+          img.style.display = 'block';
+        }
+        const wrap = document.getElementById('imagePreviewWrapper');
+        if (wrap) wrap.style.display = 'inline-block';
+        showToast('✅ عکس انتخاب شد', 'success');
       };
       reader.readAsDataURL(file);
     });
   }
 
-  // فرم محصول
+  // ============================================
+  // 💾 فرم محصول - ذخیره
+  // ============================================
   const productForm = document.getElementById('productForm');
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log('📝 فرم ارسال شد');
       
       const id = document.getElementById('productId').value;
       const name = document.getElementById('productName').value.trim();
@@ -501,58 +513,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      // آپلود عکس اگه فایل انتخاب شده
-      const imageFile = document.getElementById('productImage').files[0];
-      if (imageFile) {
-        console.log('📤 شروع آپلود عکس...');
+      // ============================================
+      // آپلود عکس اگه انتخاب شده
+      // ============================================
+      if (selectedImageFile) {
         showLoading(true);
+        showToast('📤 در حال آپلود عکس...', 'info');
+        
         try {
+          // خواندن فایل
           const reader = new FileReader();
           const base64 = await new Promise((resolve, reject) => {
             reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(imageFile);
+            reader.onerror = () => reject(new Error('خطا در خواندن فایل'));
+            reader.readAsDataURL(selectedImageFile);
           });
 
-          console.log('📦 Base64 ساخته شد، طول:', base64.length);
-          
+          // آپلود
           const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
-          
-          console.log('✅ نتیجه آپلود:', uploadResult);
           
           if (uploadResult.success && uploadResult.url) {
             image = uploadResult.url;
-            console.log('🖼️ URL عکس:', image);
+            showToast('✅ عکس آپلود شد', 'success');
           } else {
             throw new Error(uploadResult.error || 'خطا در آپلود');
           }
         } catch (err) {
-          console.error('❌ خطا در آپلود:', err);
+          console.error('خطا در آپلود:', err);
           showLoading(false);
-          showToast('خطا در آپلود: ' + err.message, 'error');
+          showToast('❌ خطا در آپلود: ' + err.message, 'error');
           return;
         }
       }
 
-      const productData = { name, description, price, discountPrice, rating, category, image, emoji: '📦' };
-      console.log('💾 داده‌های محصول:', productData);
+      // ============================================
+      // ذخیره محصول
+      // ============================================
+      const productData = { 
+        name, 
+        description, 
+        price, 
+        discountPrice, 
+        rating, 
+        category, 
+        image, 
+        emoji: '📦' 
+      };
 
       showLoading(true);
       try {
         if (id) {
           await apiCall('/products/' + id, 'PUT', productData);
-          showToast('✅ ویرایش شد');
+          showToast('✅ ویرایش شد', 'success');
         } else {
           await apiCall('/products', 'POST', productData);
-          showToast('✅ اضافه شد');
+          showToast('✅ اضافه شد', 'success');
         }
+        
+        // ریست
+        selectedImageFile = null;
+        
         await loadProducts();
         updateCounts();
         closeModal('productModal');
         switchPage(currentPage);
       } catch (err) {
-        console.error('❌ خطا در ذخیره:', err);
-        showToast('خطا: ' + err.message, 'error');
+        console.error('خطا در ذخیره:', err);
+        showToast('❌ خطا: ' + err.message, 'error');
       }
       showLoading(false);
     });
@@ -571,5 +598,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadMessages();
   updateCounts();
   switchPage('dashboard');
-  showToast('👋 خوش آمدید', 'info');
 });
