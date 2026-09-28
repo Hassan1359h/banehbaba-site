@@ -3,196 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ورود ادمین | بانه بابا</title>
+  <title>پنل مدیریت | بانه بابا</title>
+  <link rel="stylesheet" href="admin.css">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
-    
-    body {
-      background: linear-gradient(135deg, #004E89 0%, #001a33 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      direction: rtl;
-      padding: 20px;
-    }
-    
-    .login-box {
-      background: white;
-      border-radius: 20px;
-      padding: 45px 35px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-      animation: slideUp 0.5s ease;
-    }
-    
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .login-logo {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .login-logo .icon {
-      font-size: 60px;
-      display: block;
-      margin-bottom: 10px;
-    }
-    
-    .login-logo h1 {
-      color: #FF6B35;
-      font-size: 26px;
-      margin-bottom: 5px;
-    }
-    
-    .login-logo p {
-      color: #777;
-      font-size: 14px;
-    }
-    
-    .form-group {
-      margin-bottom: 18px;
-    }
-    
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #333;
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 15px;
-      font-family: inherit;
-      transition: all 0.3s;
-      direction: rtl;
-      background: #fafafa;
-    }
-    
-    .form-group input:focus {
-      outline: none;
-      border-color: #FF6B35;
-      box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
-      background: white;
-    }
-    
-    .login-btn {
-      width: 100%;
-      background: #FF6B35;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: inherit;
-      margin-top: 10px;
-    }
-    
-    .login-btn:hover {
-      background: #e55a25;
-      transform: translateY(-2px);
-    }
-    
-    .error-msg {
-      background: #ffebee;
-      color: #c62828;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      text-align: center;
-      margin-top: 15px;
-      display: none;
-    }
-    
-    .error-msg.show {
-      display: block;
-    }
-    
-    .back-link {
-      text-align: center;
-      margin-top: 20px;
-    }
-    
-    .back-link a {
-      color: #777;
-      text-decoration: none;
-      font-size: 13px;
-    }
-    
-    .back-link a:hover {
-      color: #FF6B35;
-    }
-  </style>
 </head>
 <body>
 
-  <div class="login-box">
-    <div class="login-logo">
-      <span class="icon">🔐</span>
-      <h1>پنل مدیریت بانه بابا</h1>
-      <p>فقط برای مدیران مجاز</p>
-    </div>
+  <div class="admin-layout">
 
-    <form id="loginForm">
-      <div class="form-group">
-        <label>نام کاربری</label>
-        <input type="text" id="username" placeholder="admin" required autocomplete="off">
-      </div>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
       
-      <div class="form-group">
-        <label>رمز عبور</label>
-        <input type="password" id="password" placeholder="••••••••" required>
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-logo">
+          <span class="icon">🏪</span>
+          <span class="text">بانه بابا</span>
+        </a>
+        <p class="sidebar-subtitle">پنل مدیریت</p>
       </div>
 
-      <button type="submit" class="login-btn">🚀 ورود به پنل</button>
-      
-      <div class="error-msg" id="errorMsg"></div>
-    </form>
+      <nav class="sidebar-menu">
+        <a class="menu-item active" data-page="dashboard">
+          <span class="icon">📊</span>
+          <span>داشبورد</span>
+        </a>
+        <a class="menu-item" data-page="products">
+          <span class="icon">📦</span>
+          <span>محصولات</span>
+          <span class="badge-count" id="productsCount">۰</span>
+        </a>
+        <a class="menu-item" data-page="categories">
+          <span class="icon">📂</span>
+          <span>دسته‌بندی‌ها</span>
+        </a>
+        <a class="menu-item" data-page="orders">
+          <span class="icon">🛒</span>
+          <span>سفارشات</span>
+          <span class="badge-count" id="ordersCount">۰</span>
+        </a>
+        <a class="menu-item" data-page="customers">
+          <span class="icon">👥</span>
+          <span>مشتریان</span>
+        </a>
+        <a class="menu-item" data-page="messages">
+          <span class="icon">💬</span>
+          <span>پیام‌ها</span>
+          <span class="badge-count" id="messagesCount">۰</span>
+        </a>
+      </nav>
 
-    <div class="back-link">
-      <a href="index.html">← بازگشت به سایت</a>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">ا</div>
+          <div>
+            <div class="user-name">ادمین</div>
+            <div class="user-role">مدیر کل</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 خروج از حساب</button>
+      </div>
+
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main-content">
+
+      <header class="top-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <div class="header-title">
+            <h1 id="pageTitle">داشبورد</h1>
+            <p id="pageSubtitle">خوش آمدید به پنل مدیریت</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="index.html" class="header-btn" title="مشاهده سایت">🌐</a>
+          <button class="header-btn" onclick="showToast('🔔 اعلان جدیدی نیست')" title="اعلان‌ها">🔔</button>
+        </div>
+      </header>
+
+      <div class="page-content" id="pageContent"></div>
+
+    </main>
+
+  </div>
+
+  <!-- ============ MODAL: محصول ============ -->
+  <div class="admin-modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">افزودن محصول جدید</h3>
+        <button class="modal-close-btn" onclick="closeModal('productModal')">✕</button>
+      </div>
+
+      <form class="admin-form" id="productForm">
+        <input type="hidden" id="productId">
+        <input type="hidden" id="productExistingImage">
+        
+        <div class="form-group">
+          <label>نام محصول <span class="required">*</span></label>
+          <input type="text" id="productName" placeholder="مثلاً: گوشی سامسونگ S24" required>
+        </div>
+
+        <div class="form-group">
+          <label>توضیحات</label>
+          <textarea id="productDescription" placeholder="توضیحات محصول..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>قیمت اصلی (تومان) <span class="required">*</span></label>
+            <input type="number" id="productPrice" placeholder="45000000" required>
+          </div>
+
+          <div class="form-group">
+            <label>قیمت تخفیف‌خورده (تومان)</label>
+            <input type="number" id="productDiscount" placeholder="خالی = بدون تخفیف">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>امتیاز (از ۵)</label>
+            <input type="number" id="productRating" step="0.1" min="0" max="5" value="4.5">
+          </div>
+
+          <div class="form-group">
+            <label>دسته‌بندی</label>
+            <select id="productCategory">
+              <option value="camping">🏔️ لوازم کوهنوردی و کمپ</option>
+              <option value="home">🏠 لوازم خانگی</option>
+              <option value="beauty">💄 سلامت و زیبایی</option>
+              <option value="car">🚗 لوازم یدکی خودرو</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>تصویر محصول</label>
+          <div class="image-upload" onclick="document.getElementById('productImage').click()">
+            <div class="image-upload-icon">📸</div>
+            <div class="image-upload-text">برای آپلود کلیک کنید</div>
+            <input type="file" id="productImage" accept="image/*">
+          </div>
+          <div id="imagePreviewWrapper" class="image-preview-wrapper" style="display: none;">
+            <img id="imagePreview" class="image-preview">
+            <button type="button" class="remove-image-btn" onclick="removeImage()">✕</button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('productModal')">انصراف</button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">💾 ذخیره</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <script>
-    const ADMIN_USERNAME = 'admin';
-    const ADMIN_PASSWORD = 'banehbaba2024';
+  <!-- ============ MODAL: دسته‌بندی ============ -->
+  <div class="admin-modal" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="categoryModalTitle">افزودن دسته‌بندی</h3>
+        <button class="modal-close-btn" onclick="closeModal('categoryModal')">✕</button>
+      </div>
 
-    const loginForm = document.getElementById('loginForm');
-    const errorMsg = document.getElementById('errorMsg');
+      <form class="admin-form" id="categoryForm">
+        <input type="hidden" id="categoryId">
+        
+        <div class="form-group">
+          <label>نام دسته‌بندی <span class="required">*</span></label>
+          <input type="text" id="categoryName" placeholder="مثلاً: لوازم ورزشی" required>
+        </div>
 
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
+        <div class="form-group">
+          <label>آیکون (ایموجی)</label>
+          <input type="text" id="categoryIcon" placeholder="🏃" maxlength="4" value="📂">
+        </div>
 
-      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        sessionStorage.setItem('banehbaba_admin', 'logged_in');
-        localStorage.setItem('banehbaba_admin_login', new Date().toISOString());
-        window.location.href = 'dashboard.html';
-      } else {
-        errorMsg.textContent = '❌ نام کاربری یا رمز عبور اشتباه است';
-        errorMsg.classList.add('show');
-        setTimeout(() => {
-          errorMsg.classList.remove('show');
-        }, 3000);
-      }
-    });
-  </script>
+        <div class="form-group">
+          <label>زیردسته‌ها (با کاما جدا کنید)</label>
+          <textarea id="categorySubs" placeholder="مثلاً: کفش، لباس، توپ"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">انصراف</button>
+          <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: سفارش ============ -->
+  <div class="admin-modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>جزئیات سفارش</h3>
+        <button class="modal-close-btn" onclick="closeModal('orderModal')">✕</button>
+      </div>
+      <div id="orderDetails"></div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="admin-toast" id="toast"></div>
+
+  <script src="admin.js"></script>
 
 </body>
-        </html>
+</html>
