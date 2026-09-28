@@ -1,5 +1,5 @@
 /* ============================================
-   بانه بابا - پنل مدیریت (نسخه نهایی و تست‌شده)
+   بانه بابا - پنل مدیریت (نسخه با نمایش خطا)
    ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
@@ -13,6 +13,39 @@ const isAdmin = sessionStorage.getItem('banehbaba_admin');
 if (isAdmin !== 'logged_in' || !adminToken) {
   window.location.replace('login.html');
 }
+
+// ============================================
+// 🐛 نمایش خطا
+// ============================================
+function showError(message) {
+  // نمایش خطا در یک باکس قرمز توی صفحه
+  let errorBox = document.getElementById('errorBox');
+  if (!errorBox) {
+    errorBox = document.createElement('div');
+    errorBox.id = 'errorBox';
+    errorBox.style.cssText = `
+      position: fixed; top: 10px; left: 10px; right: 10px;
+      background: #e74c3c; color: white; padding: 15px;
+      border-radius: 10px; z-index: 99999; font-size: 13px;
+      direction: ltr; text-align: left; word-break: break-all;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    `;
+    document.body.appendChild(errorBox);
+  }
+  errorBox.textContent = '❌ ' + message;
+  errorBox.style.display = 'block';
+  
+  // مخفی کردن خودکار بعد از ۱۰ ثانیه
+  setTimeout(() => {
+    if (errorBox) errorBox.style.display = 'none';
+  }, 10000);
+}
+
+// گرفتن خطاهای global
+window.onerror = function(msg, url, line, col, error) {
+  showError(msg + ' - خط ' + line);
+  console.error('Global Error:', msg, url, line, col, error);
+};
 
 // ============================================
 // 💾 State
@@ -77,19 +110,24 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const response = await fetch(API_URL + endpoint, options);
-  const data = await response.json();
+  try {
+    const response = await fetch(API_URL + endpoint, options);
+    const data = await response.json();
 
-  if (response.status === 401) {
-    showToast('دسترسی منقضی شد', 'error');
-    setTimeout(() => {
-      sessionStorage.clear();
-      window.location.href = 'login.html';
-    }, 1500);
-    throw new Error('Unauthorized');
+    if (response.status === 401) {
+      showToast('دسترسی منقضی شد', 'error');
+      setTimeout(() => {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      }, 1500);
+      throw new Error('Unauthorized');
+    }
+
+    return data;
+  } catch (err) {
+    showError('API Call Error: ' + err.message);
+    throw err;
   }
-
-  return data;
 }
 
 // ============================================
@@ -99,25 +137,25 @@ async function loadProducts() {
   try {
     const data = await apiCall('/products');
     if (data.success) products = data.products || [];
-  } catch (e) { console.error('محصولات:', e); }
+  } catch (e) { showError('loadProducts: ' + e.message); }
 }
 
 async function loadOrders() {
   try {
     const data = await apiCall('/orders');
     if (data.success) orders = data.orders || [];
-  } catch (e) { console.error('سفارشات:', e); }
+  } catch (e) { showError('loadOrders: ' + e.message); }
 }
 
 async function loadMessages() {
   try {
     const data = await apiCall('/messages');
     if (data.success) messages = data.messages || [];
-  } catch (e) { console.error('پیام‌ها:', e); }
+  } catch (e) { showError('loadMessages: ' + e.message); }
 }
 
 // ============================================
-// 🎨 رندر صفحات
+// 🎨 رندر صفحات (خلاصه)
 // ============================================
 function renderDashboard() {
   const totalRevenue = orders.reduce((sum, o) => sum + (o.amount || 0), 0);
@@ -199,37 +237,23 @@ function renderProducts() {
         ? `<div class="empty-state"><div class="icon">📦</div><h3>محصولی نیست</h3></div>`
         : `<div class="table-wrapper">
             <table class="data-table">
-              <thead><tr><th>تصویر</th><th>نام</th><th>قیمت</th><th>تخفیف</th><th>عملیات</th></tr></thead>
+              <thead><tr><th>تصویر</th><th>نام</th><th>قیمت</th><th>عملیات</th></tr></thead>
               <tbody>
-                ${products.map(p => {
-                  let discount = '-';
-                  if (p.discountPrice && p.discountPrice < p.price) {
-                    const percent = Math.round((1 - p.discountPrice / p.price) * 100);
-                    discount = `<span class="badge badge-success">${formatNumber(percent)}٪</span>`;
-                  }
-                  return `
-                    <tr>
-                      <td>
-                        <div class="product-thumb">
-                          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '📦')}
-                        </div>
-                      </td>
-                      <td><strong>${p.name}</strong></td>
-                      <td>
-                        ${p.discountPrice && p.discountPrice < p.price
-                          ? `<div style="text-decoration: line-through; color: #999; font-size: 12px;">${formatPrice(p.price)}</div>
-                             <div style="color: var(--secondary); font-weight: 700;">${formatPrice(p.discountPrice)}</div>`
-                          : formatPrice(p.price)
-                        }
-                      </td>
-                      <td>${discount}</td>
-                      <td>
-                        <button class="btn-icon btn-edit" onclick="editProduct(${p.id})">✏️</button>
-                        <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
-                      </td>
-                    </tr>
-                  `;
-                }).join('')}
+                ${products.map(p => `
+                  <tr>
+                    <td>
+                      <div class="product-thumb">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '📦')}
+                      </div>
+                    </td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${formatPrice(p.discountPrice || p.price)}</td>
+                    <td>
+                      <button class="btn-icon btn-edit" onclick="editProduct(${p.id})">✏️</button>
+                      <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
+                    </td>
+                  </tr>
+                `).join('')}
               </tbody>
             </table>
           </div>`
@@ -301,9 +325,6 @@ function renderMessages() {
         : messages.map(m => `
             <div style="background: #f9f9f9; border-radius: 12px; padding: 18px; margin-bottom: 12px; border-right: 4px solid var(--primary);">
               <strong>${m.name || 'ناشناس'}</strong>
-              <div style="font-size: 12px; color: #777; margin: 8px 0;">
-                📞 ${m.phone || '-'} | ${m.date || '-'}
-              </div>
               <p>${m.message || ''}</p>
             </div>
           `).join('')
@@ -368,10 +389,8 @@ function openProductModal(productId = null) {
   
   selectedImageFile = null;
   
-  const idEl = document.getElementById('productId');
-  const existingEl = document.getElementById('productExistingImage');
-  if (idEl) idEl.value = '';
-  if (existingEl) existingEl.value = '';
+  document.getElementById('productId').value = '';
+  document.getElementById('productExistingImage').value = '';
   
   const preview = document.getElementById('imagePreviewWrapper');
   if (preview) preview.style.display = 'none';
@@ -390,10 +409,8 @@ function openProductModal(productId = null) {
       
       if (p.image) {
         document.getElementById('productExistingImage').value = p.image;
-        const imgEl = document.getElementById('imagePreview');
-        if (imgEl) imgEl.src = p.image;
-        const wrap = document.getElementById('imagePreviewWrapper');
-        if (wrap) wrap.style.display = 'inline-block';
+        document.getElementById('imagePreview').src = p.image;
+        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
       }
     }
   } else {
@@ -424,24 +441,11 @@ async function deleteProduct(id) {
   showLoading(false);
 }
 
-function removeImage() {
-  selectedImageFile = null;
-  const input = document.getElementById('productImage');
-  if (input) input.value = '';
-  const img = document.getElementById('imagePreview');
-  if (img) img.src = '';
-  const wrap = document.getElementById('imagePreviewWrapper');
-  if (wrap) wrap.style.display = 'none';
-  const existing = document.getElementById('productExistingImage');
-  if (existing) existing.value = '';
-}
-
 // ============================================
 // 🎬 رویدادها
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
   
-  // منوی موبایل
   const menuToggle = document.getElementById('menuToggle');
   if (menuToggle) {
     menuToggle.addEventListener('click', () => {
@@ -450,21 +454,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // کلیک منوها
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('click', () => switchPage(item.dataset.page));
   });
 
   // ============================================
-  // 📸 آپلود تصویر - انتخاب فایل
+  // 📸 انتخاب عکس
   // ============================================
   const imageInput = document.getElementById('productImage');
   if (imageInput) {
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      
-      console.log('📸 فایل انتخاب شد:', file.name);
       
       if (file.size > 5 * 1024 * 1024) {
         showToast('حجم عکس باید کمتر از ۵ مگابایت باشه', 'error');
@@ -473,16 +474,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       selectedImageFile = file;
       
-      // پیش‌نمایش
       const reader = new FileReader();
       reader.onload = (ev) => {
-        const img = document.getElementById('imagePreview');
-        if (img) {
-          img.src = ev.target.result;
-          img.style.display = 'block';
-        }
-        const wrap = document.getElementById('imagePreviewWrapper');
-        if (wrap) wrap.style.display = 'inline-block';
+        document.getElementById('imagePreview').src = ev.target.result;
+        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
         showToast('✅ عکس انتخاب شد', 'success');
       };
       reader.readAsDataURL(file);
@@ -490,109 +485,98 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ============================================
-  // 💾 فرم محصول - ذخیره
+  // 💾 ذخیره محصول
   // ============================================
   const productForm = document.getElementById('productForm');
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const id = document.getElementById('productId').value;
-      const name = document.getElementById('productName').value.trim();
-      const description = document.getElementById('productDescription').value.trim();
-      const price = parseInt(document.getElementById('productPrice').value);
-      const discountPrice = document.getElementById('productDiscount').value 
-        ? parseInt(document.getElementById('productDiscount').value) 
-        : null;
-      const rating = parseFloat(document.getElementById('productRating').value) || 4.5;
-      const category = document.getElementById('productCategory').value;
-      let image = document.getElementById('productExistingImage').value || '';
+      try {
+        const id = document.getElementById('productId').value;
+        const name = document.getElementById('productName').value.trim();
+        const description = document.getElementById('productDescription').value.trim();
+        const price = parseInt(document.getElementById('productPrice').value);
+        const discountPrice = document.getElementById('productDiscount').value 
+          ? parseInt(document.getElementById('productDiscount').value) 
+          : null;
+        const rating = parseFloat(document.getElementById('productRating').value) || 4.5;
+        const category = document.getElementById('productCategory').value;
+        let image = document.getElementById('productExistingImage').value || '';
 
-      if (!name || !price) {
-        showToast('نام و قیمت الزامی است', 'error');
-        return;
-      }
-
-      // ============================================
-      // آپلود عکس اگه انتخاب شده
-      // ============================================
-      if (selectedImageFile) {
-        showLoading(true);
-        showToast('📤 در حال آپلود عکس...', 'info');
-        
-        try {
-          // خواندن فایل
-          const reader = new FileReader();
-          const base64 = await new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('خطا در خواندن فایل'));
-            reader.readAsDataURL(selectedImageFile);
-          });
-
-          // آپلود
-          const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
-          
-          if (uploadResult.success && uploadResult.url) {
-            image = uploadResult.url;
-            showToast('✅ عکس آپلود شد', 'success');
-          } else {
-            throw new Error(uploadResult.error || 'خطا در آپلود');
-          }
-        } catch (err) {
-          console.error('خطا در آپلود:', err);
-          showLoading(false);
-          showToast('❌ خطا در آپلود: ' + err.message, 'error');
+        if (!name || !price) {
+          showToast('نام و قیمت الزامی است', 'error');
           return;
         }
-      }
 
-      // ============================================
-      // ذخیره محصول
-      // ============================================
-      const productData = { 
-        name, 
-        description, 
-        price, 
-        discountPrice, 
-        rating, 
-        category, 
-        image, 
-        emoji: '📦' 
-      };
+        // آپلود عکس
+        if (selectedImageFile) {
+          showLoading(true);
+          showToast('📤 در حال آپلود عکس...', 'info');
+          
+          try {
+            const reader = new FileReader();
+            const base64 = await new Promise((resolve, reject) => {
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = () => reject(new Error('خطا در خواندن فایل'));
+              reader.readAsDataURL(selectedImageFile);
+            });
 
-      showLoading(true);
-      try {
-        if (id) {
-          await apiCall('/products/' + id, 'PUT', productData);
-          showToast('✅ ویرایش شد', 'success');
-        } else {
-          await apiCall('/products', 'POST', productData);
-          showToast('✅ اضافه شد', 'success');
+            const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
+            
+            if (uploadResult.success && uploadResult.url) {
+              image = uploadResult.url;
+              showToast('✅ عکس آپلود شد', 'success');
+            } else {
+              throw new Error(uploadResult.error || 'خطا در آپلود');
+            }
+          } catch (err) {
+            showLoading(false);
+            showToast('❌ خطا در آپلود: ' + err.message, 'error');
+            showError('Upload Error: ' + err.message);
+            return;
+          }
+        }
+
+        const productData = { name, description, price, discountPrice, rating, category, image, emoji: '📦' };
+
+        showLoading(true);
+        
+        try {
+          if (id) {
+            await apiCall('/products/' + id, 'PUT', productData);
+            showToast('✅ ویرایش شد', 'success');
+          } else {
+            await apiCall('/products', 'POST', productData);
+            showToast('✅ اضافه شد', 'success');
+          }
+          
+          selectedImageFile = null;
+          
+          await loadProducts();
+          updateCounts();
+          closeModal('productModal');
+          switchPage(currentPage);
+        } catch (err) {
+          showToast('❌ خطا: ' + err.message, 'error');
+          showError('Save Error: ' + err.message);
         }
         
-        // ریست
-        selectedImageFile = null;
+        showLoading(false);
         
-        await loadProducts();
-        updateCounts();
-        closeModal('productModal');
-        switchPage(currentPage);
-      } catch (err) {
-        console.error('خطا در ذخیره:', err);
-        showToast('❌ خطا: ' + err.message, 'error');
+      } catch (outerErr) {
+        showLoading(false);
+        showError('Form Error: ' + outerErr.message);
       }
-      showLoading(false);
     });
   }
 
-  // Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.admin-modal.active').forEach(m => m.classList.remove('active'));
     }
   });
 
-  // لود داده‌ها
   await loadProducts();
   await loadOrders();
   await loadMessages();
