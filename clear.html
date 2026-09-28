@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clear Session</title>
+</head>
+<body>
+  <h1>پاک کردن Session</h1>
+  <p id="status">در حال پاک کردن...</p>
+  <script>
+    sessionStorage.clear();
+    localStorage.clear();
+    document.getElementById('status').textContent = '✅ پاک شد! الان برو به admin.html';
+    setTimeout(() => {
+      window.location.href = '/admin.html';
+    }, 2000);
+  </script>
+</body>
+</html>
