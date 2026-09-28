@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تست پنل</title>
+  <style>
+    body { font-family: Tahoma; padding: 20px; direction: rtl; background: #f5f5f5; }
+    button { padding: 12px 25px; font-size: 16px; margin: 10px 0; cursor: pointer; background: #FF6B35; color: white; border: none; border-radius: 8px; display: block; width: 100%; max-width: 400px; }
+    pre { background: white; padding: 15px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; white-space: pre-wrap; font-size: 12px; }
+    .step { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    h3 { color: #FF6B35; }
+    .log { background: #fff3cd; padding: 10px; border-radius: 5px; margin: 5px 0; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>🔧 تست پنل ادمین</h1>
+
+  <div class="step">
+    <h3>مرحله ۱: پاک کردن session قبلی</h3>
+    <button onclick="clearSession()">🗑️ پاک کردن</button>
+  </div>
+
+  <div class="step">
+    <h3>مرحله ۲: لاگین و ذخیره توکن</h3>
+    <button onclick="login()">🔐 لاگین</button>
+  </div>
+
+  <div class="step">
+    <h3>مرحله ۳: بررسی توکن ذخیره‌شده</h3>
+    <button onclick="checkToken()">🔍 بررسی</button>
+  </div>
+
+  <div class="step">
+    <h3>مرحله ۴: تست محصولات با توکن</h3>
+    <button onclick="testProducts()">📦 تست محصولات</button>
+  </div>
+
+  <div class="step">
+    <h3>مرحله ۵: رفتن به پنل</h3>
+    <button onclick="goToPanel()">🚀 باز کردن پنل</button>
+  </div>
+
+  <h3>نتیجه:</h3>
+  <pre id="result">هنوز تست نشده...</pre>
+
+  <script>
+    const API = 'https://banehbaba-backend.vercel.app/api';
+    const result = document.getElementById('result');
+
+    function log(msg) {
+      const time = new Date().toLocaleTimeString('fa-IR');
+      result.textContent += `\n[${time}] ${msg}`;
+    }
+
+    function show(data) {
+      result.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function clearSession() {
+      sessionStorage.removeItem('banehbaba_admin');
+      sessionStorage.removeItem('banehbaba_token');
+      show({ success: true, message: '✅ session پاک شد' });
+    }
+
+    async function login() {
+      show({ step: 'login', status: 'در حال ارسال...' });
+      try {
+        const r = await fetch(API + '/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'admin', password: 'banehbaba2024' })
+        });
+        const d = await r.json();
+
+        if (d.token) {
+          sessionStorage.setItem('banehbaba_admin', 'logged_in');
+          sessionStorage.setItem('banehbaba_token', d.token);
+          show({
+            step: 'login',
+            status: r.status,
+            success: true,
+            message: '✅ توکن ذخیره شد',
+            token_preview: d.token.substring(0, 40) + '...',
+            sessionStorage_keys: Object.keys(sessionStorage)
+          });
+        } else {
+          show({ step: 'login', status: r.status, error: d.error || 'خطا' });
+        }
+      } catch (e) {
+        show({ error: e.message });
+      }
+    }
+
+    function checkToken() {
+      const token = sessionStorage.getItem('banehbaba_token');
+      const admin = sessionStorage.getItem('banehbaba_admin');
+      show({
+        step: 'checkToken',
+        has_admin: !!admin,
+        admin_value: admin,
+        has_token: !!token,
+        token_length: token ? token.length : 0,
+        token_preview: token ? token.substring(0, 40) + '...' : 'خالی',
+        all_keys: Object.keys(sessionStorage)
+      });
+    }
+
+    async function testProducts() {
+      const token = sessionStorage.getItem('banehbaba_token');
+      if (!token) {
+        show({ error: '❌ توکن نیست. اول لاگین کنید' });
+        return;
+      }
+
+      try {
+        const r = await fetch(API + '/products', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const d = await r.json();
+        show({
+          step: 'testProducts',
+          status: r.status,
+          success: d.success,
+          count: d.products?.length || 0,
+          products: d.products || []
+        });
+      } catch (e) {
+        show({ error: e.message });
+      }
+    }
+
+    function goToPanel() {
+      window.location.href = '/dashboard.html';
+    }
+  </script>
+</body>
+</html>
