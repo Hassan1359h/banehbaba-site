@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>افزودن محصول تست</title>
+  <style>
+    body { font-family: Tahoma; padding: 20px; direction: rtl; background: #f5f5f5; }
+    h1 { color: #333; }
+    button { padding: 12px 25px; font-size: 16px; margin: 10px 0; cursor: pointer; background: #FF6B35; color: white; border: none; border-radius: 8px; display: block; width: 100%; max-width: 400px; }
+    pre { background: white; padding: 15px; border-radius: 8px; overflow-x: auto; direction: ltr; text-align: left; white-space: pre-wrap; }
+    .step { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h3 { color: #FF6B35; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🔧 تست افزودن محصول</h1>
+  
+  <div class="step">
+    <h3>مرحله ۱: ورود ادمین</h3>
+    <button onclick="login()">🔐 لاگین</button>
+  </div>
+  
+  <div class="step">
+    <h3>مرحله ۲: افزودن محصول</h3>
+    <button onclick="addProduct()">➕ افزودن محصول تست</button>
+  </div>
+  
+  <div class="step">
+    <h3>مرحله ۳: مشاهده محصولات</h3>
+    <button onclick="checkProducts()">👁️ مشاهده محصولات</button>
+  </div>
+  
+  <h3>نتیجه:</h3>
+  <pre id="result">هنوز تست نشده...</pre>
+  
+  <script>
+    const API = 'https://banehbaba-backend.vercel.app/api';
+    
+    function show(data) {
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    }
+    
+    async function login() {
+      document.getElementById('result').textContent = 'در حال لاگین...';
+      try {
+        const r = await fetch(API + '/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'admin', password: 'banehbaba2024' })
+        });
+        const d = await r.json();
+        
+        if (d.token) {
+          sessionStorage.setItem('banehbaba_token', d.token);
+          show({ 
+            step: 'login', 
+            status: r.status, 
+            success: true,
+            message: '✅ توکن ذخیره شد',
+            token_preview: d.token.substring(0, 30) + '...'
+          });
+        } else {
+          show({ step: 'login', status: r.status, error: d.error || 'خطای ناشناخته' });
+        }
+      } catch (e) {
+        show({ error: e.message });
+      }
+    }
+    
+    async function addProduct() {
+      const token = sessionStorage.getItem('banehbaba_token');
+      if (!token) {
+        show({ error: '❌ اول لاگین کنید!' });
+        return;
+      }
+      
+      const product = {
+        name: 'گوشی سامسونگ Galaxy S24',
+        description: 'حافظه ۲۵۶ گیگ، دوربین ۲۰۰ مگاپیکسل',
+        price: 45000000,
+        discountPrice: 40000000,
+        rating: 4.8,
+        category: 'home',
+        emoji: '📱',
+        image: ''
+      };
+      
+      document.getElementById('result').textContent = 'در حال افزودن...';
+      
+      try {
+        const r = await fetch(API + '/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(product)
+        });
+        const d = await r.json();
+        show({ step: 'addProduct', status: r.status, data: d });
+      } catch (e) {
+        show({ error: e.message });
+      }
+    }
+    
+    async function checkProducts() {
+      document.getElementById('result').textContent = 'در حال بارگذاری...';
+      try {
+        const r = await fetch(API + '/products');
+        const d = await r.json();
+        show({ 
+          step: 'checkProducts', 
+          count: d.products?.length || 0, 
+          products: d.products || []
+        });
+      } catch (e) {
+        show({ error: e.message });
+      }
+    }
+  </script>
+</body>
+</html>
