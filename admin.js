@@ -424,7 +424,7 @@ function openProductModal(productId = null) {
       setVal('productDiscount', p.discountPrice || '');
       setVal('productRating', p.rating || 4.5);
       setVal('productCategory', p.category || 'home');
-      
+      setVal('productSubcategory', p.subcategory || '');
       if (p.image) {
         setVal('productExistingImage', p.image);
         if (imgPreview) imgPreview.src = p.image;
@@ -436,6 +436,7 @@ function openProductModal(productId = null) {
     if (titleEl) titleEl.textContent = 'افزودن محصول جدید';
     
     setVal('productRating', '4.5');
+     setVal('productSubcategory', '');
   }
 
   openModal('productModal');
@@ -566,15 +567,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      const productData = { 
-        name, 
-        description, 
-        price, 
-        discountPrice, 
-        rating, 
-        category, 
-        image
-      };
+      const subcategory = getVal('productSubcategory') || '';
+const productData = { 
+  name, 
+  description, 
+  price, 
+  discountPrice, 
+  rating, 
+  category,
+  subcategory,
+  image
+};
 
       showLoading(true);
       
