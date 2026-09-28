@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تست آپلود</title>
 <style>
-body { font-family: Tahoma; padding: 20px; direction: rtl; background: #f5f5f5; }
-button { padding: 15px 30px; font-size: 16px; margin: 10px 0; cursor: pointer; background: #FF6B35; color: white; border: none; border-radius: 8px; display: block; width: 100%; }
-pre { background: #1a1a1a; color: #0f0; padding: 15px; border-radius: 8px; direction: ltr; text-align: left; overflow-x: auto; font-size: 11px; white-space: pre-wrap; }
-input[type=file] { padding: 10px; background: white; border-radius: 8px; width: 100%; margin: 10px 0; }
+body { font-family: Tahoma; padding: 15px; direction: rtl; background: #f5f5f5; }
+button { padding: 15px; font-size: 16px; margin: 8px 0; cursor: pointer; background: #FF6B35; color: white; border: none; border-radius: 8px; display: block; width: 100%; }
+pre { background: #1a1a1a; color: #0f0; padding: 15px; border-radius: 8px; direction: ltr; text-align: left; overflow-x: auto; font-size: 10px; white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+input[type=file] { padding: 10px; background: white; border-radius: 8px; width: 100%; margin: 10px 0; box-sizing: border-box; }
 </style>
 </head>
 <body>
-<h1>🔍 تست آپلود</h1>
+<h1>🔍 تست آپلود - نسخه دقیق</h1>
 
 <p>۱. اول لاگین کنید</p>
 <button onclick="login()">🔐 لاگین</button>
@@ -32,6 +32,7 @@ const result = document.getElementById('result');
 
 function log(msg) {
   result.textContent += '\n' + msg;
+  console.log(msg);
 }
 
 async function login() {
@@ -46,12 +47,12 @@ async function login() {
     
     if (d.token) {
       sessionStorage.setItem('banehbaba_token', d.token);
-      result.textContent = '✅ لاگین موفق!\nToken: ' + d.token.substring(0, 40) + '...';
+      result.textContent = '✅ لاگین موفق!\n' + d.token.substring(0, 40) + '...';
     } else {
-      result.textContent = '❌ لاگین ناموفق: ' + JSON.stringify(d);
+      result.textContent = '❌ ' + JSON.stringify(d);
     }
   } catch (e) {
-    result.textContent = '❌ خطا: ' + e.message;
+    result.textContent = '❌ خطا: ' + (e.message || e);
   }
 }
 
@@ -68,28 +69,24 @@ async function upload() {
     return;
   }
   
-  result.textContent = '📤 شروع آپلود...\n';
-  log('📁 نام فایل: ' + file.name);
-  log('📦 حجم فایل: ' + (file.size / 1024).toFixed(2) + ' KB');
-  log('🎨 نوع فایل: ' + file.type);
+  result.textContent = '📤 شروع...';
+  log('📁 فایل: ' + file.name);
+  log('📦 حجم: ' + (file.size / 1024).toFixed(2) + ' KB');
+  log('🎨 نوع: ' + file.type);
   log('');
   
   try {
-    // خواندن فایل
-    const reader = new FileReader();
-    const base64 = await new Promise((resolve, reject) => {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-    
-    log('✅ Base64 ساخته شد');
-    log('📏 طول Base64: ' + base64.length + ' کاراکتر');
+    // مرحله ۱: خواندن فایل
+    log('⏳ خواندن فایل...');
+    const base64 = await readFileAsDataURL(file);
+    log('✅ فایل خونده شد. طول: ' + base64.length);
     log('');
     
-    // آپلود
+    // مرحله ۲: آپلود
     log('📡 ارسال به API...');
-    const r = await fetch(API + '/upload', {
+    log('URL: ' + API + '/upload');
+    
+    const response = await fetch(API + '/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -98,21 +95,48 @@ async function upload() {
       body: JSON.stringify({ image: base64 })
     });
     
-    log('📥 Status: ' + r.status);
-    const d = await r.json();
-    log('📄 Response: ' + JSON.stringify(d, null, 2));
+    log('📥 Status: ' + response.status);
+    log('📥 Content-Type: ' + response.headers.get('content-type'));
+    log('');
     
-    if (d.success) {
-      log('');
-      log('✅ آپلود موفق!');
-      log('🖼️ URL: ' + d.url);
+    // مرحله ۳: خواندن response
+    const responseText = await response.text();
+    log('📄 Response Text (اول ۵۰۰ کاراکتر):');
+    log(responseText.substring(0, 500));
+    log('');
+    
+    if (response.status === 200) {
+      try {
+        const data = JSON.parse(responseText);
+        if (data.success) {
+          log('✅✅ آپلود موفق!');
+          log('🖼️ URL: ' + data.url);
+        } else {
+          log('❌ API گفت: ' + JSON.stringify(data));
+        }
+      } catch (parseErr) {
+        log('❌ خطا در JSON: ' + parseErr.message);
+      }
+    } else {
+      log('❌ Status غیر 200: ' + response.status);
     }
     
   } catch (e) {
     log('');
-    log('❌ خطا: ' + e.message);
-    console.error(e);
+    log('❌❌ خطای اصلی:');
+    log('Name: ' + (e.name || 'نامشخص'));
+    log('Message: ' + (e.message || 'نامشخص'));
+    log('Stack: ' + (e.stack || 'نامشخص').substring(0, 300));
   }
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (e) => reject(new Error('خطا در خواندن فایل'));
+    reader.readAsDataURL(file);
+  });
 }
 </script>
 </body>
