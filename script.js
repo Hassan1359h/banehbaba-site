@@ -1,35 +1,16 @@
 /* ============================================
    بانه بابا - فروشگاه آنلاین
-   با همگام‌سازی پنل مدیریت
+   با اتصال به API
    ============================================ */
 
-// ============================================
-// 📦 داده‌های پیش‌فرض (اگه پنل خالی بود)
-// ============================================
-const defaultProducts = [
-  { id: 1, name: "گوشی سامسونگ Galaxy S24", description: "حافظه ۲۵۶ گیگ، دوربین ۲۰۰ مگاپیکسل", price: 45000000, emoji: "📱", rating: 4.8, category: "home", image: "" },
-  { id: 2, name: "لپ‌تاپ ایسوس ROG", description: "پردازنده i9، رم ۳۲ گیگ", price: 95000000, emoji: "💻", rating: 4.9, category: "home", image: "" },
-  { id: 3, name: "هدفون سونی WH-1000XM5", description: "نویز کنسلینگ، ۳۰ ساعت شارژ", price: 15000000, emoji: "🎧", rating: 4.7, category: "home", image: "" },
-  { id: 4, name: "ساعت هوشمند Apple Watch 9", description: "نمایشگر رتینا، ضدآب", price: 22000000, emoji: "⌚", rating: 4.6, category: "home", image: "" },
-  { id: 5, name: "پلی‌استیشن 5", description: "دیسک‌خور، ۲ دسته بی‌سیم", price: 42000000, emoji: "🎮", rating: 4.9, category: "home", image: "" },
-  { id: 6, name: "ایرپاد پرو نسل ۲", description: "نویز کنسلینگ، شارژ مغناطیسی", price: 8500000, emoji: "🎵", rating: 4.5, category: "home", image: "" },
-  { id: 7, name: "تبلت آیپد ایر", description: "۱۱ اینچ، تراشه M2", price: 38000000, emoji: "📲", rating: 4.8, category: "home", image: "" },
-  { id: 8, name: "دوربین کنون EOS R6", description: "سنسور فول‌فریم، 4K", price: 120000000, emoji: "📷", rating: 4.9, category: "home", image: "" }
-];
+const API_URL = 'https://banehbaba-backend.vercel.app/api';
 
 // ============================================
-// 📦 خواندن محصولات از پنل (localStorage)
+// 💾 State
 // ============================================
-function getProducts() {
-  const stored = localStorage.getItem('banehbaba_products');
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    } catch (e) { console.error('خطا در خواندن محصولات:', e); }
-  }
-  return defaultProducts;
-}
+let products = [];
+let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
+let currentUser = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
 
 // ============================================
 // 🗓️ توابع تاریخ شمسی
@@ -51,19 +32,11 @@ function getPersianTime() {
   return new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
 }
 function displayTodayDate() {
-  const dateEl = document.getElementById('todayDate');
-  if (dateEl) dateEl.textContent = '📅 امروز: ' + getPersianDate();
-  const cartDateEl = document.getElementById('cartDateInfo');
-  if (cartDateEl) cartDateEl.textContent = '📅 امروز: ' + getPersianDate();
+  const d1 = document.getElementById('todayDate');
+  if (d1) d1.textContent = '📅 امروز: ' + getPersianDate();
+  const d2 = document.getElementById('cartDateInfo');
+  if (d2) d2.textContent = '📅 امروز: ' + getPersianDate();
 }
-
-// ============================================
-// 💾 State
-// ============================================
-let products = getProducts();
-let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
-let currentUser = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
-let orders = JSON.parse(localStorage.getItem('banehbaba_orders') || '[]');
 
 // ============================================
 // 🛠 توابع کمکی
@@ -79,46 +52,80 @@ function showToast(message, type = 'success') {
   setTimeout(() => { toast.className = 'toast ' + type; }, 2500);
 }
 function updateCartBadge() {
-  const badge = document.getElementById('cartBadge');
-  if (!badge) return;
-  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-  badge.textContent = count.toLocaleString('fa-IR');
+  const b = document.getElementById('cartBadge');
+  if (!b) return;
+  b.textContent = cart.reduce((s, i) => s + i.quantity, 0).toLocaleString('fa-IR');
 }
 
 // ============================================
-// 🎨 نمایش محصولات
+// 🔌 بارگذاری محصولات از API
 // ============================================
-function renderProducts() {
+async function loadProductsFromAPI() {
+  try {
+    const response = await fetch(API_URL + '/products');
+    const data = await response.json();
+    
+    if (data.success) {
+      products = data.products || [];
+      console.log('✅ محصولات لود شد:', products.length);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error('خطا در لود محصولات:', e);
+    return false;
+  }
+}
+
+// ============================================
+// 📦 نمایش محصولات
+// ============================================
+function renderProducts(filterCategory = null) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
 
-  // خواندن مجدد از localStorage (برای اطمینان)
-  products = getProducts();
+  let list = products;
+  if (filterCategory) {
+    list = products.filter(p => p.category === filterCategory);
+  }
 
-  if (products.length === 0) {
+  if (list.length === 0) {
     grid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #999;">
-        <div style="font-size: 60px; margin-bottom: 15px;">📦</div>
-        <h3>هیچ محصولی موجود نیست</h3>
-        <p style="font-size: 14px;">به‌زودی محصولات جدید اضافه می‌شوند</p>
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#999;">
+        <div style="font-size:60px; margin-bottom:15px;">📦</div>
+        <h3>محصولی یافت نشد</h3>
       </div>
     `;
     return;
   }
 
-  grid.innerHTML = products.map(p => {
-    const imageHtml = p.image 
-      ? `<img src="${p.image}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover;">`
-      : p.emoji || '📦';
+  grid.innerHTML = list.map(p => {
+    const hasDiscount = p.discountPrice && p.discountPrice < p.price;
+    const discountPercent = hasDiscount 
+      ? Math.round((1 - p.discountPrice / p.price) * 100) 
+      : 0;
+
+    const imageHtml = p.image
+      ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+      : '📦';
 
     return `
       <div class="product-card">
-        <div class="product-image">${imageHtml}</div>
+        <div class="product-image">
+          ${imageHtml}
+          ${hasDiscount ? `<span style="position:absolute;top:10px;left:10px;background:#e74c3c;color:white;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">${discountPercent}٪ تخفیف</span>` : ''}
+        </div>
         <div class="product-info">
           <h3>${p.name}</h3>
           <p class="description">${p.description || ''}</p>
           <div class="product-price-row">
-            <span class="product-price">${formatPrice(p.price)}</span>
+            <div>
+              ${hasDiscount 
+                ? `<div style="font-size:12px;text-decoration:line-through;color:#999;">${formatPrice(p.price)}</div>
+                   <div class="product-price" style="color:#27ae60;">${formatPrice(p.discountPrice)}</div>`
+                : `<div class="product-price">${formatPrice(p.price)}</div>`
+              }
+            </div>
             <span class="product-rating">⭐ ${p.rating || 4.5}</span>
           </div>
           <button class="btn-add-to-cart" onclick="addToCart(${p.id})">
@@ -130,21 +137,37 @@ function renderProducts() {
   }).join('');
 }
 
-// ============================================
-// 🛒 سبد خرید
-// ============================================
-function addToCart(productId) {
-  products = getProducts();
-  const product = products.find(p => p.id === productId);
-  if (!product) return;
-
-  const existing = cart.find(item => item.id === productId);
-  if (existing) {
-    existing.quantity++;
-  } else {
-    cart.push({ ...product, quantity: 1 });
+function filterByCategory(categoryId, subName = null) {
+  const cat = {
+    camping: { name: 'لوازم کوهنوردی و کمپ', icon: '🏔️' },
+    home: { name: 'لوازم خانگی', icon: '🏠' },
+    beauty: { name: 'سلامت و زیبایی', icon: '💄' },
+    car: { name: 'لوازم یدکی خودرو', icon: '🚗' }
+  }[categoryId];
+  
+  const header = document.querySelector('.section-header h2');
+  if (header && cat) {
+    header.textContent = subName 
+      ? `${subName} — ${cat.name}` 
+      : `${cat.icon} ${cat.name}`;
   }
 
+  renderProducts(categoryId);
+  const section = document.getElementById('productsSection');
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================
+// 🛒 سبد
+// ============================================
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  
+  const existing = cart.find(i => i.id === productId);
+  if (existing) existing.quantity++;
+  else cart.push({ ...product, quantity: 1 });
+  
   saveCart();
   updateCartBadge();
   showToast(`✅ ${product.name} به سبد اضافه شد`);
@@ -171,13 +194,13 @@ function renderCart() {
   if (summary) summary.style.display = 'block';
 
   container.innerHTML = cart.map(item => {
-    const imageHtml = item.image
-      ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`
-      : item.emoji || '📦';
+    const img = item.image
+      ? `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`
+      : '📦';
 
     return `
       <div class="cart-item">
-        <div class="cart-item-image">${imageHtml}</div>
+        <div class="cart-item-image">${img}</div>
         <div class="cart-item-info">
           <h4>${item.name}</h4>
           <span class="price">${formatPrice(item.price * item.quantity)}</span>
@@ -192,49 +215,42 @@ function renderCart() {
     `;
   }).join('');
 
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalEl = document.getElementById('cartTotal');
-  if (totalEl) totalEl.textContent = formatPrice(total);
+  const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+  const el = document.getElementById('cartTotal');
+  if (el) el.textContent = formatPrice(total);
 }
 
-function changeQty(productId, delta) {
-  const item = cart.find(i => i.id === productId);
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
   if (!item) return;
   item.quantity += delta;
-  if (item.quantity <= 0) { removeFromCart(productId); return; }
-  saveCart();
-  updateCartBadge();
-  renderCart();
+  if (item.quantity <= 0) { removeFromCart(id); return; }
+  saveCart(); updateCartBadge(); renderCart();
 }
 
-function removeFromCart(productId) {
-  const item = cart.find(i => i.id === productId);
-  cart = cart.filter(i => i.id !== productId);
-  saveCart();
-  updateCartBadge();
-  renderCart();
-  if (item) showToast(`❌ ${item.name} از سبد حذف شد`, 'error');
+function removeFromCart(id) {
+  const item = cart.find(i => i.id === id);
+  cart = cart.filter(i => i.id !== id);
+  saveCart(); updateCartBadge(); renderCart();
+  if (item) showToast(`❌ ${item.name} حذف شد`, 'error');
 }
 
 // ============================================
 // 💳 پرداخت
 // ============================================
 function checkout() {
-  if (cart.length === 0) {
-    showToast('سبد خرید شما خالی است!', 'error');
-    return;
-  }
+  if (cart.length === 0) { showToast('سبد خرید خالی است!', 'error'); return; }
   if (!currentUser) {
     showToast('لطفاً ابتدا ثبت‌نام کنید', 'error');
     closeModal('cartModal');
     setTimeout(() => openModal('registerModal'), 300);
     return;
   }
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const amountEl = document.getElementById('checkoutAmount');
-  if (amountEl) amountEl.textContent = formatPrice(total);
-  const dateEl = document.getElementById('orderDateTime');
-  if (dateEl) dateEl.textContent = getPersianDateTime();
+  const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+  const a = document.getElementById('checkoutAmount');
+  if (a) a.textContent = formatPrice(total);
+  const d = document.getElementById('orderDateTime');
+  if (d) d.textContent = getPersianDateTime();
   closeModal('cartModal');
   setTimeout(() => openModal('checkoutModal'), 300);
 }
@@ -279,7 +295,10 @@ function initMobileMenu() {
 // ============================================
 // 🎬 اجرا
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  
+  // لود محصولات از API
+  await loadProductsFromAPI();
   renderProducts();
   updateCartBadge();
   displayTodayDate();
@@ -297,7 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // بستن Modal‌ها
   ['closeRegister', 'closeCart', 'closeCheckout'].forEach(id => {
     const btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', () => {
@@ -321,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // فرم ثبت‌نام
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
@@ -332,13 +350,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (phone.length < 10) { showToast('شماره موبایل معتبر نیست', 'error'); return; }
       if (password.length < 4) { showToast('رمز عبور حداقل ۴ کاراکتر', 'error'); return; }
 
-      currentUser = { name, phone, email, registerDate: getPersianDate(), registerDateTime: getPersianDateTime() };
+      currentUser = { name, phone, email, registerDate: getPersianDate() };
       localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
 
-      // ذخیره در لیست مشتریان
-      const customers = JSON.parse(localStorage.getItem('banehbaba_customers') || '[]');
-      customers.push(currentUser);
-      localStorage.setItem('banehbaba_customers', JSON.stringify(customers));
+      // ارسال به API
+      try {
+        await fetch(API_URL + '/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, email, password })
+        });
+      } catch (e) { console.error(e); }
 
       showToast(`🎉 ثبت‌نام موفق! خوش آمدید ${name}`);
       registerForm.reset();
@@ -351,16 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // فرم پرداخت
   const checkoutForm = document.getElementById('checkoutForm');
   if (checkoutForm) {
-    checkoutForm.addEventListener('submit', (e) => {
+    checkoutForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const trackingCode = document.getElementById('trackingCode').value.trim();
       if (!trackingCode || trackingCode.length < 5) {
         showToast('شماره پیگیری معتبر نیست', 'error');
         return;
       }
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       const order = {
-        id: Date.now(),
         trackingCode,
         date: getPersianDate(),
         dateTime: getPersianDateTime(),
@@ -370,8 +391,15 @@ document.addEventListener('DOMContentLoaded', () => {
         items: [...cart],
         user: { ...currentUser }
       };
-      orders.push(order);
-      localStorage.setItem('banehbaba_orders', JSON.stringify(orders));
+
+      // ارسال به API
+      try {
+        await fetch(API_URL + '/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+      } catch (e) { console.error(e); }
 
       showToast(`✅ پرداخت ثبت شد - ${getPersianDateShort()}`);
       cart = [];
