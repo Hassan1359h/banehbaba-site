@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تست آپلود</title>
+<style>
+body { font-family: Tahoma; padding: 20px; direction: rtl; background: #f5f5f5; }
+button { padding: 15px 30px; font-size: 16px; margin: 10px 0; cursor: pointer; background: #FF6B35; color: white; border: none; border-radius: 8px; display: block; width: 100%; }
+pre { background: #1a1a1a; color: #0f0; padding: 15px; border-radius: 8px; direction: ltr; text-align: left; overflow-x: auto; font-size: 11px; white-space: pre-wrap; }
+input[type=file] { padding: 10px; background: white; border-radius: 8px; width: 100%; margin: 10px 0; }
+</style>
+</head>
+<body>
+<h1>🔍 تست آپلود</h1>
+
+<p>۱. اول لاگین کنید</p>
+<button onclick="login()">🔐 لاگین</button>
+
+<p>۲. عکس انتخاب کنید</p>
+<input type="file" id="file" accept="image/*">
+
+<p>۳. آپلود</p>
+<button onclick="upload()">📤 آپلود عکس</button>
+
+<p>۴. نتیجه:</p>
+<pre id="result">...</pre>
+
+<script>
+const API = 'https://banehbaba-backend.vercel.app/api';
+const result = document.getElementById('result');
+
+function log(msg) {
+  result.textContent += '\n' + msg;
+}
+
+async function login() {
+  result.textContent = '🔐 در حال لاگین...';
+  try {
+    const r = await fetch(API + '/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', password: 'banehbaba2024' })
+    });
+    const d = await r.json();
+    
+    if (d.token) {
+      sessionStorage.setItem('banehbaba_token', d.token);
+      result.textContent = '✅ لاگین موفق!\nToken: ' + d.token.substring(0, 40) + '...';
+    } else {
+      result.textContent = '❌ لاگین ناموفق: ' + JSON.stringify(d);
+    }
+  } catch (e) {
+    result.textContent = '❌ خطا: ' + e.message;
+  }
+}
+
+async function upload() {
+  const token = sessionStorage.getItem('banehbaba_token');
+  if (!token) {
+    result.textContent = '❌ اول لاگین کنید!';
+    return;
+  }
+  
+  const file = document.getElementById('file').files[0];
+  if (!file) {
+    result.textContent = '❌ عکس انتخاب کنید!';
+    return;
+  }
+  
+  result.textContent = '📤 شروع آپلود...\n';
+  log('📁 نام فایل: ' + file.name);
+  log('📦 حجم فایل: ' + (file.size / 1024).toFixed(2) + ' KB');
+  log('🎨 نوع فایل: ' + file.type);
+  log('');
+  
+  try {
+    // خواندن فایل
+    const reader = new FileReader();
+    const base64 = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    
+    log('✅ Base64 ساخته شد');
+    log('📏 طول Base64: ' + base64.length + ' کاراکتر');
+    log('');
+    
+    // آپلود
+    log('📡 ارسال به API...');
+    const r = await fetch(API + '/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ image: base64 })
+    });
+    
+    log('📥 Status: ' + r.status);
+    const d = await r.json();
+    log('📄 Response: ' + JSON.stringify(d, null, 2));
+    
+    if (d.success) {
+      log('');
+      log('✅ آپلود موفق!');
+      log('🖼️ URL: ' + d.url);
+    }
+    
+  } catch (e) {
+    log('');
+    log('❌ خطا: ' + e.message);
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
