@@ -1,6 +1,6 @@
 /* ============================================
    بانه بابا - فروشگاه آنلاین
-   با اتصال به API
+   با اتصال به API + فیلتر دسته‌بندی
    ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
@@ -11,6 +11,7 @@ const API_URL = 'https://banehbaba-backend.vercel.app/api';
 let products = [];
 let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
 let currentUser = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+let currentFilter = null;
 
 // ============================================
 // 🗓️ توابع تاریخ شمسی
@@ -80,20 +81,25 @@ async function loadProductsFromAPI() {
 // ============================================
 // 📦 نمایش محصولات
 // ============================================
-function renderProducts(filterCategory = null) {
+function renderProducts(filterCategory = null, subName = null) {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
 
   let list = products;
+  
+  // فیلتر دسته‌بندی
   if (filterCategory) {
     list = products.filter(p => p.category === filterCategory);
   }
 
+  // نمایش پیام
   if (list.length === 0) {
     grid.innerHTML = `
       <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#999;">
         <div style="font-size:60px; margin-bottom:15px;">📦</div>
-        <h3>محصولی یافت نشد</h3>
+        <h3>محصولی در این دسته وجود ندارد</h3>
+        <p style="font-size:14px; margin-top:10px;">به‌زودی محصولات جدید اضافه می‌شوند</p>
+        ${filterCategory ? '<button onclick="clearFilter()" style="margin-top:20px; padding:10px 20px; background:#FF6B35; color:white; border:none; border-radius:8px; cursor:pointer; font-family:inherit;">نمایش همه محصولات</button>' : ''}
       </div>
     `;
     return;
@@ -110,10 +116,10 @@ function renderProducts(filterCategory = null) {
       : '📦';
 
     return `
-      <div class="product-card">
-        <div class="product-image">
+      <div class="product-card" style="position:relative;">
+        <div class="product-image" style="position:relative;">
           ${imageHtml}
-          ${hasDiscount ? `<span style="position:absolute;top:10px;left:10px;background:#e74c3c;color:white;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">${discountPercent}٪ تخفیف</span>` : ''}
+          ${hasDiscount ? `<span style="position:absolute;top:10px;left:10px;background:#e74c3c;color:white;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;z-index:2;">${discountPercent}٪ تخفیف</span>` : ''}
         </div>
         <div class="product-info">
           <h3>${p.name}</h3>
@@ -137,22 +143,54 @@ function renderProducts(filterCategory = null) {
   }).join('');
 }
 
+// ============================================
+// 🎯 فیلتر دسته‌بندی
+// ============================================
+const categoryInfo = {
+  camping: { name: 'لوازم کوهنوردی و کمپ', icon: '🏔️' },
+  home: { name: 'لوازم خانگی', icon: '🏠' },
+  beauty: { name: 'سلامت و زیبایی', icon: '💄' },
+  car: { name: 'لوازم یدکی خودرو', icon: '🚗' }
+};
+
 function filterByCategory(categoryId, subName = null) {
-  const cat = {
-    camping: { name: 'لوازم کوهنوردی و کمپ', icon: '🏔️' },
-    home: { name: 'لوازم خانگی', icon: '🏠' },
-    beauty: { name: 'سلامت و زیبایی', icon: '💄' },
-    car: { name: 'لوازم یدکی خودرو', icon: '🚗' }
-  }[categoryId];
+  currentFilter = categoryId;
   
+  const cat = categoryInfo[categoryId];
   const header = document.querySelector('.section-header h2');
+  const subHeader = document.querySelector('.section-header p');
+  
   if (header && cat) {
     header.textContent = subName 
       ? `${subName} — ${cat.name}` 
       : `${cat.icon} ${cat.name}`;
   }
+  
+  if (subHeader && cat) {
+    subHeader.textContent = `محصولات دسته «${cat.name}»`;
+  }
+  
+  renderProducts(categoryId, subName);
+  
+  // اسکرول به محصولات
+  const section = document.getElementById('productsSection');
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+  
+  // بستن منو
+  document.getElementById('mainNav')?.classList.remove('active');
+}
 
-  renderProducts(categoryId);
+function clearFilter() {
+  currentFilter = null;
+  
+  const header = document.querySelector('.section-header h2');
+  const subHeader = document.querySelector('.section-header p');
+  
+  if (header) header.textContent = 'محصولات ویژه ⭐';
+  if (subHeader) subHeader.textContent = 'جدیدترین و پرطرفدارترین کالاها';
+  
+  renderProducts();
+  
   const section = document.getElementById('productsSection');
   if (section) section.scrollIntoView({ behavior: 'smooth' });
 }
@@ -164,9 +202,13 @@ function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
   
+  const price = product.discountPrice && product.discountPrice < product.price 
+    ? product.discountPrice 
+    : product.price;
+  
   const existing = cart.find(i => i.id === productId);
   if (existing) existing.quantity++;
-  else cart.push({ ...product, quantity: 1 });
+  else cart.push({ ...product, price, quantity: 1 });
   
   saveCart();
   updateCartBadge();
@@ -274,7 +316,7 @@ function closeModal(modalId) {
 }
 
 // ============================================
-// 📱 منوی موبایل
+// 📱 منوی موبایل و دسته‌بندی
 // ============================================
 function initMobileMenu() {
   const menuToggle = document.getElementById('menuToggle');
@@ -282,12 +324,65 @@ function initMobileMenu() {
   if (menuToggle && mainNav) {
     menuToggle.addEventListener('click', () => mainNav.classList.toggle('active'));
   }
+  
+  // زیرمنو در موبایل
   document.querySelectorAll('.category-title').forEach(title => {
     title.addEventListener('click', (e) => {
       if (window.innerWidth <= 768) {
         e.preventDefault();
         title.parentElement.classList.toggle('active');
       }
+    });
+  });
+}
+
+// ============================================
+// 🎯 راه‌اندازی فیلتر دسته‌بندی
+// ============================================
+function initCategoryFilters() {
+  // کلیک روی دسته‌های اصلی
+  document.querySelectorAll('.category-title').forEach(el => {
+    el.addEventListener('click', (e) => {
+      // توی موبایل فقط زیرمنو باز میشه
+      if (window.innerWidth <= 768) return;
+      
+      e.preventDefault();
+      
+      const text = el.textContent.trim();
+      let categoryId = null;
+      
+      if (text.includes('کوهنوردی') || text.includes('کمپ')) categoryId = 'camping';
+      else if (text.includes('خانگی')) categoryId = 'home';
+      else if (text.includes('زیبایی') || text.includes('سلامت')) categoryId = 'beauty';
+      else if (text.includes('یدکی') || text.includes('خودرو')) categoryId = 'car';
+      
+      if (categoryId) {
+        filterByCategory(categoryId);
+      }
+    });
+  });
+
+  // کلیک روی زیردسته‌ها
+  document.querySelectorAll('.submenu a').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const subName = el.textContent.trim();
+      const parentCategory = el.closest('.dropdown-category');
+      const parentTitle = parentCategory?.querySelector('.category-title')?.textContent || '';
+      
+      let categoryId = null;
+      if (parentTitle.includes('کوهنوردی') || parentTitle.includes('کمپ')) categoryId = 'camping';
+      else if (parentTitle.includes('خانگی')) categoryId = 'home';
+      else if (parentTitle.includes('زیبایی') || parentTitle.includes('سلامت')) categoryId = 'beauty';
+      else if (parentTitle.includes('یدکی') || parentTitle.includes('خودرو')) categoryId = 'car';
+      
+      if (categoryId) {
+        filterByCategory(categoryId, subName);
+      }
+      
+      // بستن منو
+      document.getElementById('mainNav')?.classList.remove('active');
     });
   });
 }
@@ -303,6 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCartBadge();
   displayTodayDate();
   initMobileMenu();
+  initCategoryFilters();
 
   // دکمه‌ها
   const cartBtn = document.getElementById('cartBtn');
@@ -353,7 +449,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentUser = { name, phone, email, registerDate: getPersianDate() };
       localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
 
-      // ارسال به API
       try {
         await fetch(API_URL + '/users', {
           method: 'POST',
@@ -392,7 +487,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         user: { ...currentUser }
       };
 
-      // ارسال به API
       try {
         await fetch(API_URL + '/orders', {
           method: 'POST',
