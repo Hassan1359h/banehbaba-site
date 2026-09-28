@@ -1,60 +1,47 @@
 /* ============================================
    بانه بابا - پنل مدیریت (نسخه کامل)
+   اتصال به Backend API + آپلود تصویر
    ============================================ */
 
 // ============================================
 // 🔐 بررسی لاگین
 // ============================================
-if (sessionStorage.getItem('banehbaba_admin') !== 'logged_in') {
+const isAdmin = sessionStorage.getItem('banehbaba_admin');
+const adminToken = sessionStorage.getItem('banehbaba_token');
+
+if (isAdmin !== 'logged_in' || !adminToken) {
   window.location.href = 'admin.html';
 }
 
 // ============================================
-// 📦 داده‌های پیش‌فرض
+// 🌐 آدرس API
 // ============================================
-const defaultProducts = [
-  { id: 1, name: "گوشی سامسونگ Galaxy S24", description: "حافظه ۲۵۶ گیگ، دوربین ۲۰۰ مگاپیکسل", price: 45000000, emoji: "📱", rating: 4.8, category: "home", image: "" },
-  { id: 2, name: "لپ‌تاپ ایسوس ROG", description: "پردازنده i9، رم ۳۲ گیگ", price: 95000000, emoji: "💻", rating: 4.9, category: "home", image: "" },
-  { id: 3, name: "هدفون سونی WH-1000XM5", description: "نویز کنسلینگ، ۳۰ ساعت شارژ", price: 15000000, emoji: "🎧", rating: 4.7, category: "home", image: "" },
-  { id: 4, name: "ساعت هوشمند Apple Watch 9", description: "نمایشگر رتینا، ضدآب", price: 22000000, emoji: "⌚", rating: 4.6, category: "home", image: "" },
-  { id: 5, name: "پلی‌استیشن 5", description: "دیسک‌خور، ۲ دسته بی‌سیم", price: 42000000, emoji: "🎮", rating: 4.9, category: "home", image: "" },
-  { id: 6, name: "ایرپاد پرو نسل ۲", description: "نویز کنسلینگ، شارژ مغناطیسی", price: 8500000, emoji: "🎵", rating: 4.5, category: "home", image: "" },
-  { id: 7, name: "تبلت آیپد ایر", description: "۱۱ اینچ، تراشه M2", price: 38000000, emoji: "📲", rating: 4.8, category: "home", image: "" },
-  { id: 8, name: "دوربین کنون EOS R6", description: "سنسور فول‌فریم، 4K", price: 120000000, emoji: "📷", rating: 4.9, category: "home", image: "" }
-];
-
-const defaultCategories = [
-  { id: 'camping', name: 'لوازم کوهنوردی و کمپ', icon: '🏔️', subs: ['عینک', 'چادر کوهنوردی', 'کیسه خواب', 'چراغ پیشانی', 'باتوم', 'اجاق کمپ', 'ابزار کوه', 'شکار'] },
-  { id: 'home', name: 'لوازم خانگی', icon: '🏠', subs: ['تلویزیون', 'لباسشویی', 'ظرفشویی', 'کولر گازی', 'سرخ کن', 'اتو بخار', 'آبمیوه گیری'] },
-  { id: 'beauty', name: 'سلامت و زیبایی', icon: '💄', subs: ['سفید کننده دندان', 'لمینت دندان', 'پوست', 'مو'] },
-  { id: 'car', name: 'لوازم یدکی خودرو', icon: '🚗', subs: ['لنت'] }
-];
+const API_URL = 'https://banehbaba-backend.vercel.app/api';
 
 // ============================================
 // 💾 State
 // ============================================
-let products = JSON.parse(localStorage.getItem('banehbaba_products') || 'null') || [...defaultProducts];
-let categories = JSON.parse(localStorage.getItem('banehbaba_categories') || 'null') || [...defaultCategories];
-let orders = JSON.parse(localStorage.getItem('banehbaba_orders') || '[]');
-let messages = JSON.parse(localStorage.getItem('banehbaba_messages') || '[]');
-let customers = JSON.parse(localStorage.getItem('banehbaba_customers') || '[]');
+let products = [];
+let categories = [];
+let orders = [];
+let messages = [];
+let customers = [];
 let currentPage = 'dashboard';
 let searchTerm = '';
-
-// اگه مشتری‌ها خالی بود، از سفارشات استخراج کن
-if (customers.length === 0 && orders.length > 0) {
-  const customerMap = {};
-  orders.forEach(o => { if (o.user?.phone) customerMap[o.user.phone] = o.user; });
-  customers = Object.values(customerMap);
-}
 
 // ============================================
 // 🛠 توابع کمکی
 // ============================================
-function formatPrice(num) { return Number(num).toLocaleString('fa-IR') + ' تومان'; }
-function formatNumber(num) { return Number(num).toLocaleString('fa-IR'); }
+function formatPrice(num) {
+  return Number(num).toLocaleString('fa-IR') + ' تومان';
+}
+function formatNumber(num) {
+  return Number(num).toLocaleString('fa-IR');
+}
 function getPersianDate() {
-  return new Date().toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date().toLocaleDateString('fa-IR', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
 }
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
@@ -63,17 +50,138 @@ function showToast(message, type = 'success') {
   toast.className = 'admin-toast show ' + (type === 'info' ? '' : type);
   setTimeout(() => { toast.className = 'admin-toast'; }, 2500);
 }
-function saveAll() {
-  localStorage.setItem('banehbaba_products', JSON.stringify(products));
-  localStorage.setItem('banehbaba_categories', JSON.stringify(categories));
+function showLoading(show = true) {
+  const el = document.getElementById('loadingOverlay');
+  if (el) el.classList.toggle('active', show);
 }
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
 function logout() {
   if (confirm('از پنل خارج می‌شید؟')) {
     sessionStorage.removeItem('banehbaba_admin');
+    sessionStorage.removeItem('banehbaba_token');
     window.location.href = 'admin.html';
   }
+}
+
+// ============================================
+// 🔌 API Helper
+// ============================================
+async function apiCall(endpoint, method = 'GET', body = null) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  
+  if (adminToken) {
+    headers['Authorization'] = 'Bearer ' + adminToken;
+  }
+  
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+  
+  try {
+    const response = await fetch(API_URL + endpoint, options);
+    const data = await response.json();
+    
+    if (response.status === 401) {
+      showToast('❌ دسترسی منقضی شده. لطفاً دوباره وارد شوید', 'error');
+      setTimeout(() => {
+        sessionStorage.clear();
+        window.location.href = 'admin.html';
+      }, 2000);
+      throw new Error('Unauthorized');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+}
+
+// ============================================
+// 📥 بارگذاری داده‌ها
+// ============================================
+async function loadProducts() {
+  try {
+    const data = await apiCall('/products');
+    if (data.success) {
+      products = data.products || [];
+      updateCounts();
+    }
+  } catch (e) {
+    console.error('خطا در بارگذاری محصولات:', e);
+    showToast('خطا در بارگذاری محصولات', 'error');
+  }
+}
+
+async function loadCategories() {
+  try {
+    const data = await apiCall('/categories');
+    if (data.success) {
+      categories = data.categories || [];
+      
+      // اگه دسته‌ای نیست، پیش‌فرض بساز
+      if (categories.length === 0) {
+        const defaults = [
+          { id: 'camping', name: 'لوازم کوهنوردی و کمپ', icon: '🏔️', subs: ['عینک', 'چادر کوهنوردی', 'کیسه خواب', 'چراغ پیشانی', 'باتوم', 'اجاق کمپ', 'ابزار کوه', 'شکار'] },
+          { id: 'home', name: 'لوازم خانگی', icon: '🏠', subs: ['تلویزیون', 'لباسشویی', 'ظرفشویی', 'کولر گازی', 'سرخ کن', 'اتو بخار', 'آبمیوه گیری'] },
+          { id: 'beauty', name: 'سلامت و زیبایی', icon: '💄', subs: ['سفید کننده دندان', 'لمینت دندان', 'پوست', 'مو'] },
+          { id: 'car', name: 'لوازم یدکی خودرو', icon: '🚗', subs: ['لنت'] }
+        ];
+        for (const cat of defaults) {
+          try {
+            await apiCall('/categories', 'POST', cat);
+          } catch (e) { /* silent */ }
+        }
+        categories = defaults;
+      }
+    }
+  } catch (e) {
+    console.error('خطا در بارگذاری دسته‌ها:', e);
+  }
+}
+
+async function loadOrders() {
+  try {
+    const data = await apiCall('/orders');
+    if (data.success) {
+      orders = data.orders || [];
+      updateCounts();
+    }
+  } catch (e) { /* silent */ }
+}
+
+async function loadMessages() {
+  try {
+    const data = await apiCall('/messages');
+    if (data.success) {
+      messages = data.messages || [];
+      updateCounts();
+    }
+  } catch (e) { /* silent */ }
+}
+
+async function loadCustomers() {
+  try {
+    const data = await apiCall('/users');
+    if (data.success) {
+      customers = data.users || [];
+    }
+  } catch (e) { /* silent */ }
+}
+
+async function loadAll() {
+  showLoading(true);
+  await Promise.all([
+    loadProducts(),
+    loadCategories(),
+    loadOrders(),
+    loadMessages(),
+    loadCustomers()
+  ]);
+  showLoading(false);
 }
 
 // ============================================
@@ -81,7 +189,6 @@ function logout() {
 // ============================================
 function renderDashboard() {
   const totalRevenue = orders.reduce((sum, o) => sum + (o.amount || 0), 0);
-  const newMessages = messages.length;
 
   return `
     <div class="stats-grid">
@@ -109,7 +216,7 @@ function renderDashboard() {
       <div class="stat-card">
         <div class="stat-icon purple">💬</div>
         <div class="stat-info">
-          <h3>${formatNumber(newMessages)}</h3>
+          <h3>${formatNumber(messages.length)}</h3>
           <p>پیام</p>
         </div>
       </div>
@@ -120,55 +227,32 @@ function renderDashboard() {
         <h3 class="section-title"><span class="icon">📦</span> آخرین محصولات</h3>
         <button class="btn btn-primary btn-sm" onclick="openProductModal()">➕ افزودن محصول</button>
       </div>
-      <div class="table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>تصویر</th>
-              <th>نام محصول</th>
-              <th>قیمت</th>
-              <th>امتیاز</th>
-              <th>عملیات</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${products.slice(0, 5).map(p => `
-              <tr>
-                <td>
-                  <div class="product-thumb">
-                    ${p.image ? `<img src="${p.image}" alt="${p.name}">` : p.emoji}
-                  </div>
-                </td>
-                <td><strong>${p.name}</strong></td>
-                <td>${formatPrice(p.price)}</td>
-                <td>⭐ ${p.rating}</td>
-                <td>
-                  <button class="btn-icon btn-edit" onclick="editProduct(${p.id})" title="ویرایش">✏️</button>
-                  <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})" title="حذف">🗑️</button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <h3 class="section-title"><span class="icon">🕐</span> آخرین سفارشات</h3>
-      </div>
-      ${orders.length === 0
-        ? `<div class="empty-state"><div class="icon">🛒</div><h3>هنوز سفارشی ثبت نشده</h3><p>سفارشات جدید اینجا نمایش داده می‌شوند</p></div>`
+      ${products.length === 0
+        ? `<div class="empty-state"><div class="icon">📦</div><h3>هنوز محصولی اضافه نکردید</h3><p>روی «افزودن محصول» بزنید</p></div>`
         : `<div class="table-wrapper">
             <table class="data-table">
-              <thead><tr><th>کد پیگیری</th><th>مشتری</th><th>مبلغ</th><th>تاریخ</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>تصویر</th>
+                  <th>نام</th>
+                  <th>قیمت</th>
+                  <th>عملیات</th>
+                </tr>
+              </thead>
               <tbody>
-                ${orders.slice(-5).reverse().map(o => `
+                ${products.slice(0, 5).map(p => `
                   <tr>
-                    <td><span class="badge badge-info">${o.trackingCode || '-'}</span></td>
-                    <td>${o.user?.name || 'ناشناس'}</td>
-                    <td>${formatPrice(o.amount || 0)}</td>
-                    <td>${o.shortDate || '-'}</td>
+                    <td>
+                      <div class="product-thumb">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '📦')}
+                      </div>
+                    </td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${formatPrice(p.discountPrice || p.price)}</td>
+                    <td>
+                      <button class="btn-icon btn-edit" onclick="editProduct(${p.id})">✏️</button>
+                      <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
+                    </td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -207,30 +291,41 @@ function renderProducts() {
                 <tr>
                   <th>تصویر</th>
                   <th>نام</th>
-                  <th>توضیحات</th>
                   <th>قیمت</th>
-                  <th>امتیاز</th>
+                  <th>تخفیف</th>
                   <th>عملیات</th>
                 </tr>
               </thead>
               <tbody>
-                ${filtered.map(p => `
-                  <tr>
-                    <td>
-                      <div class="product-thumb">
-                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : p.emoji}
-                      </div>
-                    </td>
-                    <td><strong>${p.name}</strong></td>
-                    <td style="max-width: 250px; font-size: 12px; color: #777;">${p.description || '-'}</td>
-                    <td>${formatPrice(p.price)}</td>
-                    <td>⭐ ${p.rating}</td>
-                    <td>
-                      <button class="btn-icon btn-edit" onclick="editProduct(${p.id})">✏️</button>
-                      <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
-                    </td>
-                  </tr>
-                `).join('')}
+                ${filtered.map(p => {
+                  let discountBadge = '-';
+                  if (p.discountPrice && p.discountPrice < p.price) {
+                    const percent = Math.round((1 - p.discountPrice / p.price) * 100);
+                    discountBadge = `<span class="badge badge-success">${formatNumber(percent)}٪ تخفیف</span>`;
+                  }
+                  return `
+                    <tr>
+                      <td>
+                        <div class="product-thumb">
+                          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '📦')}
+                        </div>
+                      </td>
+                      <td><strong>${p.name}</strong></td>
+                      <td>
+                        ${p.discountPrice && p.discountPrice < p.price
+                          ? `<div style="text-decoration: line-through; color: #999; font-size: 12px;">${formatPrice(p.price)}</div>
+                             <div style="color: var(--secondary); font-weight: 700;">${formatPrice(p.discountPrice)}</div>`
+                          : formatPrice(p.price)
+                        }
+                      </td>
+                      <td>${discountBadge}</td>
+                      <td>
+                        <button class="btn-icon btn-edit" onclick="editProduct(${p.id})">✏️</button>
+                        <button class="btn-icon btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </div>`
@@ -248,8 +343,8 @@ function openProductModal(productId = null) {
   const form = document.getElementById('productForm');
   form.reset();
   document.getElementById('productId').value = '';
-  document.getElementById('imagePreview').style.display = 'none';
-  document.getElementById('productImageData').value = '';
+  document.getElementById('productExistingImage').value = '';
+  document.getElementById('imagePreviewWrapper').style.display = 'none';
 
   if (productId) {
     const p = products.find(x => x.id === productId);
@@ -259,20 +354,18 @@ function openProductModal(productId = null) {
       document.getElementById('productName').value = p.name;
       document.getElementById('productDescription').value = p.description || '';
       document.getElementById('productPrice').value = p.price;
-      document.getElementById('productEmoji').value = p.emoji;
-      document.getElementById('productRating').value = p.rating;
+      document.getElementById('productDiscount').value = p.discountPrice || '';
+      document.getElementById('productRating').value = p.rating || 4.5;
       document.getElementById('productCategory').value = p.category || 'home';
       
       if (p.image) {
-        const preview = document.getElementById('imagePreview');
-        preview.src = p.image;
-        preview.style.display = 'block';
-        document.getElementById('productImageData').value = p.image;
+        document.getElementById('productExistingImage').value = p.image;
+        document.getElementById('imagePreview').src = p.image;
+        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
       }
     }
   } else {
     document.getElementById('modalTitle').textContent = 'افزودن محصول جدید';
-    document.getElementById('productEmoji').value = '📦';
     document.getElementById('productRating').value = '4.5';
   }
 
@@ -281,15 +374,28 @@ function openProductModal(productId = null) {
 
 function editProduct(id) { openProductModal(id); }
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
   if (!confirm(`«${p.name}» حذف بشه؟`)) return;
-  products = products.filter(x => x.id !== id);
-  saveAll();
-  updateCounts();
-  switchPage(currentPage);
-  showToast('🗑️ محصول حذف شد');
+
+  showLoading(true);
+  try {
+    await apiCall('/products/' + id, 'DELETE');
+    showToast('🗑️ محصول حذف شد');
+    await loadProducts();
+    switchPage(currentPage);
+  } catch (e) {
+    showToast('خطا در حذف محصول', 'error');
+  }
+  showLoading(false);
+}
+
+function removeImage() {
+  document.getElementById('productImage').value = '';
+  document.getElementById('imagePreview').src = '';
+  document.getElementById('imagePreviewWrapper').style.display = 'none';
+  document.getElementById('productExistingImage').value = '';
 }
 
 // آپلود تصویر
@@ -299,12 +405,17 @@ document.addEventListener('DOMContentLoaded', () => {
     imageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
+
+      // چک حجم (حداکثر ۵ مگابایت)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('❌ حجم عکس باید کمتر از ۵ مگابایت باشه', 'error');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (ev) => {
-        const preview = document.getElementById('imagePreview');
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
-        document.getElementById('productImageData').value = ev.target.result;
+        document.getElementById('imagePreview').src = ev.target.result;
+        document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
       };
       reader.readAsDataURL(file);
     });
@@ -315,33 +426,83 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const productForm = document.getElementById('productForm');
   if (productForm) {
-    productForm.addEventListener('submit', (e) => {
+    productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
       const id = document.getElementById('productId').value;
       const name = document.getElementById('productName').value.trim();
       const description = document.getElementById('productDescription').value.trim();
       const price = parseInt(document.getElementById('productPrice').value);
-      const emoji = document.getElementById('productEmoji').value.trim() || '📦';
+      const discountPrice = document.getElementById('productDiscount').value 
+        ? parseInt(document.getElementById('productDiscount').value) 
+        : null;
       const rating = parseFloat(document.getElementById('productRating').value) || 4.5;
       const category = document.getElementById('productCategory').value;
-      const image = document.getElementById('productImageData').value;
+      let image = document.getElementById('productExistingImage').value;
 
-      if (!name || !price) { showToast('❌ نام و قیمت الزامی است', 'error'); return; }
-
-      if (id) {
-        const idx = products.findIndex(p => p.id === Number(id));
-        if (idx !== -1) products[idx] = { ...products[idx], name, description, price, emoji, rating, category, image };
-        showToast('✅ محصول ویرایش شد');
-      } else {
-        const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-        products.push({ id: newId, name, description, price, emoji, rating, category, image });
-        showToast('✅ محصول اضافه شد');
+      if (!name || !price) {
+        showToast('❌ نام و قیمت الزامی است', 'error');
+        return;
       }
 
-      saveAll();
-      updateCounts();
-      closeModal('productModal');
-      switchPage(currentPage);
+      if (discountPrice && discountPrice >= price) {
+        showToast('❌ قیمت تخفیف باید کمتر از قیمت اصلی باشه', 'error');
+        return;
+      }
+
+      // اگه عکس جدید انتخاب شده، آپلود کن
+      const imageFile = document.getElementById('productImage').files[0];
+      if (imageFile) {
+        showLoading(true);
+        try {
+          const reader = new FileReader();
+          const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(imageFile);
+          });
+
+          const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
+          if (uploadResult.success) {
+            image = uploadResult.url;
+          } else {
+            throw new Error(uploadResult.error || 'خطا در آپلود');
+          }
+        } catch (err) {
+          showLoading(false);
+          showToast('❌ خطا در آپلود عکس: ' + err.message, 'error');
+          return;
+        }
+      }
+
+      const productData = {
+        name,
+        description,
+        price,
+        discountPrice,
+        rating,
+        category,
+        image,
+        emoji: '📦'
+      };
+
+      showLoading(true);
+      try {
+        if (id) {
+          await apiCall('/products/' + id, 'PUT', productData);
+          showToast('✅ محصول ویرایش شد');
+        } else {
+          await apiCall('/products', 'POST', productData);
+          showToast('✅ محصول اضافه شد');
+        }
+
+        await loadProducts();
+        closeModal('productModal');
+        switchPage(currentPage);
+      } catch (err) {
+        showToast('❌ خطا: ' + err.message, 'error');
+      }
+      showLoading(false);
     });
   }
 });
@@ -363,17 +524,17 @@ function renderCategories() {
           return `
             <div class="category-card">
               <div class="category-header">
-                <h4>${cat.icon} ${cat.name}</h4>
+                <h4>${cat.icon || '📂'} ${cat.name}</h4>
                 <div>
                   <button class="btn-icon btn-edit" onclick="editCategory('${cat.id}')">✏️</button>
                   <button class="btn-icon btn-delete" onclick="deleteCategory('${cat.id}')">🗑️</button>
                 </div>
               </div>
               <p style="font-size: 12px; color: var(--text-light); margin-bottom: 12px;">
-                ${formatNumber(count)} محصول • ${cat.subs.length} زیردسته
+                ${formatNumber(count)} محصول • ${(cat.subs || []).length} زیردسته
               </p>
               <div class="category-subs">
-                ${cat.subs.map(s => `<span class="badge badge-info">${s}</span>`).join('')}
+                ${(cat.subs || []).map(s => `<span class="badge badge-info">${s}</span>`).join('')}
               </div>
             </div>
           `;
@@ -395,8 +556,8 @@ function openCategoryModal(categoryId = null) {
       document.getElementById('categoryModalTitle').textContent = 'ویرایش دسته‌بندی';
       document.getElementById('categoryId').value = c.id;
       document.getElementById('categoryName').value = c.name;
-      document.getElementById('categoryIcon').value = c.icon;
-      document.getElementById('categorySubs').value = c.subs.join('، ');
+      document.getElementById('categoryIcon').value = c.icon || '📂';
+      document.getElementById('categorySubs').value = (c.subs || []).join('، ');
     }
   } else {
     document.getElementById('categoryModalTitle').textContent = 'افزودن دسته‌بندی';
@@ -407,21 +568,28 @@ function openCategoryModal(categoryId = null) {
 
 function editCategory(id) { openCategoryModal(id); }
 
-function deleteCategory(id) {
+async function deleteCategory(id) {
   const c = categories.find(x => x.id === id);
   if (!c) return;
   if (!confirm(`دسته «${c.name}» حذف بشه؟`)) return;
-  categories = categories.filter(x => x.id !== id);
-  saveAll();
-  switchPage('categories');
-  showToast('🗑️ دسته‌بندی حذف شد');
+
+  showLoading(true);
+  try {
+    await apiCall('/categories/' + id, 'DELETE');
+    showToast('🗑️ دسته‌بندی حذف شد');
+    await loadCategories();
+    switchPage('categories');
+  } catch (e) {
+    showToast('خطا در حذف دسته', 'error');
+  }
+  showLoading(false);
 }
 
 // فرم دسته‌بندی
 document.addEventListener('DOMContentLoaded', () => {
   const categoryForm = document.getElementById('categoryForm');
   if (categoryForm) {
-    categoryForm.addEventListener('submit', (e) => {
+    categoryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('categoryId').value;
       const name = document.getElementById('categoryName').value.trim();
@@ -431,19 +599,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!name) { showToast('❌ نام دسته الزامی است', 'error'); return; }
 
-      if (id) {
-        const idx = categories.findIndex(c => c.id === id);
-        if (idx !== -1) categories[idx] = { ...categories[idx], name, icon, subs };
-        showToast('✅ دسته ویرایش شد');
-      } else {
-        const newId = 'cat_' + Date.now();
-        categories.push({ id: newId, name, icon, subs });
-        showToast('✅ دسته اضافه شد');
-      }
+      showLoading(true);
+      try {
+        if (id) {
+          await apiCall('/categories/' + id, 'PUT', { name, icon, subs });
+          showToast('✅ دسته ویرایش شد');
+        } else {
+          await apiCall('/categories', 'POST', { name, icon, subs });
+          showToast('✅ دسته اضافه شد');
+        }
 
-      saveAll();
-      closeModal('categoryModal');
-      switchPage('categories');
+        await loadCategories();
+        closeModal('categoryModal');
+        switchPage('categories');
+      } catch (err) {
+        showToast('خطا: ' + err.message, 'error');
+      }
+      showLoading(false);
     });
   }
 });
@@ -465,7 +637,6 @@ function renderOrders() {
                 <tr>
                   <th>کد پیگیری</th>
                   <th>مشتری</th>
-                  <th>موبایل</th>
                   <th>مبلغ</th>
                   <th>تاریخ</th>
                   <th>عملیات</th>
@@ -476,7 +647,6 @@ function renderOrders() {
                   <tr>
                     <td><span class="badge badge-info">${o.trackingCode || '-'}</span></td>
                     <td>${o.user?.name || 'ناشناس'}</td>
-                    <td>${o.user?.phone || '-'}</td>
                     <td>${formatPrice(o.amount || 0)}</td>
                     <td>${o.shortDate || '-'}</td>
                     <td>
@@ -518,10 +688,6 @@ function viewOrder(orderId) {
       <p style="font-weight: 600;">${o.user?.name || 'ناشناس'} • ${o.user?.phone || '-'}</p>
     </div>
     <div style="margin-bottom: 15px;">
-      <p style="font-size: 13px; color: #777; margin-bottom: 5px;">تاریخ</p>
-      <p>${o.date || '-'} • ${o.time || ''}</p>
-    </div>
-    <div style="margin-bottom: 15px;">
       <p style="font-size: 13px; color: #777; margin-bottom: 10px;">محصولات</p>
       ${itemsHtml || '<p>محصولی ثبت نشده</p>'}
     </div>
@@ -534,13 +700,18 @@ function viewOrder(orderId) {
   openModal('orderModal');
 }
 
-function deleteOrder(orderId) {
+async function deleteOrder(orderId) {
   if (!confirm('این سفارش حذف بشه؟')) return;
-  orders = orders.filter(o => o.id !== orderId);
-  localStorage.setItem('banehbaba_orders', JSON.stringify(orders));
-  updateCounts();
-  switchPage('orders');
-  showToast('🗑️ سفارش حذف شد');
+  showLoading(true);
+  try {
+    await apiCall('/orders/' + orderId, 'DELETE');
+    showToast('🗑️ سفارش حذف شد');
+    await loadOrders();
+    switchPage('orders');
+  } catch (e) {
+    showToast('خطا در حذف سفارش', 'error');
+  }
+  showLoading(false);
 }
 
 // ============================================
@@ -565,7 +736,7 @@ function renderCustomers() {
                     <td><strong>${c.name || '-'}</strong></td>
                     <td>${c.phone || '-'}</td>
                     <td>${c.email || '-'}</td>
-                    <td>${c.registerDate || '-'}</td>
+                    <td>${c.registeredAt ? new Date(c.registeredAt).toLocaleDateString('fa-IR') : '-'}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -607,67 +778,18 @@ function renderMessages() {
   `;
 }
 
-function deleteMessage(id) {
+async function deleteMessage(id) {
   if (!confirm('این پیام حذف بشه؟')) return;
-  messages = messages.filter(m => m.id !== id);
-  localStorage.setItem('banehbaba_messages', JSON.stringify(messages));
-  updateCounts();
-  switchPage('messages');
-  showToast('🗑️ پیام حذف شد');
-}
-
-// ============================================
-// ⚙️ تنظیمات
-// ============================================
-function renderSettings() {
-  return `
-    <div class="section">
-      <div class="section-header">
-        <h3 class="section-title"><span class="icon">⚙️</span> تنظیمات فروشگاه</h3>
-      </div>
-      <div style="max-width: 500px;">
-        <div class="form-group" style="margin-bottom: 18px;">
-          <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">نام فروشگاه</label>
-          <input type="text" value="بانه بابا" style="width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 9px; font-family: inherit; direction: rtl;">
-        </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">شماره تماس</label>
-          <input type="text" value="۰۹۱۲۳۴۵۶۷۸۹" style="width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 9px; font-family: inherit; direction: rtl;">
-        </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">شماره کارت</label>
-          <input type="text" value="۶۰۳۷ - ۹۹۷۵ - ۱۲۳۴ - ۵۶۷۸" style="width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0; border-radius: 9px; font-family: inherit; direction: ltr;">
-        </div>
-        <button class="btn btn-primary" onclick="showToast('✅ تنظیمات ذخیره شد')">💾 ذخیره تنظیمات</button>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-header">
-        <h3 class="section-title"><span class="icon">🗑️</span> منطقه خطر</h3>
-      </div>
-      <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">همه داده‌ها پاک می‌شوند.</p>
-      <button class="btn btn-danger" onclick="resetAllData()">🗑️ پاک کردن همه داده‌ها</button>
-    </div>
-  `;
-}
-
-function resetAllData() {
-  if (!confirm('⚠️ همه داده‌ها پاک می‌شوند. مطمئنید؟')) return;
-  if (!confirm('این کار قابل بازگشت نیست!')) return;
-  localStorage.removeItem('banehbaba_products');
-  localStorage.removeItem('banehbaba_categories');
-  localStorage.removeItem('banehbaba_orders');
-  localStorage.removeItem('banehbaba_messages');
-  localStorage.removeItem('banehbaba_customers');
-  products = [...defaultProducts];
-  categories = [...defaultCategories];
-  orders = [];
-  messages = [];
-  customers = [];
-  saveAll();
-  updateCounts();
-  switchPage('dashboard');
-  showToast('🗑️ همه داده‌ها پاک شد');
+  showLoading(true);
+  try {
+    await apiCall('/messages/' + id, 'DELETE');
+    showToast('🗑️ پیام حذف شد');
+    await loadMessages();
+    switchPage('messages');
+  } catch (e) {
+    showToast('خطا در حذف پیام', 'error');
+  }
+  showLoading(false);
 }
 
 // ============================================
@@ -685,8 +807,7 @@ function switchPage(page) {
     categories: ['دسته‌بندی‌ها', 'مدیریت دسته‌بندی'],
     orders: ['سفارشات', 'لیست سفارشات'],
     customers: ['مشتریان', 'لیست مشتریان'],
-    messages: ['پیام‌ها', 'پیام‌های دریافتی'],
-    settings: ['تنظیمات', 'تنظیمات فروشگاه']
+    messages: ['پیام‌ها', 'پیام‌های دریافتی']
   };
   document.getElementById('pageTitle').textContent = titles[page][0];
   document.getElementById('pageSubtitle').textContent = titles[page][1];
@@ -699,7 +820,6 @@ function switchPage(page) {
     case 'orders': content.innerHTML = renderOrders(); break;
     case 'customers': content.innerHTML = renderCustomers(); break;
     case 'messages': content.innerHTML = renderMessages(); break;
-    case 'settings': content.innerHTML = renderSettings(); break;
   }
 
   document.getElementById('sidebar').classList.remove('active');
@@ -713,9 +833,12 @@ document.querySelectorAll('.menu-item').forEach(item => {
 // 🔢 شمارنده‌ها
 // ============================================
 function updateCounts() {
-  document.getElementById('productsCount').textContent = formatNumber(products.length);
-  document.getElementById('ordersCount').textContent = formatNumber(orders.length);
-  document.getElementById('messagesCount').textContent = formatNumber(messages.length);
+  const pc = document.getElementById('productsCount');
+  const oc = document.getElementById('ordersCount');
+  const mc = document.getElementById('messagesCount');
+  if (pc) pc.textContent = formatNumber(products.length);
+  if (oc) oc.textContent = formatNumber(orders.length);
+  if (mc) mc.textContent = formatNumber(messages.length);
 }
 
 // ============================================
@@ -743,8 +866,8 @@ document.addEventListener('keydown', (e) => {
 // ============================================
 // 🚀 اجرا
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  updateCounts();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadAll();
   switchPage('dashboard');
   showToast('👋 خوش آمدید', 'info');
 });
