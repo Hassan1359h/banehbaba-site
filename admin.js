@@ -1,7 +1,6 @@
-// ============================================
-// بانه بابا - پنل مدیریت
-// نسخه نهایی و پایدار
-// ============================================
+/* ============================================
+   بانه بابا - پنل مدیریت (نسخه نهایی)
+   ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
 
@@ -13,7 +12,11 @@ const isAdmin = sessionStorage.getItem('banehbaba_admin');
 
 console.log('🚀 Admin.js شروع شد');
 console.log('Token:', adminToken ? '✅ دارد' : '❌ ندارد');
-console.log('isAdmin:', isAdmin);
+
+// اگه لاگین نیست
+if (isAdmin !== 'logged_in' || !adminToken) {
+  window.location.replace('login.html');
+}
 
 // ============================================
 // 💾 State
@@ -61,7 +64,7 @@ function closeModal(id) {
 function logout() {
   if (confirm('از پنل خارج می‌شید؟')) {
     sessionStorage.clear();
-    window.location.href = 'admin.html';
+    window.location.href = 'login.html';
   }
 }
 
@@ -70,24 +73,25 @@ function logout() {
 // ============================================
 async function apiCall(endpoint, method = 'GET', body = null) {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + adminToken
   };
-  
-  if (adminToken) {
-    headers['Authorization'] = 'Bearer ' + adminToken;
-  }
 
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
+  console.log(`📡 ${method} ${API_URL + endpoint}`);
+
   const response = await fetch(API_URL + endpoint, options);
   const data = await response.json();
+
+  console.log(`📥 Response:`, data);
 
   if (response.status === 401) {
     showToast('دسترسی منقضی شد', 'error');
     setTimeout(() => {
       sessionStorage.clear();
-      window.location.href = 'admin.html';
+      window.location.href = 'login.html';
     }, 1500);
     throw new Error('Unauthorized');
   }
@@ -436,26 +440,6 @@ function removeImage() {
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('✅ DOM لود شد');
 
-  const content = document.getElementById('pageContent');
-  if (!content) {
-    console.error('❌ pageContent پیدا نشد!');
-    return;
-  }
-
-  // اگه لاگین نیست
-  if (isAdmin !== 'logged_in' || !adminToken) {
-    console.warn('⚠️ لاگین نیست');
-    content.innerHTML = `
-      <div style="padding:40px; margin:20px; background:#fff; border-radius:16px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,.08);">
-        <div style="font-size:60px; margin-bottom:15px;">🔐</div>
-        <h2 style="margin-bottom:10px;">ورود به پنل مدیریت</h2>
-        <p style="color:#666;">برای استفاده از پنل مدیریت ابتدا وارد شوید.</p>
-        <a href="admin.html" style="display:inline-block; margin-top:20px; padding:12px 24px; background:#FF6B35; color:white; text-decoration:none; border-radius:8px; font-weight:600;">🔑 ورود به پنل</a>
-      </div>
-    `;
-    return;
-  }
-
   // منوی موبایل
   const menuToggle = document.getElementById('menuToggle');
   if (menuToggle) {
@@ -477,6 +461,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const file = e.target.files[0];
       if (!file) return;
       
+      console.log('📸 عکس انتخاب شد:', file.name, file.size, 'bytes');
+      
       if (file.size > 5 * 1024 * 1024) {
         showToast('حجم عکس باید کمتر از ۵ مگابایت باشه', 'error');
         return;
@@ -486,6 +472,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       reader.onload = (ev) => {
         document.getElementById('imagePreview').src = ev.target.result;
         document.getElementById('imagePreviewWrapper').style.display = 'inline-block';
+        console.log('✅ پیش‌نمایش ساخته شد');
       };
       reader.readAsDataURL(file);
     });
@@ -496,6 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      console.log('📝 فرم ارسال شد');
       
       const id = document.getElementById('productId').value;
       const name = document.getElementById('productName').value.trim();
@@ -506,16 +494,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         : null;
       const rating = parseFloat(document.getElementById('productRating').value) || 4.5;
       const category = document.getElementById('productCategory').value;
-      let image = document.getElementById('productExistingImage').value;
+      let image = document.getElementById('productExistingImage').value || '';
 
       if (!name || !price) {
         showToast('نام و قیمت الزامی است', 'error');
         return;
       }
 
-      // آپلود عکس
+      // آپلود عکس اگه فایل انتخاب شده
       const imageFile = document.getElementById('productImage').files[0];
       if (imageFile) {
+        console.log('📤 شروع آپلود عکس...');
         showLoading(true);
         try {
           const reader = new FileReader();
@@ -525,10 +514,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             reader.readAsDataURL(imageFile);
           });
 
+          console.log('📦 Base64 ساخته شد، طول:', base64.length);
+          
           const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
-          if (uploadResult.success) image = uploadResult.url;
-          else throw new Error(uploadResult.error || 'خطا');
+          
+          console.log('✅ نتیجه آپلود:', uploadResult);
+          
+          if (uploadResult.success && uploadResult.url) {
+            image = uploadResult.url;
+            console.log('🖼️ URL عکس:', image);
+          } else {
+            throw new Error(uploadResult.error || 'خطا در آپلود');
+          }
         } catch (err) {
+          console.error('❌ خطا در آپلود:', err);
           showLoading(false);
           showToast('خطا در آپلود: ' + err.message, 'error');
           return;
@@ -536,6 +535,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const productData = { name, description, price, discountPrice, rating, category, image, emoji: '📦' };
+      console.log('💾 داده‌های محصول:', productData);
 
       showLoading(true);
       try {
@@ -551,6 +551,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         closeModal('productModal');
         switchPage(currentPage);
       } catch (err) {
+        console.error('❌ خطا در ذخیره:', err);
         showToast('خطا: ' + err.message, 'error');
       }
       showLoading(false);
