@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود | بانه بابا</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #FF6B35 0%, #004E89 100%);
+    }
+    .auth-box {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 35px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .auth-logo .icon {
+      font-size: 55px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .auth-logo h1 {
+      color: #FF6B35;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .auth-logo p {
+      color: #777;
+      font-size: 13px;
+    }
+    .auth-btn {
+      width: 100%;
+      background: #FF6B35;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+    .auth-btn:hover { background: #e55a25; transform: translateY(-2px); }
+    .auth-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+    .auth-footer a {
+      color: #FF6B35;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+    .auth-error.show { display: block; }
+    .auth-success {
+      background: #e8f7ee;
+      color: #27ae60;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+    .auth-success.show { display: block; }
+    .forgot-link {
+      display: block;
+      text-align: left;
+      font-size: 13px;
+      color: #FF6B35;
+      text-decoration: none;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 500px) {
+      .auth-box { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-page">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <span class="icon">🔐</span>
+        <h1>ورود به حساب</h1>
+        <p>به بانه بابا خوش آمدید</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>شماره موبایل</label>
+          <input type="tel" id="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required maxlength="11">
+        </div>
+
+        <div class="form-group">
+          <label>رمز عبور</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <a class="forgot-link" id="forgotLink">رمز عبور را فراموش کرده‌اید؟</a>
+
+        <button type="submit" class="auth-btn" id="submitBtn">
+          🚀 ورود به حساب
+        </button>
+
+        <div class="auth-error" id="errorMsg"></div>
+        <div class="auth-success" id="successMsg"></div>
+      </form>
+
+      <div class="auth-footer">
+        حساب ندارید؟ <a href="user-register.html">ثبت‌نام کنید</a>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 10px;">
+        <a href="index.html" style="color: #777;">← بازگشت به فروشگاه</a>
+      </div>
+    </div>
+
+    <!-- Modal: فراموشی رمز -->
+    <div id="forgotModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+      <div style="background:white; border-radius:20px; padding:35px 25px; max-width:420px; width:100%; text-align:center;">
+        <div style="font-size:50px; margin-bottom:15px;">🔑</div>
+        <h2 style="font-size:20px; margin-bottom:10px; color:#333;">فراموشی رمز عبور</h2>
+        <p style="font-size:13px; color:#777; margin-bottom:20px; line-height:1.8;">
+          شماره موبایل خود را وارد کنید. پس از تأیید، رمز جدید برای شما تنظیم می‌شود.
+        </p>
+
+        <div class="form-group">
+          <input type="tel" id="forgotPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" maxlength="11" style="text-align:center;">
+        </div>
+
+        <button id="forgotSubmit" class="auth-btn" style="background:#004E89;">📨 ارسال درخواست</button>
+        <button id="forgotClose" style="width:100%; background:#f0f0f0; color:#333; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; margin-top:10px;">
+          انصراف
+        </button>
+
+        <div class="auth-error" id="forgotError"></div>
+        <div class="auth-success" id="forgotSuccess"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://banehbaba-backend.vercel.app/api';
+
+    // اگه کاربر لاگین هست، بره داشبورد
+    if (localStorage.getItem('banehbaba_user') && localStorage.getItem('banehbaba_token')) {
+      window.location.replace('user-account.html');
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // ============================================
+    // ورود
+    // ============================================
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.classList.remove('show');
+      successMsg.classList.remove('show');
+
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!phone || !password) {
+        showError('لطفاً همه فیلدها را پر کنید');
+        return;
+      }
+
+      if (phone.length < 11) {
+        showError('شماره موبایل باید ۱۱ رقم باشد');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ در حال ورود...';
+
+      try {
+        const response = await fetch(API_URL + '/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.token) {
+          localStorage.setItem('banehbaba_token', data.token);
+          localStorage.setItem('banehbaba_user', JSON.stringify(data.user));
+
+          submitBtn.textContent = '✅ خوش آمدید!';
+          submitBtn.style.background = '#27ae60';
+
+          setTimeout(() => {
+            window.location.href = 'user-account.html';
+          }, 700);
+        } else {
+          showError(data.error || 'شماره موبایل یا رمز عبور اشتباه است');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '🚀 ورود به حساب';
+        }
+      } catch (err) {
+        console.error(err);
+        showError('خطا در ارتباط با سرور');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚀 ورود به حساب';
+      }
+    });
+
+    function showError(message) {
+      errorMsg.textContent = '❌ ' + message;
+      errorMsg.classList.add('show');
+      setTimeout(() => errorMsg.classList.remove('show'), 5000);
+    }
+
+    // ============================================
+    // فراموشی رمز
+    // ============================================
+    const forgotLink = document.getElementById('forgotLink');
+    const forgotModal = document.getElementById('forgotModal');
+    const forgotClose = document.getElementById('forgotClose');
+    const forgotSubmit = document.getElementById('forgotSubmit');
+    const forgotError = document.getElementById('forgotError');
+    const forgotSuccess = document.getElementById('forgotSuccess');
+
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotModal.style.display = 'flex';
+    });
+
+    forgotClose.addEventListener('click', () => {
+      forgotModal.style.display = 'none';
+      forgotError.classList.remove('show');
+      forgotSuccess.classList.remove('show');
+      document.getElementById('forgotPhone').value = '';
+    });
+
+    forgotSubmit.addEventListener('click', async () => {
+      forgotError.classList.remove('show');
+      forgotSuccess.classList.remove('show');
+
+      const phone = document.getElementById('forgotPhone').value.trim();
+
+      if (!phone || phone.length < 11) {
+        forgotError.textContent = '❌ شماره موبایل معتبر وارد کنید';
+        forgotError.classList.add('show');
+        return;
+      }
+
+      forgotSubmit.disabled = true;
+      forgotSubmit.textContent = '⏳ در حال ارسال...';
+
+      try {
+        const response = await fetch(API_URL + '/users/forgot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          forgotSuccess.textContent = '✅ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم';
+          forgotSuccess.classList.add('show');
+          forgotSubmit.textContent = '✅ ارسال شد';
+          forgotSubmit.style.background = '#27ae60';
+
+          setTimeout(() => {
+            forgotModal.style.display = 'none';
+            forgotSubmit.disabled = false;
+            forgotSubmit.textContent = '📨 ارسال درخواست';
+            forgotSubmit.style.background = '#004E89';
+            document.getElementById('forgotPhone').value = '';
+          }, 3000);
+        } else {
+          forgotError.textContent = '❌ ' + (data.error || 'خطا در ارسال');
+          forgotError.classList.add('show');
+          forgotSubmit.disabled = false;
+          forgotSubmit.textContent = '📨 ارسال درخواست';
+        }
+      } catch (err) {
+        console.error(err);
+        forgotError.textContent = '❌ خطا در ارتباط با سرور';
+        forgotError.classList.add('show');
+        forgotSubmit.disabled = false;
+        forgotSubmit.textContent = '📨 ارسال درخواست';
+      }
+    });
+  </script>
+
+</body>
+</html>
