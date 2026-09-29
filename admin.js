@@ -1,5 +1,6 @@
 /* ============================================
-   بانه بابا - پنل مدیریت (نسخه نهایی بدون آیکون)
+   بانه بابا - پنل مدیریت (نسخه حرفه‌ای)
+   با فشرده‌سازی عکس + نمایش پیشرفت آپلود
    ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
@@ -48,6 +49,7 @@ let orders = [];
 let messages = [];
 let currentPage = 'dashboard';
 let selectedImageFile = null;
+let compressedImageBase64 = null;
 
 const categories = [
   { id: 'camping', name: 'لوازم کوهنوردی و کمپ', icon: '🏔️' },
@@ -97,6 +99,137 @@ function setVal(id, value) {
 function getVal(id) {
   const el = document.getElementById(id);
   return el ? el.value : '';
+}
+
+// ============================================
+// 📊 نمایش پیشرفت آپلود
+// ============================================
+function showUploadProgress(percent, text = 'در حال آپلود...') {
+  let box = document.getElementById('uploadProgress');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'uploadProgress';
+    box.style.cssText = `
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white; padding: 30px;
+      border-radius: 16px; z-index: 99999;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      width: 90%; max-width: 400px;
+      text-align: center; font-family: inherit;
+    `;
+    box.innerHTML = `
+      <div style="font-size: 40px; margin-bottom: 15px;">📤</div>
+      <h3 id="progressText" style="margin-bottom: 20px; color: #333; font-size: 16px;">در حال آپلود...</h3>
+      <div style="background: #f0f0f0; border-radius: 20px; height: 20px; overflow: hidden; margin-bottom: 15px;">
+        <div id="progressBar" style="background: linear-gradient(90deg, #FF6B35, #e55a25); height: 100%; width: 0%; transition: width 0.3s; border-radius: 20px;"></div>
+      </div>
+      <div id="progressPercent" style="font-size: 24px; font-weight: 700; color: #FF6B35;">۰٪</div>
+    `;
+    document.body.appendChild(box);
+  }
+  
+  const bar = document.getElementById('progressBar');
+  const textEl = document.getElementById('progressText');
+  const percentEl = document.getElementById('progressPercent');
+  
+  if (bar) bar.style.width = percent + '%';
+  if (textEl) textEl.textContent = text;
+  if (percentEl) percentEl.textContent = percent.toLocaleString('fa-IR') + '٪';
+}
+
+function hideUploadProgress() {
+  const box = document.getElementById('uploadProgress');
+  if (box) box.remove();
+}
+
+function showSuccessAnimation(message) {
+  const box = document.createElement('div');
+  box.style.cssText = `
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #27ae60; color: white;
+    padding: 40px; border-radius: 20px;
+    z-index: 99999; text-align: center;
+    box-shadow: 0 10px 40px rgba(39,174,96,0.4);
+    animation: popIn 0.3s ease;
+  `;
+  box.innerHTML = `
+    <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
+    <h2 style="font-size: 20px; margin-bottom: 10px;">${message}</h2>
+    <p style="font-size: 14px; opacity: 0.9;">محصول با موفقیت ذخیره شد</p>
+  `;
+  document.body.appendChild(box);
+  
+  setTimeout(() => box.remove(), 2000);
+}
+
+// ============================================
+// 🗜️ فشرده‌سازی عکس
+// ============================================
+function compressImage(file, maxWidth = 1200, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    console.log('🗜️ شروع فشرده‌سازی...');
+    
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      const img = new Image();
+      
+      img.onload = () => {
+        console.log('✅ تصویر لود شد:', img.width, 'x', img.height);
+        
+        // محاسبه ابعاد جدید
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        console.log('📐 ابعاد جدید:', width, 'x', height);
+        
+        // کشیدن روی canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // تبدیل به Base64 فشرده
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        
+        const originalSize = file.size / 1024;
+        const newSize = (compressed.length * 0.75) / 1024; // تخمین
+        
+        console.log('✅ فشرده شد: از ' + originalSize.toFixed(0) + ' KB به ~' + newSize.toFixed(0) + ' KB');
+        
+        resolve({
+          base64: compressed,
+          originalSize: originalSize,
+          newSize: newSize,
+          width: width,
+          height: height
+        });
+      };
+      
+      img.onerror = () => {
+        console.error('❌ خطا در لود تصویر');
+        reject(new Error('خطا در لود تصویر'));
+      };
+      
+      img.src = e.target.result;
+    };
+    
+    reader.onerror = () => {
+      console.error('❌ خطا در خواندن فایل');
+      reject(new Error('خطا در خواندن فایل'));
+    };
+    
+    reader.readAsDataURL(file);
+  });
 }
 
 // ============================================
@@ -401,6 +534,7 @@ function openProductModal(productId = null) {
   if (form) form.reset();
   
   selectedImageFile = null;
+  compressedImageBase64 = null;
   
   setVal('productId', '');
   setVal('productExistingImage', '');
@@ -425,6 +559,7 @@ function openProductModal(productId = null) {
       setVal('productRating', p.rating || 4.5);
       setVal('productCategory', p.category || 'home');
       setVal('productSubcategory', p.subcategory || '');
+      
       if (p.image) {
         setVal('productExistingImage', p.image);
         if (imgPreview) imgPreview.src = p.image;
@@ -436,7 +571,7 @@ function openProductModal(productId = null) {
     if (titleEl) titleEl.textContent = 'افزودن محصول جدید';
     
     setVal('productRating', '4.5');
-     setVal('productSubcategory', '');
+    setVal('productSubcategory', '');
   }
 
   openModal('productModal');
@@ -462,17 +597,6 @@ async function deleteProduct(id) {
   showLoading(false);
 }
 
-function removeImage() {
-  selectedImageFile = null;
-  const input = document.getElementById('productImage');
-  if (input) input.value = '';
-  const img = document.getElementById('imagePreview');
-  if (img) img.src = '';
-  const wrap = document.getElementById('imagePreviewWrapper');
-  if (wrap) wrap.style.display = 'none';
-  setVal('productExistingImage', '');
-}
-
 // ============================================
 // 🎬 رویدادها
 // ============================================
@@ -490,118 +614,166 @@ document.addEventListener('DOMContentLoaded', async () => {
     item.addEventListener('click', () => switchPage(item.dataset.page));
   });
 
-  // 📸 انتخاب عکس
+  // ============================================
+  // 📸 انتخاب و فشرده‌سازی عکس
+  // ============================================
   const imageInput = document.getElementById('productImage');
   if (imageInput) {
-    imageInput.addEventListener('change', (e) => {
+    imageInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('حجم عکس باید کمتر از ۵ مگابایت باشه', 'error');
+      if (!file.type.startsWith('image/')) {
+        showToast('❌ فقط فایل عکس مجاز است', 'error');
+        return;
+      }
+      
+      if (file.size > 20 * 1024 * 1024) {
+        showToast('❌ حجم عکس باید کمتر از ۲۰ مگابایت باشه', 'error');
         return;
       }
       
       selectedImageFile = file;
+      compressedImageBase64 = null;
       
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+      // نمایش پیام فشرده‌سازی
+      showToast('🗜️ در حال فشرده‌سازی عکس...', 'info');
+      
+      try {
+        const compressed = await compressImage(file, 1200, 0.75);
+        
+        compressedImageBase64 = compressed.base64;
+        
+        // نمایش پیش‌نمایش
         const img = document.getElementById('imagePreview');
-        if (img) img.src = ev.target.result;
+        if (img) {
+          img.src = compressed.base64;
+          img.style.display = 'block';
+        }
         const wrap = document.getElementById('imagePreviewWrapper');
         if (wrap) wrap.style.display = 'inline-block';
-        showToast('✅ عکس انتخاب شد', 'success');
-      };
-      reader.readAsDataURL(file);
+        
+        showToast(`✅ عکس آماده شد (${compressed.originalSize.toFixed(0)} → ~${compressed.newSize.toFixed(0)} KB)`, 'success');
+        
+      } catch (err) {
+        console.error('خطا در فشرده‌سازی:', err);
+        showToast('❌ خطا در خواندن عکس', 'error');
+        selectedImageFile = null;
+      }
     });
   }
 
+  // ============================================
   // 💾 ذخیره محصول
+  // ============================================
   const productForm = document.getElementById('productForm');
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const id = getVal('productId');
-      const name = getVal('productName').trim();
-      const description = getVal('productDescription').trim();
-      const price = parseInt(getVal('productPrice'));
-      const discountPrice = getVal('productDiscount') 
-        ? parseInt(getVal('productDiscount')) 
-        : null;
-      const rating = parseFloat(getVal('productRating')) || 4.5;
-      const category = getVal('productCategory');
-      let image = getVal('productExistingImage') || '';
+      try {
+        const id = getVal('productId');
+        const name = getVal('productName').trim();
+        const description = getVal('productDescription').trim();
+        const price = parseInt(getVal('productPrice'));
+        const discountPrice = getVal('productDiscount') 
+          ? parseInt(getVal('productDiscount')) 
+          : null;
+        const rating = parseFloat(getVal('productRating')) || 4.5;
+        const category = getVal('productCategory');
+        const subcategory = getVal('productSubcategory') || '';
+        let image = getVal('productExistingImage') || '';
 
-      if (!name || !price) {
-        showToast('نام و قیمت الزامی است', 'error');
-        return;
-      }
-
-      // آپلود عکس
-      if (selectedImageFile) {
-        showLoading(true);
-        showToast('📤 در حال آپلود عکس...', 'info');
-        
-        try {
-          const reader = new FileReader();
-          const base64 = await new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('خطا در خواندن فایل'));
-            reader.readAsDataURL(selectedImageFile);
-          });
-
-          const uploadResult = await apiCall('/upload', 'POST', { image: base64 });
-          
-          if (uploadResult.success && uploadResult.url) {
-            image = uploadResult.url;
-            showToast('✅ عکس آپلود شد', 'success');
-          } else {
-            throw new Error(uploadResult.error || 'خطا در آپلود');
-          }
-        } catch (err) {
-          showLoading(false);
-          showToast('❌ خطا در آپلود: ' + err.message, 'error');
-          showError('Upload Error: ' + err.message);
+        if (!name || !price) {
+          showToast('نام و قیمت الزامی است', 'error');
           return;
         }
-      }
 
-const subcategory = getVal('productSubcategory') || '';
-const productData = { 
-  name, 
-  description, 
-  price, 
-  discountPrice, 
-  rating, 
-  category, 
-  subcategory, 
-  image
-};
+        // ============================================
+        // 📤 آپلود عکس با نمایش پیشرفت
+        // ============================================
+        if (compressedImageBase64) {
+          // نمایش پیشرفت آپلود
+          showUploadProgress(0, 'آماده‌سازی...');
+          
+          await new Promise(r => setTimeout(r, 200));
+          showUploadProgress(20, 'خواندن عکس...');
+          
+          await new Promise(r => setTimeout(r, 200));
+          showUploadProgress(50, 'ارسال به سرور...');
+          
+          try {
+            const uploadResult = await apiCall('/upload', 'POST', { 
+              image: compressedImageBase64 
+            });
+            
+            showUploadProgress(90, 'پردازش...');
+            
+            await new Promise(r => setTimeout(r, 300));
+            
+            if (uploadResult.success && uploadResult.url) {
+              image = uploadResult.url;
+              showUploadProgress(100, '✅ آپلود شد!');
+              
+              await new Promise(r => setTimeout(r, 500));
+              hideUploadProgress();
+            } else {
+              hideUploadProgress();
+              throw new Error(uploadResult.error || 'خطا در آپلود');
+            }
+          } catch (err) {
+            hideUploadProgress();
+            showToast('❌ خطا در آپلود: ' + err.message, 'error');
+            return;
+          }
+        }
 
-      showLoading(true);
-      
-      try {
-        if (id) {
-          await apiCall('/products/' + id, 'PUT', productData);
-          showToast('✅ ویرایش شد', 'success');
-        } else {
-          await apiCall('/products', 'POST', productData);
-          showToast('✅ اضافه شد', 'success');
+        // ============================================
+        // 💾 ذخیره محصول
+        // ============================================
+        showUploadProgress(100, '💾 ذخیره در دیتابیس...');
+        
+        const productData = { 
+          name, 
+          description, 
+          price, 
+          discountPrice, 
+          rating, 
+          category, 
+          subcategory, 
+          image
+        };
+
+        try {
+          if (id) {
+            await apiCall('/products/' + id, 'PUT', productData);
+          } else {
+            await apiCall('/products', 'POST', productData);
+          }
+          
+          hideUploadProgress();
+          showSuccessAnimation(id ? 'ویرایش شد!' : 'اضافه شد!');
+          
+          selectedImageFile = null;
+          compressedImageBase64 = null;
+          
+          await loadProducts();
+          updateCounts();
+          closeModal('productModal');
+          
+          setTimeout(() => {
+            switchPage(currentPage);
+          }, 500);
+          
+        } catch (err) {
+          hideUploadProgress();
+          showToast('❌ خطا: ' + err.message, 'error');
         }
         
-        selectedImageFile = null;
-        
-        await loadProducts();
-        updateCounts();
-        closeModal('productModal');
-        switchPage(currentPage);
-      } catch (err) {
-        showToast('❌ خطا: ' + err.message, 'error');
-        showError('Save Error: ' + err.message);
+      } catch (outerErr) {
+        hideUploadProgress();
+        showError('خطای کلی: ' + outerErr.message);
       }
-      
-      showLoading(false);
     });
   }
 
