@@ -414,12 +414,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (cartBtn) cartBtn.addEventListener('click', () => { renderCart(); openModal('cartModal'); });
 
   const registerBtn = document.getElementById('registerBtn');
-  if (registerBtn) {
-    registerBtn.addEventListener('click', () => {
-      if (currentUser) { showToast(`خوش آمدید ${currentUser.name} 👋`); return; }
-      openModal('registerModal');
-    });
-  }
+if (registerBtn) {
+  registerBtn.addEventListener('click', () => {
+    if (currentUser) {
+      if (confirm(`خوش آمدید ${currentUser.name} 👋\n\nمی‌خواید از حساب خارج بشید؟`)) {
+        localStorage.removeItem('banehbaba_user');
+        currentUser = null;
+        location.reload();
+      }
+      return;
+    }
+    openModal('loginModal');
+  });
+}
 
   ['closeRegister', 'closeCart', 'closeCheckout'].forEach(id => {
     const btn = document.getElementById(id);
