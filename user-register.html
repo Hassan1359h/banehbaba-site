@@ -183,7 +183,7 @@
       </form>
 
       <div class="auth-footer">
-        قبلاً ثبت‌نام کرده‌اید؟ <a href="login.html">ورود به حساب</a>
+        قبلاً ثبت‌نام کرده‌اید؟ <a href="user-login.html">ورود به حساب</a>
       </div>
 
       <div class="auth-footer" style="margin-top: 10px;">
@@ -197,7 +197,7 @@
 
     // اگه کاربر لاگین هست، بره داشبورد
     if (localStorage.getItem('banehbaba_user')) {
-      window.location.replace('account.html');
+      window.location.replace('user-account.html');
     }
 
     const registerForm = document.getElementById('registerForm');
@@ -261,7 +261,7 @@
           submitBtn.style.background = '#27ae60';
 
           setTimeout(() => {
-            window.location.href = 'account.html';
+            window.location.href = 'user-account.html';
           }, 800);
         } else {
           showError(data.error || 'خطا در ثبت‌نام');
