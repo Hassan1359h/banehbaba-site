@@ -567,15 +567,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      const subcategory = getVal('productSubcategory') || '';
+const subcategory = getVal('productSubcategory') || '';
 const productData = { 
   name, 
   description, 
   price, 
   discountPrice, 
   rating, 
-  category,
-  subcategory,
+  category, 
+  subcategory, 
   image
 };
 
