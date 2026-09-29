@@ -637,7 +637,6 @@ body {
   align-items: center;
   justify-content: center;
 }
-
 /* ============ Toast ============ */
 .admin-toast {
   position: fixed;
@@ -663,7 +662,6 @@ body {
 
 .admin-toast.success { background: var(--success); }
 .admin-toast.error { background: var(--danger); }
-
 /* ============ Loading ============ */
 .loading-overlay {
   position: fixed;
