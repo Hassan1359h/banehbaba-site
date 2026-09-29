@@ -120,8 +120,8 @@ function renderProducts(filterCategory = null, subName = null) {
       : 0;
 
     const imageHtml = p.image
-      ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
-      : '📦';
+  ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+  : '';
 
     return `
       <div class="product-card" style="position:relative;">
