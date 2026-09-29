@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پیگیری سفارش | بانه بابا</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle">☰</button>
+
+      <nav class="main-nav" id="mainNav">
+        <div class="dropdown">
+          <a href="#" class="nav-link">دسته‌بندی ▾</a>
+          <div class="dropdown-content">
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏔️ لوازم کوهنوردی و کمپ ▸</a>
+              <div class="submenu">
+                <a href="#">عینک</a>
+                <a href="#">چادر کوهنوردی</a>
+                <a href="#">کیسه خواب</a>
+                <a href="#">چراغ پیشانی</a>
+                <a href="#">باتوم</a>
+                <a href="#">اجاق کمپ</a>
+                <a href="#">ابزار کوه</a>
+                <a href="#">شکار</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏠 لوازم خانگی ▸</a>
+              <div class="submenu">
+                <a href="#">تلویزیون</a>
+                <a href="#">لباسشویی</a>
+                <a href="#">ظرفشویی</a>
+                <a href="#">کولر گازی</a>
+                <a href="#">سرخ کن</a>
+                <a href="#">اتو بخار</a>
+                <a href="#">آبمیوه گیری</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">💄 سلامت و زیبایی ▸</a>
+              <div class="submenu">
+                <a href="#">سفید کننده دندان</a>
+                <a href="#">لمینت دندان</a>
+                <a href="#">پوست</a>
+                <a href="#">مو</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🚗 لوازم یدکی خودرو ▸</a>
+              <div class="submenu">
+                <a href="#">لنت</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">تماس با ما</a>
+      </nav>
+
+      <div class="user-actions">
+        <button class="cart-btn" id="cartBtn">
+          🛒 <span class="cart-text">سبد خرید</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="registerBtn">
+          👤 <span class="register-text">ثبت‌نام</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero hero-small">
+    <div class="hero-content">
+      <h1>📦 پیگیری سفارش</h1>
+      <p>وضعیت سفارش خود را بررسی کنید</p>
+    </div>
+  </section>
+
+  <!-- ============ محتوا ============ -->
+  <section style="max-width: 700px; margin: 50px auto; padding: 0 25px;">
+
+    <!-- فرم پیگیری -->
+    <div style="background: white; border-radius: 16px; padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+      
+      <div style="text-align: center; margin-bottom: 30px;">
+        <div style="font-size: 60px; margin-bottom: 15px;">🔍</div>
+        <h2 style="font-size: 22px; color: #333; margin-bottom: 8px;">پیگیری سفارش</h2>
+        <p style="color: #777; font-size: 14px;">شماره پیگیری سفارش خود را وارد کنید</p>
+      </div>
+
+      <form id="trackForm">
+        <div class="form-group">
+          <label>شماره پیگیری سفارش</label>
+          <input 
+            type="text" 
+            id="trackingCode" 
+            placeholder="مثلاً: 1234567890" 
+            required
+            style="text-align: center; font-size: 18px; letter-spacing: 2px; font-weight: 600;"
+          >
+        </div>
+
+        <button type="submit" class="btn-primary" id="trackBtn" style="padding: 15px; font-size: 16px;">
+          🔍 پیگیری سفارش
+        </button>
+      </form>
+
+      <!-- نتیجه پیگیری -->
+      <div id="trackResult" style="display: none; margin-top: 30px;"></div>
+
+    </div>
+
+    <!-- راهنما -->
+    <div style="background: #FFF9F0; border-right: 4px solid #FFB800; padding: 20px; border-radius: 12px; margin-top: 25px;">
+      <h4 style="font-size: 15px; margin-bottom: 12px; color: #333;">💡 راهنما:</h4>
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="padding: 6px 0; font-size: 14px; color: #666; padding-right: 20px; position: relative;">
+          <span style="position: absolute; right: 0; color: #FF6B35;">•</span>
+          شماره پیگیری بعد از ثبت سفارش به شما نمایش داده می‌شود.
+        </li>
+        <li style="padding: 6px 0; font-size: 14px; color: #666; padding-right: 20px; position: relative;">
+          <span style="position: absolute; right: 0; color: #FF6B35;">•</span>
+          این شماره بعد از تأیید پرداخت، به‌صورت پیامک نیز ارسال می‌شود.
+        </li>
+        <li style="padding: 6px 0; font-size: 14px; color: #666; padding-right: 20px; position: relative;">
+          <span style="position: absolute; right: 0; color: #FF6B35;">•</span>
+          در صورت گم کردن شماره، با پشتیبانی تماس بگیرید.
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>🏪 بانه بابا</h3>
+        <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
+        <p style="margin-top: 10px; font-size: 13px;">📍 کردستان، بانه، میدان چومان</p>
+        <p style="font-size: 13px;">📞 ۰۹۰۲۹۸۸۵۵۸۳</p>
+      </div>
+      <div class="footer-col">
+        <h4>لینک‌های سریع</h4>
+        <a href="index.html">صفحه اصلی</a>
+        <a href="contact.html">تماس با ما</a>
+        <a href="rules.html">قوانین و مقررات</a>
+      </div>
+      <div class="footer-col">
+        <h4>خدمات مشتریان</h4>
+        <a href="track.html">پیگیری سفارش</a>
+        <a href="rules.html">رویه بازگشت کالا</a>
+        <a href="contact.html">سوالات متداول</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
+      <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
+    </div>
+  </footer>
+
+  <!-- دکمه شناور واتساپ -->
+  <a href="https://wa.me/989029885583" target="_blank" class="whatsapp-float" title="تماس از طریق واتساپ" style="position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: #25D366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 5px 20px rgba(37,211,102,0.4); z-index: 1000;">
+    💬
+  </a>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // ============================================
+    // 📦 پیگیری سفارش
+    // ============================================
+    const API_URL = 'https://banehbaba-backend.vercel.app/api';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('trackForm');
+      const resultDiv = document.getElementById('trackResult');
+      const btn = document.getElementById('trackBtn');
+
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const code = document.getElementById('trackingCode').value.trim();
+        
+        if (!code || code.length < 5) {
+          alert('لطفاً شماره پیگیری معتبر وارد کنید');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ در حال جستجو...';
+        resultDiv.style.display = 'none';
+
+        try {
+          // گرفتن همه سفارشات
+          const response = await fetch(API_URL + '/orders');
+          const data = await response.json();
+
+          if (!data.success) {
+            throw new Error('خطا در دریافت اطلاعات');
+          }
+
+          // پیدا کردن سفارش با شماره پیگیری
+          const orders = data.orders || [];
+          const order = orders.find(o => 
+            String(o.trackingCode).trim() === String(code).trim()
+          );
+
+          if (!order) {
+            showNotFound();
+          } else {
+            showOrder(order);
+          }
+        } catch (err) {
+          console.error(err);
+          showError();
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '🔍 پیگیری سفارش';
+      });
+
+      function showNotFound() {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+          <div style="background: #fff5f5; border-right: 4px solid #e74c3c; padding: 25px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 50px; margin-bottom: 15px;">❌</div>
+            <h3 style="font-size: 18px; color: #e74c3c; margin-bottom: 10px;">سفارشی با این شماره پیدا نشد</h3>
+            <p style="font-size: 14px; color: #666;">لطفاً شماره پیگیری را بررسی کنید یا با پشتیبانی تماس بگیرید</p>
+            <a href="contact.html" style="display: inline-block; margin-top: 15px; background: #FF6B35; color: white; padding: 10px 25px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px;">📞 تماس با پشتیبانی</a>
+          </div>
+        `;
+      }
+
+      function showError() {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+          <div style="background: #fff5f5; border-right: 4px solid #e74c3c; padding: 25px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 50px; margin-bottom: 15px;">⚠️</div>
+            <h3 style="font-size: 18px; color: #e74c3c; margin-bottom: 10px;">خطا در ارتباط با سرور</h3>
+            <p style="font-size: 14px; color: #666;">لطفاً دوباره تلاش کنید</p>
+          </div>
+        `;
+      }
+
+      function showOrder(order) {
+        resultDiv.style.display = 'block';
+
+        // تعیین وضعیت
+        const status = order.status || 'pending';
+        let statusText = 'در حال پردازش';
+        let statusColor = '#f39c12';
+        let statusIcon = '⏳';
+
+        if (status === 'pending') {
+          statusText = 'در حال پردازش';
+          statusColor = '#f39c12';
+          statusIcon = '⏳';
+        } else if (status === 'shipped') {
+          statusText = 'ارسال شده';
+          statusColor = '#3498db';
+          statusIcon = '🚚';
+        } else if (status === 'delivered') {
+          statusText = 'تحویل داده شده';
+          statusColor = '#27ae60';
+          statusIcon = '✅';
+        } else if (status === 'cancelled') {
+          statusText = 'لغو شده';
+          statusColor = '#e74c3c';
+          statusIcon = '❌';
+        }
+
+        // ساخت لیست محصولات
+        const itemsHtml = (order.items || []).map(item => `
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9f9f9; border-radius: 10px; margin-bottom: 10px;">
+            <div style="font-size: 28px;">${item.image ? `<img src="${item.image}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">` : '📦'}</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; font-size: 14px; color: #333;">${item.name}</div>
+              <div style="font-size: 12px; color: #777; margin-top: 3px;">تعداد: ${item.quantity}</div>
+            </div>
+            <div style="font-weight: 700; color: #004E89; font-size: 14px;">
+              ${Number(item.price * item.quantity).toLocaleString('fa-IR')} تومان
+            </div>
+          </div>
+        `).join('');
+
+        resultDiv.innerHTML = `
+          <div style="border: 2px solid ${statusColor}; border-radius: 16px; overflow: hidden;">
+            
+            <!-- هدر وضعیت -->
+            <div style="background: ${statusColor}; color: white; padding: 20px; text-align: center;">
+              <div style="font-size: 50px; margin-bottom: 8px;">${statusIcon}</div>
+              <div style="font-size: 18px; font-weight: 700;">${statusText}</div>
+            </div>
+
+            <!-- اطلاعات سفارش -->
+            <div style="padding: 20px;">
+              <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                <span style="color: #777; font-size: 14px;">شماره پیگیری:</span>
+                <strong style="direction: ltr; color: #333;">${order.trackingCode || '-'}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                <span style="color: #777; font-size: 14px;">مشتری:</span>
+                <strong style="color: #333;">${order.user?.name || '-'}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                <span style="color: #777; font-size: 14px;">تاریخ سفارش:</span>
+                <strong style="color: #333;">${order.date || order.shortDate || '-'}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+                <span style="color: #777; font-size: 14px;">مبلغ کل:</span>
+                <strong style="color: #27ae60; font-size: 16px;">${Number(order.amount || 0).toLocaleString('fa-IR')} تومان</strong>
+              </div>
+            </div>
+
+            <!-- محصولات -->
+            <div style="padding: 20px; border-top: 1px solid #f0f0f0; background: #fafafa;">
+              <h4 style="font-size: 15px; margin-bottom: 15px; color: #333;">📦 محصولات سفارش:</h4>
+              ${itemsHtml || '<p style="text-align: center; color: #999;">محصولی ثبت نشده</p>'}
+            </div>
+
+          </div>
+
+          <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
+            🔔 برای پیگیری بیشتر، با پشتیبانی تماس بگیرید
+          </p>
+        `;
+      }
+    });
+  </script>
+
+</body>
+</html>
