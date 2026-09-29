@@ -1,6 +1,6 @@
 /* ============================================
    بانه بابا - فروشگاه آنلاین
-   با اتصال به API + فیلتر دسته‌بندی
+   نسخه کامل با ورود، آدرس، و پیگیری سفارش
    ============================================ */
 
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
@@ -50,7 +50,7 @@ function showToast(message, type = 'success') {
   if (!toast) return;
   toast.textContent = message;
   toast.className = 'toast show ' + type;
-  setTimeout(() => { toast.className = 'toast ' + type; }, 2500);
+  setTimeout(() => { toast.className = 'toast ' + type; }, 3000);
 }
 function updateCartBadge() {
   const b = document.getElementById('cartBadge');
@@ -87,14 +87,11 @@ function renderProducts(filterCategory = null, subName = null) {
 
   let list = products;
   
-  // فیلتر دسته‌بندی
   if (filterCategory) {
     list = products.filter(p => p.category === filterCategory);
     
-    // اگه زیردسته هم مشخص شده، فیلتر دوم
     if (subName) {
       const filtered = list.filter(p => p.subcategory === subName);
-      // اگه محصولی با زیردسته داشت، همون‌ها رو نشون بده
       if (filtered.length > 0) {
         list = filtered;
       }
@@ -120,8 +117,8 @@ function renderProducts(filterCategory = null, subName = null) {
       : 0;
 
     const imageHtml = p.image
-  ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
-  : '';
+      ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+      : '';
 
     return `
       <div class="product-card" style="position:relative;">
@@ -150,6 +147,7 @@ function renderProducts(filterCategory = null, subName = null) {
     `;
   }).join('');
 }
+
 // ============================================
 // 🎯 فیلتر دسته‌بندی
 // ============================================
@@ -173,19 +171,17 @@ function filterByCategory(categoryId, subName = null) {
       : `${cat.icon} ${cat.name}`;
   }
   
-  
   if (subHeader && cat) {
-  subHeader.textContent = subName 
-    ? `محصولات زیردسته «${subName}»`
-    : `محصولات دسته «${cat.name}»`;
-}
+    subHeader.textContent = subName 
+      ? `محصولات زیردسته «${subName}»`
+      : `محصولات دسته «${cat.name}»`;
+  }
+  
   renderProducts(categoryId, subName);
   
-  // اسکرول به محصولات
   const section = document.getElementById('productsSection');
   if (section) section.scrollIntoView({ behavior: 'smooth' });
   
-  // بستن منو
   document.getElementById('mainNav')?.classList.remove('active');
 }
 
@@ -292,9 +288,9 @@ function removeFromCart(id) {
 function checkout() {
   if (cart.length === 0) { showToast('سبد خرید خالی است!', 'error'); return; }
   if (!currentUser) {
-    showToast('لطفاً ابتدا ثبت‌نام کنید', 'error');
+    showToast('لطفاً ابتدا وارد شوید', 'error');
     closeModal('cartModal');
-    setTimeout(() => openModal('registerModal'), 300);
+    setTimeout(() => openModal('loginModal'), 300);
     return;
   }
   const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
@@ -302,6 +298,13 @@ function checkout() {
   if (a) a.textContent = formatPrice(total);
   const d = document.getElementById('orderDateTime');
   if (d) d.textContent = getPersianDateTime();
+  
+  // پر کردن فیلدها با اطلاعات کاربر
+  const nameEl = document.getElementById('checkoutName');
+  if (nameEl && currentUser.name) nameEl.value = currentUser.name;
+  const phoneEl = document.getElementById('checkoutPhone');
+  if (phoneEl && currentUser.phone) phoneEl.value = currentUser.phone;
+  
   closeModal('cartModal');
   setTimeout(() => openModal('checkoutModal'), 300);
 }
@@ -325,7 +328,60 @@ function closeModal(modalId) {
 }
 
 // ============================================
-// 📱 منوی موبایل و دسته‌بندی
+// 🎉 نمایش موفقیت سفارش
+// ============================================
+function showOrderSuccess(trackingCode, amount) {
+  const old = document.getElementById('orderSuccessBox');
+  if (old) old.remove();
+  
+  const box = document.createElement('div');
+  box.id = 'orderSuccessBox';
+  box.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85); z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  `;
+  box.innerHTML = `
+    <div style="background: white; border-radius: 20px; padding: 35px 25px; max-width: 420px; width: 100%; text-align: center;">
+      <div style="font-size: 70px; margin-bottom: 15px;">🎉</div>
+      <h2 style="font-size: 22px; color: #27ae60; margin-bottom: 10px;">سفارش شما ثبت شد!</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 25px;">از خرید شما سپاسگزاریم</p>
+      
+      <div style="background: #f9f9f9; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: right;">
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+          <span style="color: #777; font-size: 13px;">کد پیگیری شما:</span>
+          <strong style="color: #FF6B35; font-size: 16px; direction: ltr;">${trackingCode}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+          <span style="color: #777; font-size: 13px;">مبلغ پرداختی:</span>
+          <strong style="color: #27ae60; font-size: 15px;">${amount.toLocaleString('fa-IR')} تومان</strong>
+        </div>
+      </div>
+      
+      <div style="background: #fff9e6; border-right: 3px solid #FFB800; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: right;">
+        <p style="font-size: 12px; color: #666; line-height: 1.7; margin: 0;">
+          📌 لطفاً کد پیگیری را نزد خود نگه دارید.<br>
+          📞 پشتیبانی: <strong>09029885583</strong>
+        </p>
+      </div>
+      
+      <button onclick="document.getElementById('orderSuccessBox').remove(); document.body.style.overflow='';" 
+              style="width: 100%; background: #27ae60; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">
+        ✅ متوجه شدم
+      </button>
+      
+      <a href="track.html" style="display: block; margin-top: 12px; color: #FF6B35; text-decoration: none; font-size: 13px; font-weight: 600;">
+        📦 پیگیری سفارش
+      </a>
+    </div>
+  `;
+  document.body.appendChild(box);
+  document.body.style.overflow = 'hidden';
+}
+
+// ============================================
+// 📱 منوی موبایل
 // ============================================
 function initMobileMenu() {
   const menuToggle = document.getElementById('menuToggle');
@@ -334,7 +390,6 @@ function initMobileMenu() {
     menuToggle.addEventListener('click', () => mainNav.classList.toggle('active'));
   }
   
-  // زیرمنو در موبایل
   document.querySelectorAll('.category-title').forEach(title => {
     title.addEventListener('click', (e) => {
       if (window.innerWidth <= 768) {
@@ -349,10 +404,8 @@ function initMobileMenu() {
 // 🎯 راه‌اندازی فیلتر دسته‌بندی
 // ============================================
 function initCategoryFilters() {
-  // کلیک روی دسته‌های اصلی
   document.querySelectorAll('.category-title').forEach(el => {
     el.addEventListener('click', (e) => {
-      // توی موبایل فقط زیرمنو باز میشه
       if (window.innerWidth <= 768) return;
       
       e.preventDefault();
@@ -371,7 +424,6 @@ function initCategoryFilters() {
     });
   });
 
-  // کلیک روی زیردسته‌ها
   document.querySelectorAll('.submenu a').forEach(el => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
@@ -390,7 +442,6 @@ function initCategoryFilters() {
         filterByCategory(categoryId, subName);
       }
       
-      // بستن منو
       document.getElementById('mainNav')?.classList.remove('active');
     });
   });
@@ -401,7 +452,6 @@ function initCategoryFilters() {
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
   
-  // لود محصولات از API
   await loadProductsFromAPI();
   renderProducts();
   updateCartBadge();
@@ -409,35 +459,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMobileMenu();
   initCategoryFilters();
 
-  // دکمه‌ها
+  // ============================================
+  // 🛒 دکمه سبد خرید
+  // ============================================
   const cartBtn = document.getElementById('cartBtn');
-  if (cartBtn) cartBtn.addEventListener('click', () => { renderCart(); openModal('cartModal'); });
-
-  const registerBtn = document.getElementById('registerBtn');
-if (registerBtn) {
-  registerBtn.addEventListener('click', () => {
-    if (currentUser) {
-      if (confirm(`خوش آمدید ${currentUser.name} 👋\n\nمی‌خواید از حساب خارج بشید؟`)) {
-        localStorage.removeItem('banehbaba_user');
-        currentUser = null;
-        location.reload();
-      }
-      return;
-    }
-    openModal('loginModal');
-  });
-}
-
-  ['closeRegister', 'closeCart', 'closeCheckout'].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', () => {
-      closeModal(id.replace('close', '').toLowerCase() + 'Modal');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', () => { 
+      renderCart(); 
+      openModal('cartModal'); 
     });
-  });
+  }
+
+  // ============================================
+  // 👤 دکمه ثبت‌نام/ورود
+  // ============================================
+  const registerBtn = document.getElementById('registerBtn');
+  if (registerBtn) {
+    registerBtn.addEventListener('click', () => {
+      if (currentUser) {
+        if (confirm(`خوش آمدید ${currentUser.name} 👋\n\nمی‌خواید از حساب خارج بشید؟`)) {
+          localStorage.removeItem('banehbaba_user');
+          currentUser = null;
+          location.reload();
+        }
+        return;
+      }
+      openModal('loginModal');
+    });
+    
+    // اگه کاربر قبلاً لاگین کرده، اسمش رو نشون بده
+    if (currentUser) {
+      const regText = registerBtn.querySelector('.register-text');
+      if (regText) regText.textContent = currentUser.name.split(' ')[0];
+    }
+  }
+
+  // ============================================
+  // ❌ دکمه‌های بستن Modal
+  // ============================================
+  const closeRegister = document.getElementById('closeRegister');
+  if (closeRegister) closeRegister.addEventListener('click', () => closeModal('registerModal'));
+  
+  const closeLogin = document.getElementById('closeLogin');
+  if (closeLogin) closeLogin.addEventListener('click', () => closeModal('loginModal'));
+  
+  const closeCart = document.getElementById('closeCart');
+  if (closeCart) closeCart.addEventListener('click', () => closeModal('cartModal'));
+  
+  const closeCheckout = document.getElementById('closeCheckout');
+  if (closeCheckout) closeCheckout.addEventListener('click', () => closeModal('checkoutModal'));
 
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) { overlay.classList.remove('active'); document.body.style.overflow = ''; }
+      if (e.target === overlay) { 
+        overlay.classList.remove('active'); 
+        document.body.style.overflow = ''; 
+      }
     });
   });
 
@@ -448,49 +525,161 @@ if (registerBtn) {
     }
   });
 
-  // فرم ثبت‌نام
+  // ============================================
+  // 📝 فرم ثبت‌نام
+  // ============================================
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
 
-      if (!name || !phone || !password) { showToast('لطفاً همه فیلدها را پر کنید', 'error'); return; }
-      if (phone.length < 10) { showToast('شماره موبایل معتبر نیست', 'error'); return; }
-      if (password.length < 4) { showToast('رمز عبور حداقل ۴ کاراکتر', 'error'); return; }
-
-      currentUser = { name, phone, email, registerDate: getPersianDate() };
-      localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
+      if (!name || !phone || !password) { 
+        showToast('لطفاً همه فیلدها را پر کنید', 'error'); 
+        return; 
+      }
+      if (phone.length < 10) { 
+        showToast('شماره موبایل معتبر نیست', 'error'); 
+        return; 
+      }
+      if (password.length < 4) { 
+        showToast('رمز عبور حداقل ۴ کاراکتر', 'error'); 
+        return; 
+      }
 
       try {
-        await fetch(API_URL + '/users', {
+        const response = await fetch(API_URL + '/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, phone, email, password })
         });
-      } catch (e) { console.error(e); }
-
-      showToast(`🎉 ثبت‌نام موفق! خوش آمدید ${name}`);
-      registerForm.reset();
-      closeModal('registerModal');
-      const regText = registerBtn.querySelector('.register-text');
-      if (regText) regText.textContent = name.split(' ')[0];
+        
+        const data = await response.json();
+        
+        if (data.success || response.ok) {
+          currentUser = { name, phone, email, registerDate: getPersianDate() };
+          localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
+          
+          showToast(`🎉 ثبت‌نام موفق! خوش آمدید ${name}`);
+          registerForm.reset();
+          closeModal('registerModal');
+          
+          const regText = registerBtn.querySelector('.register-text');
+          if (regText) regText.textContent = name.split(' ')[0];
+        } else {
+          showToast(data.error || 'این شماره قبلاً ثبت‌نام کرده', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ارتباط با سرور', 'error');
+      }
     });
   }
 
-  // فرم پرداخت
+  // ============================================
+  // 🔐 فرم ورود
+  // ============================================
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const phone = document.getElementById('loginPhone').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!phone || !password) {
+        showToast('لطفاً همه فیلدها را پر کنید', 'error');
+        return;
+      }
+      
+      if (phone.length < 10) {
+        showToast('شماره موبایل معتبر نیست', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(API_URL + '/users');
+        const data = await response.json();
+        
+        if (!data.success) {
+          showToast('خطا در دریافت اطلاعات', 'error');
+          return;
+        }
+        
+        const users = data.users || [];
+        const user = users.find(u => u.phone === phone && u.password === password);
+        
+        if (!user) {
+          showToast('شماره موبایل یا رمز عبور اشتباه است', 'error');
+          return;
+        }
+        
+        currentUser = { 
+          name: user.name, 
+          phone: user.phone, 
+          email: user.email || '' 
+        };
+        localStorage.setItem('banehbaba_user', JSON.stringify(currentUser));
+        
+        showToast(`🎉 خوش آمدید ${user.name}`);
+        loginForm.reset();
+        closeModal('loginModal');
+        
+        const regText = registerBtn.querySelector('.register-text');
+        if (regText) regText.textContent = user.name.split(' ')[0];
+        
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ورود', 'error');
+      }
+    });
+  }
+
+  // ============================================
+  // 🔗 لینک ثبت‌نام از Modal ورود
+  // ============================================
+  const goToRegister = document.getElementById('goToRegister');
+  if (goToRegister) {
+    goToRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeModal('loginModal');
+      setTimeout(() => openModal('registerModal'), 300);
+    });
+  }
+
+  // ============================================
+  // 💳 فرم پرداخت
+  // ============================================
   const checkoutForm = document.getElementById('checkoutForm');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const name = document.getElementById('checkoutName').value.trim();
+      const phone = document.getElementById('checkoutPhone').value.trim();
+      const address = document.getElementById('checkoutAddress').value.trim();
+      const postalCode = document.getElementById('checkoutPostalCode').value.trim();
       const trackingCode = document.getElementById('trackingCode').value.trim();
-      if (!trackingCode || trackingCode.length < 5) {
+      
+      if (!name || !phone || !address || !trackingCode) {
+        showToast('لطفاً همه فیلدهای ستاره‌دار را پر کنید', 'error');
+        return;
+      }
+      
+      if (phone.length < 10) {
+        showToast('شماره موبایل معتبر نیست', 'error');
+        return;
+      }
+      
+      if (trackingCode.length < 5) {
         showToast('شماره پیگیری معتبر نیست', 'error');
         return;
       }
+      
       const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       const order = {
         trackingCode,
@@ -500,22 +689,35 @@ if (registerBtn) {
         time: getPersianTime(),
         amount: total,
         items: [...cart],
-        user: { ...currentUser }
+        customer: { name, phone, address, postalCode },
+        user: currentUser ? { ...currentUser } : { name, phone }
       };
 
       try {
-        await fetch(API_URL + '/orders', {
+        const response = await fetch(API_URL + '/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(order)
         });
-      } catch (e) { console.error(e); }
-
-      showToast(`✅ پرداخت ثبت شد - ${getPersianDateShort()}`);
-      cart = [];
-      saveCart();
-      updateCartBadge();
-      setTimeout(() => { closeModal('checkoutModal'); checkoutForm.reset(); }, 1500);
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showOrderSuccess(trackingCode, total);
+          cart = [];
+          saveCart();
+          updateCartBadge();
+          setTimeout(() => {
+            closeModal('checkoutModal');
+            checkoutForm.reset();
+          }, 6000);
+        } else {
+          showToast('خطا در ثبت سفارش', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ارتباط با سرور', 'error');
+      }
     });
   }
 });
