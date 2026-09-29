@@ -1230,48 +1230,84 @@ body {
 .badge.pulse {
   animation: pulse 0.5s ease;
 }
-// ============================================
-// 📞 فرم تماس با ما
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  const contactForm = document.getElementById('contactForm');
-  
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('contactName').value.trim();
-      const phone = document.getElementById('contactPhone').value.trim();
-      const email = document.getElementById('contactEmail').value.trim();
-      const subject = document.getElementById('contactSubject').value;
-      const message = document.getElementById('contactMessage').value.trim();
-      
-      if (!name || !phone || !message) {
-        showToast('لطفاً فیلدهای ستاره‌دار را پر کنید', 'error');
-        return;
-      }
-      
-      if (phone.length < 10) {
-        showToast('شماره موبایل معتبر نیست', 'error');
-        return;
-      }
-      
-      // ذخیره پیام
-      const messages = JSON.parse(localStorage.getItem('banehbaba_messages') || '[]');
-      messages.push({
-        id: Date.now(),
-        name,
-        phone,
-        email,
-        subject,
-        message,
-        date: getPersianDate(),
-        dateTime: getPersianDateTime()
-      });
-      localStorage.setItem('banehbaba_messages', JSON.stringify(messages));
-      
-      showToast(`✅ پیام شما ثبت شد - ${getPersianDateShort()}`, 'success');
-      contactForm.reset();
-    });
+/* ============================================
+   📋 صفحه قوانین و مقررات
+   ============================================ */
+
+.rules-section {
+  background: white;
+  border-radius: 15px;
+  padding: 25px 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+}
+
+.rules-section:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.rules-section h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #FFF5F0;
+}
+
+.rules-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.rules-section li {
+  padding: 10px 0 10px 25px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.9;
+  color: #555;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.rules-section li:last-child {
+  border-bottom: none;
+}
+
+.rules-section li::before {
+  content: "✓";
+  position: absolute;
+  right: 0;
+  color: #FF6B35;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.rules-section strong {
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .rules-section {
+    padding: 20px;
   }
-});
+  
+  .rules-section h2 {
+    font-size: 17px;
+  }
+  
+  .rules-section li {
+    font-size: 13px;
+    padding: 8px 0 8px 20px;
+  }
+  
+  .hero-small {
+    padding: 35px 20px;
+  }
+  
+  .hero-small h1 {
+    font-size: 24px;
+  }
+}
