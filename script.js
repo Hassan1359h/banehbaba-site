@@ -90,9 +90,17 @@ function renderProducts(filterCategory = null, subName = null) {
   // فیلتر دسته‌بندی
   if (filterCategory) {
     list = products.filter(p => p.category === filterCategory);
+    
+    // اگه زیردسته هم مشخص شده، فیلتر دوم
+    if (subName) {
+      const filtered = list.filter(p => p.subcategory === subName);
+      // اگه محصولی با زیردسته داشت، همون‌ها رو نشون بده
+      if (filtered.length > 0) {
+        list = filtered;
+      }
+    }
   }
 
-  // نمایش پیام
   if (list.length === 0) {
     grid.innerHTML = `
       <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#999;">
@@ -142,7 +150,6 @@ function renderProducts(filterCategory = null, subName = null) {
     `;
   }).join('');
 }
-
 // ============================================
 // 🎯 فیلتر دسته‌بندی
 // ============================================
@@ -166,10 +173,12 @@ function filterByCategory(categoryId, subName = null) {
       : `${cat.icon} ${cat.name}`;
   }
   
-  if (subHeader && cat) {
-    subHeader.textContent = `محصولات دسته «${cat.name}»`;
-  }
   
+  if (subHeader && cat) {
+  subHeader.textContent = subName 
+    ? `محصولات زیردسته «${subName}»`
+    : `محصولات دسته «${cat.name}»`;
+}
   renderProducts(categoryId, subName);
   
   // اسکرول به محصولات
