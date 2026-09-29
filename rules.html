@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قوانین و مقررات | بانه بابا</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle">☰</button>
+
+      <nav class="main-nav" id="mainNav">
+        <div class="dropdown">
+          <a href="#" class="nav-link">دسته‌بندی ▾</a>
+          <div class="dropdown-content">
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏔️ لوازم کوهنوردی و کمپ ▸</a>
+              <div class="submenu">
+                <a href="#">عینک</a>
+                <a href="#">چادر کوهنوردی</a>
+                <a href="#">کیسه خواب</a>
+                <a href="#">چراغ پیشانی</a>
+                <a href="#">باتوم</a>
+                <a href="#">اجاق کمپ</a>
+                <a href="#">ابزار کوه</a>
+                <a href="#">شکار</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏠 لوازم خانگی ▸</a>
+              <div class="submenu">
+                <a href="#">تلویزیون</a>
+                <a href="#">لباسشویی</a>
+                <a href="#">ظرفشویی</a>
+                <a href="#">کولر گازی</a>
+                <a href="#">سرخ کن</a>
+                <a href="#">اتو بخار</a>
+                <a href="#">آبمیوه گیری</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">💄 سلامت و زیبایی ▸</a>
+              <div class="submenu">
+                <a href="#">سفید کننده دندان</a>
+                <a href="#">لمینت دندان</a>
+                <a href="#">پوست</a>
+                <a href="#">مو</a>
+              </div>
+            </div>
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🚗 لوازم یدکی خودرو ▸</a>
+              <div class="submenu">
+                <a href="#">لنت</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">تماس با ما</a>
+      </nav>
+
+      <div class="user-actions">
+        <button class="cart-btn" id="cartBtn">
+          🛒 <span class="cart-text">سبد خرید</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="registerBtn">
+          👤 <span class="register-text">ثبت‌نام</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero hero-small">
+    <div class="hero-content">
+      <h1>📋 قوانین و مقررات</h1>
+      <p>لطفاً قبل از خرید مطالعه کنید</p>
+    </div>
+  </section>
+
+  <!-- ============ محتوا ============ -->
+  <section style="max-width: 900px; margin: 50px auto; padding: 0 25px;">
+
+    <!-- آخرین بروزرسانی -->
+    <div style="background: #FFF5F0; border-right: 4px solid #FF6B35; padding: 15px 20px; border-radius: 10px; margin-bottom: 30px;">
+      <p style="font-size: 13px; color: #666; margin: 0;">
+        📅 آخرین بروزرسانی: <span id="updateDate"></span>
+      </p>
+    </div>
+
+    <!-- مقدمه -->
+    <div class="rules-section">
+      <p style="line-height: 1.9; color: #555; font-size: 15px;">
+        استفاده از فروشگاه اینترنتی <strong>«بانه بابا»</strong> به معنی پذیرش کامل قوانین و مقررات زیر است.
+        لطفاً قبل از ثبت سفارش، این قوانین را با دقت مطالعه فرمایید.
+      </p>
+    </div>
+
+    <!-- ۱. ثبت سفارش -->
+    <div class="rules-section">
+      <h2>۱. ثبت سفارش و پرداخت</h2>
+      <ul>
+        <li>برای ثبت سفارش، مشتری باید اطلاعات صحیح و کامل خود (نام، شماره تماس، آدرس) را وارد کند.</li>
+        <li>پرداخت به صورت <strong>کارت به کارت</strong> انجام می‌شود و پس از واریز، شماره پیگیری تراکنش باید ثبت شود.</li>
+        <li>سفارش‌ها پس از <strong>تأیید پرداخت</strong> توسط مدیر فروشگاه، پردازش و ارسال می‌شوند.</li>
+        <li>در صورت واریز مبلغ اشتباه، سفارش پردازش نخواهد شد.</li>
+      </ul>
+    </div>
+
+    <!-- ۲. ارسال کالا -->
+    <div class="rules-section">
+      <h2>۲. ارسال کالا</h2>
+      <ul>
+        <li>ارسال کالا به سراسر ایران از طریق <strong>پست پیشتاز</strong> یا <strong>تیپاکس</strong> انجام می‌شود.</li>
+        <li>زمان ارسال برای شهر بانه: <strong>۱-۲ روز کاری</strong>.</li>
+        <li>زمان ارسال برای سایر شهرهای ایران: <strong>۲-۵ روز کاری</strong>.</li>
+        <li>هزینه ارسال بر عهده مشتری است، مگر در مواردی که ارسال رایگان اعلام شده باشد.</li>
+        <li>مسئولیت خسارت‌های احتمالی در حین حمل بر عهده <strong>شرکت پستی</strong> است.</li>
+      </ul>
+    </div>
+
+    <!-- ۳. بازگشت کالا - مهم -->
+    <div class="rules-section" style="background: #FFF9F0; padding: 25px; border-radius: 15px; border: 2px solid #FFB800;">
+      <h2 style="color: #FF6B35;">۳. رویه بازگشت کالا ⚠️</h2>
+      <p style="font-weight: 600; color: #333; margin-bottom: 15px;">شرایط بازگشت کالا:</p>
+      <ul>
+        <li>مشتری تا <strong style="color: #e74c3c;">۷ روز</strong> پس از دریافت کالا، حق بازگشت دارد.</li>
+        <li>کالا باید <strong>کاملاً سالم</strong> و <strong style="color: #e74c3c;">کارتن آن باز نشده</strong> باشد.</li>
+        <li>در صورت باز شدن کارتن، کالا <strong>قابل بازگشت نیست</strong>.</li>
+        <li>هزینه ارسال برگشتی <strong>بر عهده مشتری</strong> است.</li>
+        <li>پس از دریافت کالا و بررسی سالم بودن آن، مبلغ حداکثر تا <strong>۷۲ ساعت</strong> به حساب مشتری واریز می‌شود.</li>
+        <li>کالاهای مصرفی بهداشتی (لوازم آرایشی، بهداشتی) قابل بازگشت <strong>نیستند</strong>.</li>
+        <li>کالاهای سفارشی‌سازی‌شده قابل بازگشت <strong>نیستند</strong>.</li>
+      </ul>
+    </div>
+
+    <!-- ۴. گارانتی -->
+    <div class="rules-section">
+      <h2>۴. گارانتی محصولات</h2>
+      <ul>
+        <li>همه محصولات دارای <strong>اصالت کالا</strong> و <strong>گارانتی معتبر</strong> هستند.</li>
+        <li>مدت گارانتی هر محصول، در صفحه محصول ذکر شده است.</li>
+        <li>گارانتی شامل خرابی‌های ناشی از <strong>استفاده نادرست</strong> نمی‌شود.</li>
+        <li>برای استفاده از گارانتی، فاکتور خرید ضروری است.</li>
+      </ul>
+    </div>
+
+    <!-- ۵. مسئولیت‌ها -->
+    <div class="rules-section">
+      <h2>۵. مسئولیت‌های فروشگاه</h2>
+      <p style="margin-bottom: 15px;">فروشگاه «بانه بابا» در موارد زیر <strong>مسئولیتی ندارد</strong>:</p>
+      <ul>
+        <li>استفاده نادرست مشتری از کالای خریداری‌شده.</li>
+        <li>خسارات ناشی از حمل و نقل توسط شرکت پستی.</li>
+        <li>تأخیر در ارسال به دلیل مشکلات پیش‌بینی‌نشده (بلایای طبیعی، اعتصاب، بحران).</li>
+        <li>تغییر قیمت‌ها بر اساس نوسانات بازار.</li>
+        <li>اطلاعات نادرست وارد‌شده توسط مشتری در فرم سفارش.</li>
+      </ul>
+    </div>
+
+    <!-- ۶. حریم خصوصی -->
+    <div class="rules-section">
+      <h2>۶. حریم خصوصی</h2>
+      <ul>
+        <li>اطلاعات شخصی مشتریان فقط برای پردازش سفارش استفاده می‌شود.</li>
+        <li>اطلاعات مشتریان در اختیار <strong>هیچ شخص ثالثی</strong> قرار نمی‌گیرد.</li>
+        <li>شماره تماس مشتری ممکن است برای <strong>پیگیری سفارش</strong> استفاده شود.</li>
+      </ul>
+    </div>
+
+    <!-- ۷. مالکیت معنوی -->
+    <div class="rules-section">
+      <h2>۷. مالکیت معنوی</h2>
+      <ul>
+        <li>تمام محتوای این سایت (تصاویر، متن‌ها، لوگو) متعلق به <strong>«بانه بابا»</strong> است.</li>
+        <li>استفاده از محتوا بدون اجازه کتبی، <strong>ممنوع</strong> است.</li>
+        <li>در صورت تخلف، پیگرد قانونی انجام می‌شود.</li>
+      </ul>
+    </div>
+
+    <!-- ۸. تغییر قوانین -->
+    <div class="rules-section">
+      <h2>۸. تغییر قوانین</h2>
+      <ul>
+        <li>فروشگاه «بانه بابا» حق تغییر این قوانین را در هر زمان محفوظ می‌دارد.</li>
+        <li>مشتری موظف است پیش از هر خرید، قوانین را مطالعه کند.</li>
+        <li>ادامه استفاده از فروشگاه، به معنی پذیرش قوانین جدید است.</li>
+      </ul>
+    </div>
+
+    <!-- ۹. حل اختلاف -->
+    <div class="rules-section">
+      <h2>۹. حل اختلافات</h2>
+      <ul>
+        <li>در صورت بروز هرگونه اختلاف، ابتدا از طریق <strong>گفتگو</strong> حل می‌شود.</li>
+        <li>در صورت عدم توافق، موضوع از طریق <strong>مراجع قانونی شهر بانه</strong> پیگیری می‌شود.</li>
+      </ul>
+    </div>
+
+    <!-- تماس -->
+    <div class="rules-section" style="background: linear-gradient(135deg, #FF6B35, #004E89); color: white; padding: 30px; border-radius: 15px; text-align: center; margin-top: 40px;">
+      <h3 style="font-size: 20px; margin-bottom: 12px;">سوالی دارید؟ 🤔</h3>
+      <p style="margin-bottom: 20px; opacity: 0.95;">اگه درباره قوانین سوالی دارید، با ما تماس بگیرید</p>
+      <a href="contact.html" style="display: inline-block; background: white; color: #FF6B35; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 700; transition: all 0.3s;">
+        📞 تماس با ما
+      </a>
+    </div>
+
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>🏪 بانه بابا</h3>
+        <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
+        <p style="margin-top: 10px; font-size: 13px;">📍 کردستان، بانه، میدان چومان</p>
+        <p style="font-size: 13px;">📞 ۰۹۰۲۹۸۸۵۵۸۳</p>
+      </div>
+      <div class="footer-col">
+        <h4>لینک‌های سریع</h4>
+        <a href="index.html">صفحه اصلی</a>
+        <a href="contact.html">تماس با ما</a>
+        <a href="rules.html">قوانین و مقررات</a>
+      </div>
+      <div class="footer-col">
+        <h4>خدمات مشتریان</h4>
+        <a href="contact.html">پیگیری سفارش</a>
+        <a href="rules.html">رویه بازگشت کالا</a>
+        <a href="contact.html#contactForm">سوالات متداول</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
+      <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
+    </div>
+  </footer>
+
+  <!-- دکمه شناور واتساپ -->
+  <a href="https://wa.me/989029885583" target="_blank" class="whatsapp-float" title="تماس از طریق واتساپ">
+    💬
+  </a>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // نمایش تاریخ امروز
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateEl = document.getElementById('updateDate');
+      if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('fa-IR', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+      }
+    });
+  </script>
+
+</body>
+                                                                                                        </html>
