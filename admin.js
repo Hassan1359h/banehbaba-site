@@ -456,6 +456,115 @@ function renderOrders() {
     </div>
   `;
 }
+// ============================================
+// 🎟️ کد تخفیف
+// ============================================
+function renderCoupons() {
+  return `
+    <div class="section">
+      <div class="section-header">
+        <h3 class="section-title"><span class="icon">🎟️</span> کدهای تخفیف</h3>
+        <button class="btn btn-primary" onclick="openCouponModal()">➕ افزودن کد</button>
+      </div>
+      <div id="couponsList">
+        <div style="text-align:center; padding:40px; color:#999;">⏳ در حال بارگذاری...</div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadCoupons() {
+  const list = document.getElementById('couponsList');
+  if (!list) return;
+  
+  try {
+    const data = await apiCall('/coupons');
+    if (!data.success || !data.coupons || data.coupons.length === 0) {
+      list.innerHTML = '<div style="text-align:center; padding:40px; color:#999;"><div style="font-size:50px;">🎟️</div><p style="margin-top:10px;">هنوز کد تخفیفی ساخته نشده</p></div>';
+      return;
+    }
+    
+    list.innerHTML = `
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>کد</th>
+              <th>نوع</th>
+              <th>مقدار</th>
+              <th>استفاده</th>
+              <th>وضعیت</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.coupons.map(c => `
+              <tr>
+                <td><strong style="direction:ltr; color:#FF6B35;">${c.code}</strong></td>
+                <td>${c.type === 'percentage' ? 'درصدی' : 'مبلغی'}</td>
+                <td>${c.type === 'percentage' ? c.value + '٪' : Number(c.value).toLocaleString('fa-IR') + ' تومان'}</td>
+                <td>${c.usedCount || 0} / ${c.maxUses ? c.maxUses : '∞'}</td>
+                <td>${c.isActive ? '<span class="badge badge-success">فعال</span>' : '<span class="badge badge-danger">غیرفعال</span>'}</td>
+                <td>
+                  <button class="btn-icon btn-delete" onclick="deleteCoupon('${c.code}')">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (e) {
+    list.innerHTML = '<div style="text-align:center; padding:40px; color:#e74c3c;">خطا در بارگذاری</div>';
+  }
+}
+
+function openCouponModal() {
+  const code = prompt('کد تخفیف (مثلاً WELCOME10):');
+  if (!code) return;
+  
+  const type = prompt('نوع کد (بنویسید: percentage یا fixed):', 'percentage');
+  if (!type) return;
+  
+  const value = prompt(type === 'percentage' ? 'درصد تخفیف (مثلاً 10):' : 'مبلغ تخفیف (مثلاً 50000):');
+  if (!value) return;
+  
+  const maxUses = prompt('حداکثر تعداد استفاده (خالی = نامحدود):') || null;
+  const minPurchase = prompt('حداقل خرید (خالی = بدون محدودیت):') || 0;
+  
+  createCoupon({ 
+    code: code.trim().toUpperCase(), 
+    type, 
+    value: Number(value), 
+    maxUses: maxUses ? Number(maxUses) : null, 
+    minPurchase: Number(minPurchase) 
+  });
+}
+
+async function createCoupon(data) {
+  try {
+    const r = await apiCall('/coupons', 'POST', data);
+    if (r.success) {
+      showToast('✅ کد تخفیف ساخته شد');
+      loadCoupons();
+    } else {
+      showToast(r.error || 'خطا', 'error');
+    }
+  } catch (e) {
+    showToast('خطا در ساخت کد', 'error');
+  }
+}
+
+async function deleteCoupon(code) {
+  if (!confirm(`کد «${code}» حذف بشه؟`)) return;
+  try {
+    await apiCall('/coupons/' + code, 'DELETE');
+    showToast('🗑️ حذف شد');
+    loadCoupons();
+  } catch (e) {
+    showToast('خطا در حذف', 'error');
+  }
+}
 
 function renderMessages() {
   return `
@@ -494,7 +603,8 @@ function switchPage(page) {
     products: ['محصولات', 'مدیریت محصولات'],
     categories: ['دسته‌بندی‌ها', 'مدیریت دسته‌بندی'],
     orders: ['سفارشات', 'لیست سفارشات'],
-    messages: ['پیام‌ها', 'پیام‌های دریافتی']
+    messages: ['پیام‌ها', 'پیام‌های دریافتی'],
+coupons: ['کد تخفیف', 'مدیریت کدهای تخفیف']  
   };
 
   const titleEl = document.getElementById('pageTitle');
@@ -511,6 +621,7 @@ function switchPage(page) {
     case 'categories': content.innerHTML = renderCategories(); break;
     case 'orders': content.innerHTML = renderOrders(); break;
     case 'messages': content.innerHTML = renderMessages(); break;
+    case 'coupons': content.innerHTML = renderCoupons(); setTimeout(loadCoupons, 100); break;    
   }
 
   const sidebar = document.getElementById('sidebar');
