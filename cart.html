@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سبد خرید | بانه بابا</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .cart-page { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    .cart-item-page {
+      background: white; border-radius: 16px; padding: 18px;
+      margin-bottom: 12px; display: flex; gap: 15px; align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .cart-item-page .img {
+      width: 80px; height: 80px; border-radius: 10px; background: #f5f5f5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; overflow: hidden; flex-shrink: 0;
+    }
+    .cart-item-page .img img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-item-page .info { flex: 1; min-width: 0; }
+    .cart-item-page .info h4 { font-size: 15px; margin-bottom: 6px; }
+    .cart-item-page .info .price { color: #004E89; font-weight: 700; font-size: 15px; }
+    .cart-item-page .actions { display: flex; align-items: center; gap: 8px; }
+    .qty-box {
+      display: flex; align-items: center; gap: 8px;
+      background: #f9f9f9; border-radius: 25px; padding: 4px 10px;
+    }
+    .qty-box button {
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: white; cursor: pointer; font-size: 16px; font-weight: 700;
+      color: #FF6B35; font-family: inherit;
+    }
+    .qty-box button:hover { background: #FF6B35; color: white; }
+    .remove-btn {
+      background: #fde8e8; color: #e74c3c; border: none;
+      width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+      font-size: 16px; font-family: inherit;
+    }
+    .remove-btn:hover { background: #e74c3c; color: white; }
+    .summary-box {
+      background: white; border-radius: 16px; padding: 25px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      position: sticky; top: 100px;
+    }
+    .coupon-input {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .coupon-input input {
+      flex: 1; padding: 12px 15px; border: 2px solid #e0e0e0;
+      border-radius: 10px; font-size: 14px; font-family: inherit;
+      direction: ltr; text-align: center;
+    }
+    .coupon-input button {
+      background: #004E89; color: white; border: none;
+      padding: 0 20px; border-radius: 10px; font-weight: 600;
+      cursor: pointer; font-family: inherit; font-size: 14px;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+      font-size: 15px;
+    }
+    .summary-row:last-of-type { border-bottom: none; }
+    .summary-row.total {
+      border-top: 2px solid #FF6B35;
+      margin-top: 10px; padding-top: 15px;
+      font-size: 18px; font-weight: 700;
+    }
+    .summary-row.total strong { color: #27ae60; font-size: 22px; }
+    .discount-row strong { color: #e74c3c; }
+    .cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 25px; }
+    @media (max-width: 768px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .cart-item-page { padding: 14px; gap: 10px; }
+      .cart-item-page .img { width: 65px; height: 65px; font-size: 26px; }
+      .cart-item-page .info h4 { font-size: 13px; }
+      .cart-item-page .info .price { font-size: 13px; }
+      .summary-box { position: static; padding: 20px; }
+      .qty-box { padding: 3px 8px; }
+      .qty-box button { width: 24px; height: 24px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">🏠 خانه</a>
+      </nav>
+      <div class="user-actions">
+        <button class="cart-btn" onclick="window.location.href='cart.html'">
+          🛒 <span class="cart-text">سبد</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="userBtn">👤 <span class="register-text">ورود</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="cart-page">
+    <h1 style="font-size: 26px; margin-bottom: 25px; color: #333;">🛒 سبد خرید</h1>
+    <div class="cart-layout">
+      <div id="cartItemsList"></div>
+      <div class="summary-box" id="summaryBox" style="display: none;">
+        <h3 style="font-size: 18px; margin-bottom: 20px;">💰 خلاصه سفارش</h3>
+        <div class="coupon-input">
+          <input type="text" id="couponCode" placeholder="کد تخفیف">
+          <button onclick="applyCoupon()">اعمال</button>
+        </div>
+        <div class="summary-row"><span>جمع کل:</span><strong id="subTotal">۰ تومان</strong></div>
+        <div class="summary-row discount-row" id="discountRow" style="display:none;"><span>تخفیف:</span><strong id="discountAmount">- ۰ تومان</strong></div>
+        <div class="summary-row"><span>هزینه ارسال:</span><strong>محاسبه در مرحله بعد</strong></div>
+        <div class="summary-row total"><span>مبلغ قابل پرداخت:</span><strong id="finalTotal">۰ تومان</strong></div>
+        <button onclick="checkout()" style="width:100%; background:#FF6B35; color:white; border:none; padding:16px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:20px;">
+          🚀 تکمیل خرید
+        </button>
+        <a href="index.html" style="display:block; text-align:center; margin-top:15px; color:#777; text-decoration:none; font-size:14px;">← ادامه خرید</a>
+      </div>
+    </div>
+    <div id="emptyCart" class="empty-state" style="display:none;">
+      <div class="icon">🛒</div>
+      <h3>سبد خرید خالی است</h3>
+      <p>هنوز محصولی به سبد اضافه نکرده‌اید</p>
+      <a href="index.html" style="display:inline-block; background:#FF6B35; color:white; padding:12px 30px; border-radius:25px; text-decoration:none; font-weight:600;">🛍️ شروع خرید</a>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="footer-bottom" style="margin-top:0; padding-top:0; border:none;">
+      <p>© ۱۴۰۳ بانه بابا</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = 'https://banehbaba-backend.vercel.app/api';
+    let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
+    let appliedCoupon = null;
+    let discountAmount = 0;
+
+    function formatPrice(n) { return Number(n).toLocaleString('fa-IR') + ' تومان'; }
+
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.className = 'toast show ' + type;
+      setTimeout(() => t.className = 'toast ' + type, 2500);
+    }
+
+    function saveCart() { localStorage.setItem('banehbaba_cart', JSON.stringify(cart)); }
+
+    function updateBadge() {
+      const b = document.getElementById('cartBadge');
+      if (b) b.textContent = cart.reduce((s, i) => s + i.quantity, 0).toLocaleString('fa-IR');
+    }
+
+    function render() {
+      const list = document.getElementById('cartItemsList');
+      const summary = document.getElementById('summaryBox');
+      const empty = document.getElementById('emptyCart');
+      updateBadge();
+
+      if (cart.length === 0) {
+        list.innerHTML = '';
+        summary.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      summary.style.display = 'block';
+
+      list.innerHTML = cart.map(item => {
+        const img = item.image
+          ? `<img src="${item.image}" alt="${item.name}">`
+          : '📦';
+        return `
+          <div class="cart-item-page">
+            <div class="img">${img}</div>
+            <div class="info">
+              <h4>${item.name}</h4>
+              <div class="price">${formatPrice(item.price * item.quantity)}</div>
+            </div>
+            <div class="actions">
+              <div class="qty-box">
+                <button onclick="changeQty(${item.id}, -1)">−</button>
+                <span>${item.quantity.toLocaleString('fa-IR')}</span>
+                <button onclick="changeQty(${item.id}, 1)">+</button>
+              </div>
+              <button class="remove-btn" onclick="removeItem(${item.id})">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      document.getElementById('subTotal').textContent = formatPrice(total);
+
+      if (appliedCoupon && discountAmount > 0) {
+        document.getElementById('discountRow').style.display = 'flex';
+        document.getElementById('discountAmount').textContent = '- ' + formatPrice(discountAmount);
+      } else {
+        document.getElementById('discountRow').style.display = 'none';
+      }
+
+      document.getElementById('finalTotal').textContent = formatPrice(Math.max(0, total - discountAmount));
+    }
+
+    function changeQty(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.quantity += delta;
+      if (item.quantity <= 0) { removeItem(id); return; }
+      saveCart(); render();
+    }
+
+    function removeItem(id) {
+      cart = cart.filter(i => i.id !== id);
+      saveCart(); render();
+      showToast('🗑️ محصول حذف شد', 'error');
+    }
+
+    async function applyCoupon() {
+      const code = document.getElementById('couponCode').value.trim();
+      if (!code) { showToast('کد تخفیف را وارد کنید', 'error'); return; }
+
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+      try {
+        const r = await fetch(API_URL + '/coupons/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, amount: total })
+        });
+        const d = await r.json();
+
+        if (d.success) {
+          appliedCoupon = d.coupon;
+          discountAmount = d.discount;
+          showToast(`✅ ${formatPrice(d.discount)} تخفیف اعمال شد`);
+          render();
+        } else {
+          showToast(d.error || 'کد معتبر نیست', 'error');
+        }
+      } catch (e) {
+        showToast('خطا در بررسی کد', 'error');
+      }
+    }
+
+    function checkout() {
+      const token = localStorage.getItem('banehbaba_token');
+      const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+
+      if (!token || !user) {
+        showToast('برای خرید لطفاً وارد شوید', 'error');
+        setTimeout(() => window.location.href = 'user-login.html', 1200);
+        return;
+      }
+
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+      // ذخیره اطلاعات تخفیف برای صفحه پرداخت
+      localStorage.setItem('banehbaba_checkout', JSON.stringify({
+        couponCode: appliedCoupon?.code || null,
+        discount: discountAmount,
+        subtotal: total,
+        finalTotal: Math.max(0, total - discountAmount)
+      }));
+
+      window.location.href = 'checkout.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      render();
+
+      // دکمه کاربر
+      const userBtn = document.getElementById('userBtn');
+      const token = localStorage.getItem('banehbaba_token');
+      const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+
+      if (userBtn) {
+        if (token && user) {
+          const rt = userBtn.querySelector('.register-text');
+          if (rt) rt.textContent = user.name.split(' ')[0];
+          userBtn.onclick = () => window.location.href = 'user-account.html';
+        } else {
+          userBtn.onclick = () => window.location.href = 'user-login.html';
+        }
+      }
+
+      document.getElementById('menuToggle')?.addEventListener('click', () => {
+        document.getElementById('mainNav')?.classList.toggle('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
