@@ -477,9 +477,9 @@ if (cartBtn) {
   // ============================================
   // 👤 دکمه ثبت‌نام/ورود
   // ============================================
-  const userBtn = document.getElementById('userBtn');
+
+const userBtn = document.getElementById('userBtn');
 if (userBtn) {
-  // اگه کاربر لاگین هست، بره داشبورد
   const token = localStorage.getItem('banehbaba_token');
   const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
   
@@ -495,14 +495,6 @@ if (userBtn) {
     });
   }
 }
-    
-    // اگه کاربر قبلاً لاگین کرده، اسمش رو نشون بده
-    if (currentUser) {
-      const regText = registerBtn.querySelector('.register-text');
-      if (regText) regText.textContent = currentUser.name.split(' ')[0];
-    }
-  }
-
   // ============================================
   // ❌ دکمه‌های بستن Modal
   // ============================================
