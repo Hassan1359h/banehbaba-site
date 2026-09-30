@@ -440,21 +440,84 @@ function renderOrders() {
         ? `<div class="empty-state"><div class="icon">🛒</div><h3>هنوز سفارشی نیست</h3></div>`
         : `<div class="table-wrapper">
             <table class="data-table">
-              <thead><tr><th>کد پیگیری</th><th>مشتری</th><th>مبلغ</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>کد پیگیری</th>
+                  <th>مشتری</th>
+                  <th>مبلغ</th>
+                  <th>وضعیت</th>
+                  <th>عملیات</th>
+                </tr>
+              </thead>
               <tbody>
-                ${orders.map(o => `
-                  <tr>
-                    <td>${o.trackingCode || '-'}</td>
-                    <td>${o.user?.name || 'ناشناس'}</td>
-                    <td>${formatPrice(o.amount || 0)}</td>
-                  </tr>
-                `).join('')}
+                ${orders.slice().reverse().map(o => {
+                  const statusText = {
+                    pending: '⏳ در حال پردازش',
+                    shipped: '🚚 ارسال شده',
+                    delivered: '✅ تحویل داده شده',
+                    cancelled: '❌ لغو شده'
+                  }[o.status] || '⏳ در حال پردازش';
+                  
+                  return `
+                    <tr>
+                      <td><span class="badge badge-info">${o.trackingCode || '-'}</span></td>
+                      <td>${o.customer?.name || o.user?.name || 'ناشناس'}</td>
+                      <td>${formatPrice(o.amount || 0)}</td>
+                      <td>${statusText}</td>
+                      <td style="white-space:nowrap;">
+                        <button class="btn-icon btn-view" onclick="viewOrder(${o.id})" title="جزئیات">👁️</button>
+                        <button class="btn-icon btn-edit" onclick="changeStatus(${o.id})" title="تغییر وضعیت">✏️</button>
+                        <button class="btn-icon btn-delete" onclick="deleteOrder(${o.id})" title="حذف">🗑️</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </div>`
       }
     </div>
   `;
+}
+
+async function changeStatus(orderId) {
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  const current = o.status || 'pending';
+  const options = ['pending', 'shipped', 'delivered', 'cancelled'];
+  const labels = { pending: 'در حال پردازش', shipped: 'ارسال شده', delivered: 'تحویل داده شده', cancelled: 'لغو شده' };
+
+  const choice = prompt(
+    `وضعیت فعلی: ${labels[current]}\n\n` +
+    `وضعیت جدید را وارد کنید:\n` +
+    `1 = در حال پردازش\n` +
+    `2 = ارسال شده\n` +
+    `3 = تحویل داده شده\n` +
+    `4 = لغو شده`,
+    String(options.indexOf(current) + 1)
+  );
+
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx > 3) return;
+
+  const newStatus = options[idx];
+  const updates = { status: newStatus };
+
+  // اگه ارسال شده، کد رهگیری پستی بگیر
+  if (newStatus === 'shipped') {
+    const code = prompt('کد رهگیری پستی (اختیاری):', o.postalTrackingCode || '');
+    if (code) updates.postalTrackingCode = code;
+  }
+
+  try {
+    await apiCall('/orders/' + orderId, 'PUT', updates);
+    showToast('✅ وضعیت تغییر کرد');
+    await loadOrders();
+    switchPage('orders');
+  } catch (e) {
+    showToast('خطا در تغییر وضعیت', 'error');
+  }
 }
 // ============================================
 // 🎟️ کد تخفیف
