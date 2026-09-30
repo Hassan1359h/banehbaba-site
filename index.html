@@ -12,7 +12,6 @@
   <!-- ============ HEADER ============ -->
   <header class="main-header">
     <div class="header-container">
-      
       <a href="index.html" class="logo">
         <span class="logo-icon">🏪</span>
         <span class="logo-text">بانه بابا</span>
@@ -24,8 +23,6 @@
         <div class="dropdown">
           <a href="#" class="nav-link">دسته‌بندی ▾</a>
           <div class="dropdown-content">
-            
-            <!-- دسته ۱: لوازم کوهنوردی -->
             <div class="dropdown-category">
               <a href="#" class="category-title">🏔️ لوازم کوهنوردی و کمپ ▸</a>
               <div class="submenu">
@@ -39,8 +36,6 @@
                 <a href="#">شکار</a>
               </div>
             </div>
-
-            <!-- دسته ۲: لوازم خانگی -->
             <div class="dropdown-category">
               <a href="#" class="category-title">🏠 لوازم خانگی ▸</a>
               <div class="submenu">
@@ -53,8 +48,6 @@
                 <a href="#">آبمیوه گیری</a>
               </div>
             </div>
-
-            <!-- دسته ۳: سلامت و زیبایی -->
             <div class="dropdown-category">
               <a href="#" class="category-title">💄 سلامت و زیبایی ▸</a>
               <div class="submenu">
@@ -64,18 +57,14 @@
                 <a href="#">مو</a>
               </div>
             </div>
-
-            <!-- دسته ۴: لوازم یدکی خودرو -->
             <div class="dropdown-category">
               <a href="#" class="category-title">🚗 لوازم یدکی خودرو ▸</a>
               <div class="submenu">
                 <a href="#">لنت</a>
               </div>
             </div>
-
           </div>
         </div>
-        <a href="contact.html" class="nav-link">تماس با ما</a>
       </nav>
 
       <div class="user-actions">
@@ -83,11 +72,10 @@
           🛒 <span class="cart-text">سبد خرید</span>
           <span class="badge" id="cartBadge">۰</span>
         </button>
-        <button class="register-btn" id="registerBtn">
-          👤 <span class="register-text">ثبت‌نام</span>
+        <button class="register-btn" id="userBtn">
+          👤 <span class="register-text">ورود / ثبت‌نام</span>
         </button>
       </div>
-
     </div>
   </header>
 
@@ -115,148 +103,29 @@
       <div class="footer-col">
         <h3>🏪 بانه بابا</h3>
         <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
+        <p style="margin-top: 10px; font-size: 13px;">📍 کردستان، بانه، میدان چومان</p>
+        <p style="font-size: 13px;">📞 ۰۹۰۲۹۸۸۵۵۸۳</p>
       </div>
-    <div class="footer-col">
-  <h4>لینک‌های سریع</h4>
-  <a href="contact.html">تماس با ما</a>
-  <a href="rules.html">قوانین و مقررات</a>
-  <a href="contact.html">سوالات متداول</a>
+      <div class="footer-col">
+        <h4>لینک‌های سریع</h4>
+        <a href="user-account.html">حساب کاربری</a>
+        <a href="track.html">پیگیری سفارش</a>
+        <a href="rules.html">قوانین و مقررات</a>
+      </div>
+      <div class="footer-col">
+        <h4>خدمات مشتریان</h4>
+        <a href="contact.html">تماس با ما</a>
+        <a href="rules.html">رویه بازگشت کالا</a>
+        <a href="user-login.html">ورود / ثبت‌نام</a>
+      </div>
     </div>
-  <div class="footer-col">
-  <h4>خدمات مشتریان</h4>
-  <a href="track.html">پیگیری سفارش</a>
-  <a href="rules.html">رویه بازگشت کالا</a>
-  <a href="contact.html">تماس با ما</a>
-  </div>
     <div class="footer-bottom">
       <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
       <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
     </div>
   </footer>
 
-  <!-- ============ MODAL ثبت‌نام ============ -->
-  <div class="modal-overlay" id="registerModal">
-    <div class="modal">
-      <button class="modal-close" id="closeRegister">✕</button>
-      <h2>ثبت‌نام / ورود</h2>
-      <p class="modal-subtitle">به بانه بابا خوش آمدید</p>
-      <form id="registerForm">
-        <div class="form-group">
-          <label>نام و نام خانوادگی</label>
-          <input type="text" id="regName" placeholder="مثلاً: علی محمدی" required>
-        </div>
-        <div class="form-group">
-          <label>شماره موبایل</label>
-          <input type="tel" id="regPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
-        </div>
-        <div class="form-group">
-          <label>ایمیل (اختیاری)</label>
-          <input type="email" id="regEmail" placeholder="example@email.com">
-        </div>
-        <div class="form-group">
-          <label>رمز عبور</label>
-          <input type="password" id="regPassword" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn-primary">ثبت‌نام</button>
-      </form>
-      <p class="modal-footer-text">قبلاً ثبت‌نام کرده‌اید؟ <a href="#">ورود</a></p>
-    </div>
-  </div>
-  
-<!-- ============ MODAL: ورود ============ -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal">
-    <button class="modal-close" id="closeLogin">✕</button>
-    <h2>ورود به حساب</h2>
-    <p class="modal-subtitle">به بانه بابا خوش آمدید</p>
-    
-    <form id="loginForm">
-      <div class="form-group">
-        <label>شماره موبایل</label>
-        <input type="tel" id="loginPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
-      </div>
-      <div class="form-group">
-        <label>رمز عبور</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn-primary">🚀 ورود</button>
-    </form>
-    <p class="modal-footer-text">
-      حساب ندارید؟ <a href="#" id="goToRegister">ثبت‌نام کنید</a>
-    </p>
-  </div>
-</div>
-  
-  <!-- ============ MODAL سبد خرید ============ -->
-  <div class="modal-overlay" id="cartModal">
-    <div class="modal cart-modal">
-      <button class="modal-close" id="closeCart">✕</button>
-      <h2>🛒 سبد خرید شما</h2>
-      <p class="modal-subtitle" id="cartDateInfo">📅 امروز: ...</p>
-      <div class="cart-items" id="cartItems"></div>
-      <div class="cart-summary" id="cartSummary">
-        <div class="summary-row">
-          <span>جمع کل:</span>
-          <strong id="cartTotal">۰ تومان</strong>
-        </div>
-        <button class="btn-primary" onclick="checkout()">💳 پرداخت و تکمیل خرید</button>
-      </div>
-      <div class="cart-empty" id="cartEmpty">
-        <div class="empty-icon">🛒</div>
-        <p>سبد خرید شما خالی است</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ MODAL پرداخت ============ -->
-  <div class="modal-overlay" id="checkoutModal">
-    <div class="modal">
-      <button class="modal-close" id="closeCheckout">✕</button>
-      <h2>💳 پرداخت کارت به کارت</h2>
-      <p class="modal-subtitle">مبلغ را به کارت زیر واریز کنید</p>
-      <div class="card-info">
-        <div class="card-row">
-          <span>شماره کارت:</span>
-          <strong>6219-8618-2849-2446</strong>
-        </div>
-        <div class="card-row">
-          <span>به نام:</span>
-          <strong>حسن نادریان</strong>
-        </div>
-        <div class="card-row">
-          <span>مبلغ قابل پرداخت:</span>
-          <strong class="price-highlight" id="checkoutAmount">۰ تومان</strong>
-        </div>
-        <div class="card-row">
-          <span>تاریخ پرداخت:</span>
-          <strong id="orderDateTime">-</strong>
-        </div>
-      </div>
-        <form id="checkoutForm">
-  <div class="form-group">
-    <label>نام و نام خانوادگی *</label>
-    <input type="text" id="checkoutName" placeholder="مثلاً: علی محمدی" required>
-  </div>
-  <div class="form-group">
-    <label>شماره موبایل *</label>
-    <input type="tel" id="checkoutPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
-  </div>
-  <div class="form-group">
-    <label>آدرس کامل پستی *</label>
-    <textarea id="checkoutAddress" rows="3" placeholder="استان، شهر، خیابان، کوچه، پلاک، واحد" required style="width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;font-family:inherit;direction:rtl;background:#fafafa;resize:vertical;"></textarea>
-  </div>
-  <div class="form-group">
-    <label>کد پستی</label>
-    <input type="text" id="checkoutPostalCode" placeholder="۱۰ رقم - اختیاری">
-  </div>
-  <div class="form-group">
-    <label>شماره پیگیری تراکنش *</label>
-    <input type="text" id="trackingCode" placeholder="شماره پیگیری را وارد کنید" required>
-  </div>
-  <button type="submit" class="btn-primary">✅ تأیید پرداخت</button>
-        </form>
-    </div>
-  </div>
+  <a href="https://wa.me/989029885583" target="_blank" class="whatsapp-float" title="تماس از طریق واتساپ">💬</a>
 
   <div class="toast" id="toast"></div>
   <script src="script.js"></script>
