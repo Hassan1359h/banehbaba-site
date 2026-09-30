@@ -713,6 +713,108 @@ async function deleteCoupon(code) {
     showToast('خطا در حذف', 'error');
   }
 }
+// ============================================
+// 🎁 جوایز
+// ============================================
+function renderRewards() {
+  return `
+    <div class="section">
+      <div class="section-header">
+        <h3 class="section-title"><span class="icon">🎁</span> جوایز</h3>
+        <button class="btn btn-primary" onclick="openRewardModal()">➕ افزودن جایزه</button>
+      </div>
+      <div id="rewardsList">
+        <div style="text-align:center; padding:40px; color:#999;">⏳ در حال بارگذاری...</div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadRewards() {
+  const list = document.getElementById('rewardsList');
+  if (!list) return;
+  
+  try {
+    const data = await apiCall('/rewards');
+    if (!data.success || !data.rewards || data.rewards.length === 0) {
+      list.innerHTML = '<div style="text-align:center; padding:40px; color:#999;"><div style="font-size:50px;">🎁</div><p style="margin-top:10px;">هنوز جایزه‌ای ساخته نشده</p></div>';
+      return;
+    }
+    
+    list.innerHTML = `
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>کد</th>
+              <th>نوع</th>
+              <th>مقدار</th>
+              <th>مشتری</th>
+              <th>وضعیت</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.rewards.map(r => `
+              <tr>
+                <td><strong style="direction:ltr; color:#FF6B35;">${r.code}</strong></td>
+                <td>${r.type === 'cash' ? '💰 نقدی' : r.type === 'product' ? '📦 محصول' : '🎟️ تخفیف'}</td>
+                <td>${Number(r.value).toLocaleString('fa-IR')}${r.type === 'cash' ? ' تومان' : ''}</td>
+                <td>${r.phone || '-'}</td>
+                <td>${r.status === 'active' ? '<span class="badge badge-success">فعال</span>' : '<span class="badge badge-danger">استفاده شده</span>'}</td>
+                <td>
+                  <button class="btn-icon btn-delete" onclick="deleteReward(${r.id})">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (e) {
+    list.innerHTML = '<div style="text-align:center; padding:40px; color:#e74c3c;">خطا در بارگذاری</div>';
+  }
+}
+
+function openRewardModal() {
+  const phone = prompt('شماره موبایل مشتری:');
+  if (!phone) return;
+  
+  const type = prompt('نوع جایزه:\nبنویسید: cash (نقدی) یا product (محصول):', 'cash');
+  if (!type) return;
+  
+  const value = prompt(type === 'cash' ? 'مبلغ (تومان - مثلاً 100000):' : 'ارزش محصول (تومان):');
+  if (!value) return;
+  
+  const description = prompt('توضیحات (اختیاری):') || '';
+  
+  createReward({ phone, type, value: Number(value), description });
+}
+
+async function createReward(data) {
+  try {
+    const r = await apiCall('/rewards', 'POST', data);
+    if (r.success) {
+      showToast('✅ جایزه ساخته شد');
+      loadRewards();
+    } else {
+      showToast(r.error || 'خطا', 'error');
+    }
+  } catch (e) {
+    showToast('خطا در ساخت جایزه', 'error');
+  }
+}
+
+async function deleteReward(id) {
+  if (!confirm('این جایزه حذف بشه؟')) return;
+  try {
+    await apiCall('/rewards/' + id, 'DELETE');
+    showToast('🗑️ حذف شد');
+    loadRewards();
+  } catch (e) {
+    showToast('خطا در حذف', 'error');
+  }
+}
 
 function renderMessages() {
   return `
@@ -752,7 +854,8 @@ function switchPage(page) {
     categories: ['دسته‌بندی‌ها', 'مدیریت دسته‌بندی'],
     orders: ['سفارشات', 'لیست سفارشات'],
     messages: ['پیام‌ها', 'پیام‌های دریافتی'],
-coupons: ['کد تخفیف', 'مدیریت کدهای تخفیف']  
+   coupons: ['کد تخفیف', 'مدیریت کدهای تخفیف'],
+rewards: ['جوایز', 'مدیریت جوایز مشتریان']
   };
 
   const titleEl = document.getElementById('pageTitle');
@@ -769,7 +872,8 @@ coupons: ['کد تخفیف', 'مدیریت کدهای تخفیف']
     case 'categories': content.innerHTML = renderCategories(); break;
     case 'orders': content.innerHTML = renderOrders(); break;
     case 'messages': content.innerHTML = renderMessages(); break;
-    case 'coupons': content.innerHTML = renderCoupons(); setTimeout(loadCoupons, 100); break;    
+    case 'coupons': content.innerHTML = renderCoupons(); setTimeout(loadCoupons, 100); break;
+    case 'rewards': content.innerHTML = renderRewards(); setTimeout(loadRewards, 100); break;   
   }
 
   const sidebar = document.getElementById('sidebar');
