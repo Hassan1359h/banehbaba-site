@@ -2,12 +2,32 @@
 <html>
 <head><title>test</title></head>
 <body>
-<pre id="out" style="background:#000; color:#0f0; padding:20px; direction:ltr;">...</pre>
+<pre id="out" style="background:#000; color:#0f0; padding:20px; direction:ltr; white-space:pre-wrap;">start</pre>
+<div id="productsGrid"></div>
+<div id="toast"></div>
+<div id="cartBadge">0</div>
+<div id="todayDate"></div>
+<div id="cartDateInfo"></div>
+<button id="cartBtn">c</button>
+<button id="userBtn"><span class="register-text">u</span></button>
+<div id="registerModal"></div>
+<div id="loginModal"></div>
+<div id="cartModal"></div>
+<div id="checkoutModal"></div>
+<div id="registerForm"></div>
+<div id="checkoutForm"></div>
+
 <script>
 window.onerror = (m, u, l) => {
   document.getElementById('out').textContent += '\n❌ خط ' + l + ': ' + m;
 };
 </script>
 <script src="script.js"></script>
+<script>
+setTimeout(() => {
+  document.getElementById('out').textContent += '\n✅ تموم شد';
+  document.getElementById('out').textContent += '\n📦 grid: ' + (document.getElementById('productsGrid').innerHTML.length > 0 ? 'پر' : 'خالی');
+}, 2000);
+</script>
 </body>
 </html>
