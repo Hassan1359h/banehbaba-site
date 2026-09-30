@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>test</title></head>
+<body>
+<pre id="out" style="background:#000; color:#0f0; padding:20px; direction:ltr;">...</pre>
+<script>
+window.onerror = (m, u, l) => {
+  document.getElementById('out').textContent += '\n❌ خط ' + l + ': ' + m;
+};
+</script>
+<script src="script.js"></script>
+</body>
+</html>
