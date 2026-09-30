@@ -806,18 +806,7 @@ body {
   }
   
   /* overlay تاریک وقتی سایدبار بازه */
-  .sidebar.active::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
-    right: 260px;
-  }
-  
+
   /* جدول‌ها روی موبایل */
   .table-wrapper {
     overflow-x: auto;
@@ -900,5 +889,11 @@ body {
   .btn {
     padding: 8px 14px;
     font-size: 12px;
+  }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80% !important;
+    max-width: 320px;
   }
 }
