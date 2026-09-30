@@ -203,6 +203,7 @@ function clearFilter() {
 // ============================================
 // 🛒 سبد
 // ============================================
+
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
@@ -218,8 +219,12 @@ function addToCart(productId) {
   saveCart();
   updateCartBadge();
   showToast(`✅ ${product.name} به سبد اضافه شد`);
+  
+  // رفتن به سبد خرید بعد از 800 میلی‌ثانیه
+  setTimeout(() => {
+    window.location.href = 'cart.html';
+  }, 800);
 }
-
 function saveCart() {
   localStorage.setItem('banehbaba_cart', JSON.stringify(cart));
 }
@@ -463,12 +468,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 🛒 دکمه سبد خرید
   // ============================================
   const cartBtn = document.getElementById('cartBtn');
-  if (cartBtn) {
-    cartBtn.addEventListener('click', () => { 
-      renderCart(); 
-      openModal('cartModal'); 
-    });
-  }
+if (cartBtn) {
+  cartBtn.addEventListener('click', () => { 
+    window.location.href = 'cart.html';
+  });
+}
 
   // ============================================
   // 👤 دکمه ثبت‌نام/ورود
