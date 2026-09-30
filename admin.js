@@ -519,6 +519,91 @@ async function changeStatus(orderId) {
     showToast('خطا در تغییر وضعیت', 'error');
   }
 }
+
+async function deleteOrder(orderId) {
+  if (!confirm('این سفارش حذف بشه؟')) return;
+  try {
+    await apiCall('/orders/' + orderId, 'DELETE');
+    showToast('🗑️ سفارش حذف شد');
+    await loadOrders();
+    switchPage('orders');
+  } catch (e) {
+    showToast('خطا در حذف سفارش', 'error');
+  }
+}
+
+function viewOrder(orderId) {
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  const statusText = {
+    pending: '⏳ در حال پردازش',
+    shipped: '🚚 ارسال شده',
+    delivered: '✅ تحویل داده شده',
+    cancelled: '❌ لغو شده'
+  }[o.status] || '⏳ در حال پردازش';
+
+  const itemsHtml = (o.items || []).map(item => `
+    <div style="display:flex; gap:10px; align-items:center; padding:10px; background:#f9f9f9; border-radius:8px; margin-bottom:8px;">
+      <div style="font-size:24px;">${item.image ? `<img src="${item.image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;">` : '📦'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:13px;">${item.name}</div>
+        <div style="font-size:11px; color:#777;">تعداد: ${item.quantity}</div>
+      </div>
+      <div style="font-size:12px; color:#004E89; font-weight:700;">
+        ${Number(item.price * item.quantity).toLocaleString('fa-IR')} تومان
+      </div>
+    </div>
+  `).join('');
+
+  const c = o.customer || o.user || {};
+
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:99999; display:flex; align-items:center; justify-content:center; padding:15px;';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  modal.innerHTML = `
+    <div style="background:white; border-radius:18px; padding:22px; max-width:480px; width:100%; max-height:88vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h3 style="font-size:17px;">📦 جزئیات سفارش</h3>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:#f0f0f0; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer; font-size:15px;">✕</button>
+      </div>
+
+      <div style="background:#f9f9f9; border-radius:10px; padding:14px; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #e0e0e0; font-size:13px;">
+          <span style="color:#777;">کد پیگیری:</span><strong style="direction:ltr;">${o.trackingCode || '-'}</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #e0e0e0; font-size:13px;">
+          <span style="color:#777;">وضعیت:</span><strong>${statusText}</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #e0e0e0; font-size:13px;">
+          <span style="color:#777;">تاریخ:</span><strong>${o.date || '-'}</strong>
+        </div>
+        ${o.postalTrackingCode ? `<div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #e0e0e0; font-size:13px;"><span style="color:#777;">کد پستی:</span><strong style="direction:ltr;">${o.postalTrackingCode}</strong></div>` : ''}
+      </div>
+
+      <div style="background:#e3f0fa; border-radius:10px; padding:14px; margin-bottom:15px;">
+        <h4 style="font-size:13px; margin-bottom:10px; color:#004E89;">👤 اطلاعات مشتری:</h4>
+        <div style="font-size:13px; line-height:1.9;">
+          <div><strong>نام:</strong> ${c.name || '-'}</div>
+          <div><strong>موبایل:</strong> <span style="direction:ltr;">${c.phone || '-'}</span></div>
+          ${c.province ? `<div><strong>استان:</strong> ${c.province}</div>` : ''}
+          ${c.city ? `<div><strong>شهر:</strong> ${c.city}</div>` : ''}
+          ${c.address ? `<div><strong>آدرس:</strong> ${c.address}</div>` : ''}
+          ${c.postalCode ? `<div><strong>کد پستی:</strong> <span style="direction:ltr;">${c.postalCode}</span></div>` : ''}
+        </div>
+      </div>
+
+      <h4 style="font-size:13px; margin-bottom:10px;">📦 محصولات:</h4>
+      ${itemsHtml || '<p style="color:#999; text-align:center;">محصولی ثبت نشده</p>'}
+
+      <div style="margin-top:15px; padding-top:12px; border-top:2px solid #f0f0f0; display:flex; justify-content:space-between;">
+        <span style="font-weight:700;">جمع کل:</span>
+        <strong style="color:#27ae60; font-size:17px;">${Number(o.amount || 0).toLocaleString('fa-IR')} تومان</strong>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
 // ============================================
 // 🎟️ کد تخفیف
 // ============================================
