@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پرداخت | بانه بابا</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .checkout-page { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .checkout-section {
+      background: white; border-radius: 16px; padding: 25px;
+      margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .checkout-section h3 {
+      font-size: 18px; margin-bottom: 18px; color: #333;
+      padding-bottom: 12px; border-bottom: 2px solid #f0f0f0;
+    }
+    .card-info-box {
+      background: linear-gradient(135deg, #004E89, #0066b3);
+      color: white; padding: 20px; border-radius: 14px;
+      margin-bottom: 20px;
+    }
+    .card-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.15);
+      font-size: 14px; gap: 10px;
+    }
+    .card-row:last-child { border-bottom: none; }
+    .card-row strong { font-size: 15px; letter-spacing: 1px; direction: ltr; }
+    .card-row .highlight { color: #FFB800; font-size: 18px !important; }
+    .summary-final { background: #f9f9f9; border-radius: 12px; padding: 18px; }
+    .summary-final .row {
+      display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px;
+    }
+    .summary-final .row.total {
+      border-top: 2px solid #FF6B35; margin-top: 10px; padding-top: 14px;
+      font-size: 18px; font-weight: 700;
+    }
+    .summary-final .row.total strong { color: #27ae60; font-size: 22px; }
+    @media (max-width: 600px) {
+      .card-row { flex-direction: column; align-items: flex-start; }
+      .card-row strong { text-align: right; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <div class="user-actions">
+        <button class="cart-btn" onclick="window.location.href='cart.html'">
+          🛒 <span class="cart-text">سبد</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="userBtn">👤 <span class="register-text">ورود</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="checkout-page">
+    <h1 style="font-size: 26px; margin-bottom: 25px; color: #333;">💳 تکمیل خرید</h1>
+
+    <form id="checkoutForm">
+      <!-- اطلاعات ارسال -->
+      <div class="checkout-section">
+        <h3>📍 اطلاعات ارسال</h3>
+        <div class="form-group">
+          <label>نام و نام خانوادگی *</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+          <label>شماره موبایل *</label>
+          <input type="tel" id="phone" required maxlength="11">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>استان *</label>
+            <input type="text" id="province" required>
+          </div>
+          <div class="form-group">
+            <label>شهر *</label>
+            <input type="text" id="city" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>آدرس کامل *</label>
+          <textarea id="address" rows="2" required style="width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;font-family:inherit;direction:rtl;background:#fafafa;resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+          <label>کد پستی</label>
+          <input type="text" id="postalCode" maxlength="10">
+        </div>
+      </div>
+
+      <!-- پرداخت -->
+      <div class="checkout-section">
+        <h3>💳 پرداخت کارت به کارت</h3>
+        <div class="card-info-box">
+          <div class="card-row"><span>شماره کارت:</span><strong>6219-8618-2849-2446</strong></div>
+          <div class="card-row"><span>به نام:</span><strong style="direction:rtl;letter-spacing:0;">حسن نادریان</strong></div>
+          <div class="card-row"><span>مبلغ قابل پرداخت:</span><strong class="highlight" id="cardAmount">۰ تومان</strong></div>
+        </div>
+        <div class="form-group">
+          <label>شماره پیگیری تراکنش *</label>
+          <input type="text" id="trackingCode" placeholder="شماره پیگیری را وارد کنید" required>
+        </div>
+      </div>
+
+      <!-- خلاصه -->
+      <div class="checkout-section">
+        <h3>💰 خلاصه سفارش</h3>
+        <div class="summary-final">
+          <div class="row"><span>جمع کل:</span><strong id="subTotal">۰ تومان</strong></div>
+          <div class="row" id="discountRow" style="display:none;"><span>تخفیف:</span><strong style="color:#e74c3c;" id="discountAmount">- ۰ تومان</strong></div>
+          <div class="row total"><span>قابل پرداخت:</span><strong id="finalTotal">۰ تومان</strong></div>
+        </div>
+        <button type="submit" id="submitBtn" style="width:100%; background:#FF6B35; color:white; border:none; padding:16px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:20px;">
+          ✅ تأیید و ثبت سفارش
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <footer class="main-footer">
+    <div class="footer-bottom" style="margin-top:0; padding-top:0; border:none;">
+      <p>© ۱۴۰۳ بانه بابا</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_URL = 'https://banehbaba-backend.vercel.app/api';
+    let cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
+    let checkoutInfo = JSON.parse(localStorage.getItem('banehbaba_checkout') || '{}');
+    const token = localStorage.getItem('banehbaba_token');
+    const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+
+    if (!token || !user) {
+      window.location.replace('user-login.html');
+    }
+
+    if (cart.length === 0) {
+      window.location.replace('cart.html');
+    }
+
+    function formatPrice(n) { return Number(n).toLocaleString('fa-IR') + ' تومان'; }
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.className = 'toast show ' + type;
+      setTimeout(() => t.className = 'toast ' + type, 2500);
+    }
+    function getPersianDate() {
+      return new Date().toLocaleDateString('fa-IR', { year:'numeric', month:'long', day:'numeric' });
+    }
+    function getPersianDateShort() {
+      return new Date().toLocaleDateString('fa-IR', { year:'numeric', month:'2-digit', day:'2-digit' });
+    }
+    function getPersianDateTime() {
+      return new Date().toLocaleString('fa-IR', { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    }
+    function getPersianTime() {
+      return new Date().toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function renderSummary() {
+      const subTotal = checkoutInfo.subtotal || cart.reduce((s,i) => s + i.price*i.quantity, 0);
+      const discount = checkoutInfo.discount || 0;
+      const finalTotal = Math.max(0, subTotal - discount);
+
+      document.getElementById('subTotal').textContent = formatPrice(subTotal);
+      document.getElementById('finalTotal').textContent = formatPrice(finalTotal);
+      document.getElementById('cardAmount').textContent = formatPrice(finalTotal);
+
+      if (discount > 0) {
+        document.getElementById('discountRow').style.display = 'flex';
+        document.getElementById('discountAmount').textContent = '- ' + formatPrice(discount);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSummary();
+      document.getElementById('cartBadge').textContent = cart.reduce((s,i)=>s+i.quantity,0).toLocaleString('fa-IR');
+
+      // پر کردن اطلاعات کاربر
+      if (user) {
+        document.getElementById('name').value = user.name || '';
+        document.getElementById('phone').value = user.phone || '';
+        document.getElementById('province').value = user.province || '';
+        document.getElementById('city').value = user.city || '';
+        document.getElementById('address').value = user.address || '';
+        document.getElementById('postalCode').value = user.postalCode || '';
+      }
+
+      // دکمه کاربر
+      const userBtn = document.getElementById('userBtn');
+      const rt = userBtn.querySelector('.register-text');
+      if (rt) rt.textContent = user.name.split(' ')[0];
+      userBtn.onclick = () => window.location.href = 'user-account.html';
+
+      // فرم
+      document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ در حال ثبت...';
+
+        const subTotal = checkoutInfo.subtotal || cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        const discount = checkoutInfo.discount || 0;
+        const finalTotal = Math.max(0, subTotal - discount);
+
+        const order = {
+          trackingCode: document.getElementById('trackingCode').value.trim(),
+          date: getPersianDate(),
+          dateTime: getPersianDateTime(),
+          shortDate: getPersianDateShort(),
+          time: getPersianTime(),
+          amount: finalTotal,
+          subtotal: subTotal,
+          discount,
+          couponCode: checkoutInfo.couponCode || null,
+          items: [...cart],
+          customer: {
+            name: document.getElementById('name').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            province: document.getElementById('province').value.trim(),
+            city: document.getElementById('city').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            postalCode: document.getElementById('postalCode').value.trim()
+          },
+          user: { id: user.id, name: user.name, phone: user.phone }
+        };
+
+        if (!order.trackingCode || order.trackingCode.length < 5) {
+          showToast('شماره پیگیری معتبر نیست', 'error');
+          btn.disabled = false;
+          btn.textContent = '✅ تأیید و ثبت سفارش';
+          return;
+        }
+
+        try {
+          const r = await fetch(API_URL + '/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify(order)
+          });
+          const d = await r.json();
+
+          if (d.success) {
+            // نمایش موفقیت
+            showSuccess(order.trackingCode, finalTotal);
+            cart = [];
+            localStorage.setItem('banehbaba_cart', JSON.stringify([]));
+            localStorage.removeItem('banehbaba_checkout');
+          } else {
+            showToast(d.error || 'خطا در ثبت سفارش', 'error');
+            btn.disabled = false;
+            btn.textContent = '✅ تأیید و ثبت سفارش';
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('خطا در ارتباط با سرور', 'error');
+          btn.disabled = false;
+          btn.textContent = '✅ تأیید و ثبت سفارش';
+        }
+      });
+    });
+
+    function showSuccess(trackingCode, amount) {
+      const box = document.createElement('div');
+      box.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px;';
+      box.innerHTML = `
+        <div style="background:white; border-radius:20px; padding:35px 25px; max-width:420px; width:100%; text-align:center;">
+          <div style="font-size:70px; margin-bottom:15px;">🎉</div>
+          <h2 style="font-size:22px; color:#27ae60; margin-bottom:10px;">سفارش شما ثبت شد!</h2>
+          <p style="font-size:14px; color:#666; margin-bottom:25px;">از خرید شما سپاسگزاریم</p>
+          <div style="background:#f9f9f9; border-radius:12px; padding:20px; margin-bottom:20px; text-align:right;">
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e0e0e0;">
+              <span style="color:#777; font-size:13px;">کد پیگیری:</span>
+              <strong style="color:#FF6B35; font-size:16px; direction:ltr;">${trackingCode}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0;">
+              <span style="color:#777; font-size:13px;">مبلغ:</span>
+              <strong style="color:#27ae60; font-size:15px;">${Number(amount).toLocaleString('fa-IR')} تومان</strong>
+            </div>
+          </div>
+          <div style="background:#fff9e6; border-right:3px solid #FFB800; padding:12px; border-radius:8px; margin-bottom:20px; text-align:right;">
+            <p style="font-size:12px; color:#666; line-height:1.7; margin:0;">
+              📌 کد پیگیری را نزد خود نگه دارید.<br>
+              📞 پشتیبانی: <strong>09029885583</strong>
+            </p>
+          </div>
+          <a href="user-account.html" style="display:block; width:100%; background:#27ae60; color:white; border:none; padding:14px; border-radius:10px; font-size:15px; font-weight:600; text-decoration:none; margin-bottom:10px;">📦 مشاهده سفارشات من</a>
+          <a href="index.html" style="display:block; color:#777; text-decoration:none; font-size:13px;">← بازگشت به فروشگاه</a>
+        </div>
+      `;
+      document.body.appendChild(box);
+      document.body.style.overflow = 'hidden';
+    }
+  </script>
+
+</body>
+</html>
