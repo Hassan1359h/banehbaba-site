@@ -473,19 +473,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ============================================
   // 👤 دکمه ثبت‌نام/ورود
   // ============================================
-  const registerBtn = document.getElementById('registerBtn');
-  if (registerBtn) {
-    registerBtn.addEventListener('click', () => {
-      if (currentUser) {
-        if (confirm(`خوش آمدید ${currentUser.name} 👋\n\nمی‌خواید از حساب خارج بشید؟`)) {
-          localStorage.removeItem('banehbaba_user');
-          currentUser = null;
-          location.reload();
-        }
-        return;
-      }
-      openModal('loginModal');
+  const userBtn = document.getElementById('userBtn');
+if (userBtn) {
+  // اگه کاربر لاگین هست، بره داشبورد
+  const token = localStorage.getItem('banehbaba_token');
+  const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+  
+  if (token && user) {
+    userBtn.addEventListener('click', () => {
+      window.location.href = 'user-account.html';
     });
+    const regText = userBtn.querySelector('.register-text');
+    if (regText) regText.textContent = user.name.split(' ')[0];
+  } else {
+    userBtn.addEventListener('click', () => {
+      window.location.href = 'user-login.html';
+    });
+  }
+}
     
     // اگه کاربر قبلاً لاگین کرده، اسمش رو نشون بده
     if (currentUser) {
