@@ -15,17 +15,14 @@
         <span class="logo-icon">🏪</span>
         <span class="logo-text">بانه بابا</span>
       </a>
-
       <button class="menu-toggle" id="menuToggle">☰</button>
-
       <nav class="main-nav" id="mainNav">
         <a href="index.html" class="nav-link">🏠 خانه</a>
-        <a href="index.html" class="nav-link">📦 محصولات</a>
+        <a href="cart.html" class="nav-link">🛒 سبد خرید</a>
       </nav>
-
       <div class="user-actions">
-        <button class="cart-btn" onclick="window.location.href='index.html'">
-          🛒 <span class="cart-text">سبد خرید</span>
+        <button class="cart-btn" onclick="window.location.href='cart.html'">
+          🛒 <span class="cart-text">سبد</span>
           <span class="badge" id="cartBadge">۰</span>
         </button>
         <button class="register-btn" id="userBtn">
@@ -36,38 +33,32 @@
   </header>
 
   <section style="max-width: 1100px; margin: 30px auto; padding: 0 20px;">
-
     <div style="background: linear-gradient(135deg, #FF6B35, #004E89); color: white; padding: 30px 25px; border-radius: 20px; margin-bottom: 25px;">
       <h1 style="font-size: 24px; margin-bottom: 8px;">👋 خوش آمدید، <span id="userName">کاربر</span></h1>
       <p style="opacity: 0.9; font-size: 14px;">به پنل کاربری خود خوش آمدید</p>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
-      
       <div class="account-stat" onclick="filterOrders('all')">
         <div style="font-size: 32px;">📦</div>
         <div class="stat-num" style="color: #FF6B35;" id="statTotalOrders">۰</div>
         <div class="stat-label">کل سفارشات</div>
       </div>
-
       <div class="account-stat" onclick="filterOrders('pending')">
         <div style="font-size: 32px;">⏳</div>
         <div class="stat-num" style="color: #f39c12;" id="statPending">۰</div>
         <div class="stat-label">در حال پردازش</div>
       </div>
-
       <div class="account-stat" onclick="filterOrders('shipped')">
         <div style="font-size: 32px;">🚚</div>
         <div class="stat-num" style="color: #3498db;" id="statShipped">۰</div>
         <div class="stat-label">ارسال شده</div>
       </div>
-
       <div class="account-stat" onclick="filterOrders('delivered')">
         <div style="font-size: 32px;">✅</div>
         <div class="stat-num" style="color: #27ae60;" id="statDelivered">۰</div>
         <div class="stat-label">تحویل داده شده</div>
       </div>
-
     </div>
 
     <div class="tabs-bar">
@@ -78,7 +69,6 @@
     </div>
 
     <div id="tabContent"></div>
-
   </section>
 
   <footer class="main-footer">
@@ -117,19 +107,9 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-    .account-stat:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-    }
-    .stat-num {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 8px 0 5px;
-    }
-    .stat-label {
-      font-size: 13px;
-      color: #777;
-    }
+    .account-stat:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+    .stat-num { font-size: 24px; font-weight: 700; margin: 8px 0 5px; }
+    .stat-label { font-size: 13px; color: #777; }
     .tabs-bar {
       background: white;
       border-radius: 16px;
@@ -155,10 +135,7 @@
       transition: all 0.3s;
     }
     .tab-btn:hover { background: #f5f5f5; }
-    .tab-btn.active {
-      background: #FF6B35;
-      color: white;
-    }
+    .tab-btn.active { background: #FF6B35; color: white; }
     .order-card {
       background: white;
       border-radius: 16px;
@@ -169,98 +146,39 @@
       transition: all 0.3s;
       border-right: 4px solid #FF6B35;
     }
-    .order-card:hover {
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      transform: translateY(-3px);
-    }
-    .order-status {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .order-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); transform: translateY(-3px); }
+    .order-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .status-pending { background: #fff5e6; color: #f39c12; }
     .status-shipped { background: #e3f0fa; color: #3498db; }
     .status-delivered { background: #e8f7ee; color: #27ae60; }
     .status-cancelled { background: #fde8e8; color: #e74c3c; }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 14px;
-    }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
     .info-row:last-child { border-bottom: none; }
     .info-row span { color: #777; }
     .info-row strong { color: #333; }
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    .empty-state { text-align: center; padding: 60px 20px; background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .empty-state .icon { font-size: 60px; margin-bottom: 15px; opacity: 0.4; }
+    .empty-state h3 { font-size: 18px; color: #333; margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; color: #777; margin-bottom: 20px; }
+    .btn-orange { display: inline-block; background: #FF6B35; color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; font-family: inherit; font-size: 14px; }
+    .btn-danger { width: 100%; background: #fde8e8; color: #e74c3c; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-orange-full { width: 100%; background: #FF6B35; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-bottom: 10px; }
+    .edit-form-group { margin-bottom: 15px; }
+    .edit-form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
+    .edit-form-group input, .edit-form-group select, .edit-form-group textarea {
+      width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 10px;
+      font-size: 14px; font-family: inherit; direction: rtl; background: #fafafa;
     }
-    .empty-state .icon {
-      font-size: 60px;
-      margin-bottom: 15px;
-      opacity: 0.4;
-    }
-    .empty-state h3 {
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 8px;
-    }
-    .empty-state p {
-      font-size: 14px;
-      color: #777;
-      margin-bottom: 20px;
-    }
-    .btn-orange {
-      display: inline-block;
-      background: #FF6B35;
-      color: white;
-      padding: 12px 25px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 14px;
-    }
-    .btn-danger {
-      width: 100%;
-      background: #fde8e8;
-      color: #e74c3c;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .btn-orange-full {
-      width: 100%;
-      background: #FF6B35;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      margin-bottom: 10px;
+    .edit-form-group input:focus, .edit-form-group select:focus, .edit-form-group textarea:focus {
+      outline: none; border-color: #FF6B35; background: white;
     }
   </style>
 
   <script>
     const API_URL = 'https://banehbaba-backend.vercel.app/api';
 
-    const token = localStorage.getItem('banehbaba_token');
-    const user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
+    let token = localStorage.getItem('banehbaba_token');
+    let user = JSON.parse(localStorage.getItem('banehbaba_user') || 'null');
 
     if (!token || !user) {
       window.location.replace('user-login.html');
@@ -271,10 +189,17 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('userName').textContent = user.name || 'کاربر';
+      updateCartBadge();
       await loadOrders();
       updateStats();
       switchTab('orders');
     });
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('banehbaba_cart') || '[]');
+      const b = document.getElementById('cartBadge');
+      if (b) b.textContent = cart.reduce((s,i)=>s+i.quantity,0).toLocaleString('fa-IR');
+    }
 
     async function loadOrders() {
       try {
@@ -283,9 +208,7 @@
         });
         const data = await response.json();
         if (data.success) orders = data.orders || [];
-      } catch (err) {
-        console.error('خطا:', err);
-      }
+      } catch (err) { console.error(err); }
     }
 
     function updateStats() {
@@ -299,25 +222,17 @@
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
       });
-      
       const content = document.getElementById('tabContent');
-      
       if (tab === 'orders') content.innerHTML = renderOrders();
       else if (tab === 'profile') content.innerHTML = renderProfile();
       else if (tab === 'track') content.innerHTML = renderTrack();
       else if (tab === 'rewards') content.innerHTML = renderRewards();
     }
 
-    function filterOrders(filter) {
-      currentFilter = filter;
-      switchTab('orders');
-    }
+    function filterOrders(filter) { currentFilter = filter; switchTab('orders'); }
 
     function renderOrders() {
-      let list = currentFilter === 'all' 
-        ? orders 
-        : orders.filter(o => o.status === currentFilter);
-      
+      let list = currentFilter === 'all' ? orders : orders.filter(o => o.status === currentFilter);
       if (list.length === 0) {
         return `
           <div class="empty-state">
@@ -325,20 +240,14 @@
             <h3>هنوز سفارشی ندارید</h3>
             <p>وقتی خرید کنید، سفارشات اینجا نمایش داده می‌شوند</p>
             <a href="index.html" class="btn-orange">🛍️ شروع خرید</a>
-          </div>
-        `;
+          </div>`;
       }
-      
       return list.map(order => {
         const statusText = {
-          pending: 'در حال پردازش',
-          shipped: 'ارسال شده',
-          delivered: 'تحویل داده شده',
-          cancelled: 'لغو شده'
+          pending: 'در حال پردازش', shipped: 'ارسال شده',
+          delivered: 'تحویل داده شده', cancelled: 'لغو شده'
         }[order.status] || 'در حال پردازش';
-        
         const statusClass = 'status-' + (order.status || 'pending');
-        
         return `
           <div class="order-card" onclick="showOrderDetails(${order.id})">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -347,17 +256,12 @@
               </div>
               <span class="order-status ${statusClass}">${statusText}</span>
             </div>
-            <div style="font-size: 13px; color: #777; margin-bottom: 10px;">
-              📅 ${order.date || order.shortDate || '-'}
-            </div>
+            <div style="font-size: 13px; color: #777; margin-bottom: 10px;">📅 ${order.date || order.shortDate || '-'}</div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div style="font-size: 14px; color: #777;">${(order.items || []).length} محصول</div>
-              <div style="font-weight: 700; color: #004E89; font-size: 16px;">
-                ${Number(order.amount || 0).toLocaleString('fa-IR')} تومان
-              </div>
+              <div style="font-weight: 700; color: #004E89; font-size: 16px;">${Number(order.amount || 0).toLocaleString('fa-IR')} تومان</div>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
@@ -365,7 +269,6 @@
       return `
         <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);">
           <h2 style="font-size: 20px; margin-bottom: 20px; color: #333;">👤 اطلاعات من</h2>
-          
           <div style="margin-bottom: 25px;">
             <div class="info-row"><span>نام و نام خانوادگی</span><strong>${user.name || '-'}</strong></div>
             <div class="info-row"><span>شماره موبایل</span><strong style="direction:ltr;">${user.phone || '-'}</strong></div>
@@ -374,8 +277,7 @@
             <div class="info-row"><span>آدرس</span><strong style="text-align:left; max-width:60%;">${user.address || '-'}</strong></div>
             <div class="info-row"><span>کد پستی</span><strong style="direction:ltr;">${user.postalCode || '-'}</strong></div>
           </div>
-          
-          <button onclick="alert('به‌زودی')" class="btn-orange-full">✏️ ویرایش اطلاعات</button>
+          <button onclick="openEditModal()" class="btn-orange-full">✏️ ویرایش اطلاعات</button>
           <button onclick="logout()" class="btn-danger">🚪 خروج از حساب</button>
         </div>
       `;
@@ -395,42 +297,24 @@
           <div style="font-size: 60px; margin-bottom: 15px;">🔍</div>
           <h2 style="font-size: 20px; margin-bottom: 10px; color: #333;">پیگیری سفارش</h2>
           <p style="color: #777; font-size: 14px; margin-bottom: 25px;">کد پیگیری سفارش خود را وارد کنید</p>
-          
           <input type="text" id="trackCode" placeholder="TEST12345" style="width:100%; max-width:300px; padding:15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; text-align:center; direction:ltr; margin-bottom:15px;">
-          
           <br>
-          
           <button onclick="trackOrder()" class="btn-orange" style="padding: 14px 40px;">🔍 جستجو</button>
-          
           <div id="trackResult" style="margin-top: 25px; text-align: right;"></div>
-        </div>
-      `;
+        </div>`;
     }
 
     async function trackOrder() {
       const code = document.getElementById('trackCode').value.trim();
       const result = document.getElementById('trackResult');
-      
-      if (!code) {
-        result.innerHTML = '<p style="color:#e74c3c; text-align:center;">لطفاً کد پیگیری را وارد کنید</p>';
-        return;
-      }
-      
+      if (!code) { result.innerHTML = '<p style="color:#e74c3c; text-align:center;">لطفاً کد پیگیری را وارد کنید</p>'; return; }
       result.innerHTML = '<p style="text-align:center; color:#777;">⏳ در حال جستجو...</p>';
-      
       try {
         const response = await fetch(API_URL + '/track/' + code);
         const data = await response.json();
-        
         if (data.success) {
           const order = data.order;
-          const statusText = {
-            pending: 'در حال پردازش',
-            shipped: 'ارسال شده',
-            delivered: 'تحویل داده شده',
-            cancelled: 'لغو شده'
-          }[order.status] || 'در حال پردازش';
-          
+          const statusText = { pending: 'در حال پردازش', shipped: 'ارسال شده', delivered: 'تحویل داده شده', cancelled: 'لغو شده' }[order.status] || 'در حال پردازش';
           result.innerHTML = `
             <div style="background: #f9f9f9; border-radius: 12px; padding: 20px;">
               <div class="info-row"><span>وضعیت:</span><strong>${statusText}</strong></div>
@@ -438,8 +322,7 @@
               <div class="info-row"><span>تاریخ:</span><strong>${order.date || '-'}</strong></div>
               <div class="info-row"><span>مبلغ:</span><strong>${Number(order.amount).toLocaleString('fa-IR')} تومان</strong></div>
               ${order.postalTrackingCode ? `<div class="info-row"><span>کد رهگیری پستی:</span><strong style="direction:ltr;">${order.postalTrackingCode}</strong></div>` : ''}
-            </div>
-          `;
+            </div>`;
         } else {
           result.innerHTML = `<p style="color:#e74c3c; text-align:center;">❌ ${data.error || 'سفارش یافت نشد'}</p>`;
         }
@@ -448,20 +331,52 @@
       }
     }
 
-    function renderRewards() {
-      return `
+    async function renderRewards() {
+      // برای الان به‌زودی
+      const content = document.getElementById('tabContent');
+      content.innerHTML = `
         <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center;">
           <div style="font-size: 60px; margin-bottom: 15px; opacity:0.4;">🎁</div>
-          <h2 style="font-size: 20px; margin-bottom: 10px; color: #333;">جوایز و کدهای تخفیف</h2>
-          <p style="color: #777;">به‌زودی...</p>
-        </div>
-      `;
+          <h2 style="font-size: 20px; margin-bottom: 10px; color: #333;">جوایز من</h2>
+          <p style="color: #777;">⏳ در حال بارگذاری...</p>
+        </div>`;
+      
+      try {
+        const r = await fetch(API_URL + '/rewards/my', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const d = await r.json();
+        
+        if (d.success && d.rewards && d.rewards.length > 0) {
+          content.innerHTML = `
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);">
+              <h2 style="font-size: 20px; margin-bottom: 20px; color: #333;">🎁 جوایز من</h2>
+              ${d.rewards.map(r => `
+                <div style="background: linear-gradient(135deg, #fff9e6, #fff5f0); border-right: 4px solid #FFB800; padding: 18px; border-radius: 12px; margin-bottom: 12px;">
+                  <div style="font-weight: 700; color: #FF6B35; font-size: 16px; direction: ltr;">${r.code}</div>
+                  <div style="font-size: 13px; color: #777; margin-top: 6px;">${r.description || ''}</div>
+                  <div style="font-weight: 700; color: #27ae60; font-size: 18px; margin-top: 8px;">
+                    ${Number(r.value).toLocaleString('fa-IR')}${r.type === 'cash' ? ' تومان' : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>`;
+        } else {
+          content.innerHTML = `
+            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center;">
+              <div style="font-size: 60px; margin-bottom: 15px; opacity:0.4;">🎁</div>
+              <h2 style="font-size: 20px; margin-bottom: 10px; color: #333;">جوایز من</h2>
+              <p style="color: #777;">هنوز جایزه‌ای ندارید</p>
+            </div>`;
+        }
+      } catch (e) {
+        content.innerHTML = '<div style="text-align:center; padding:40px;">خطا در بارگذاری</div>';
+      }
     }
 
     function showOrderDetails(orderId) {
       const order = orders.find(o => o.id === orderId);
       if (!order) return;
-      
       const itemsHtml = (order.items || []).map(item => `
         <div style="display: flex; gap: 10px; align-items: center; padding: 10px; background: #f9f9f9; border-radius: 8px; margin-bottom: 8px;">
           <div style="font-size: 24px;">${item.image ? `<img src="${item.image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;">` : '📦'}</div>
@@ -469,12 +384,8 @@
             <div style="font-weight: 600; font-size: 14px;">${item.name}</div>
             <div style="font-size: 12px; color: #777;">تعداد: ${item.quantity}</div>
           </div>
-          <div style="font-size: 13px; color: #004E89; font-weight: 600;">
-            ${Number(item.price * item.quantity).toLocaleString('fa-IR')} تومان
-          </div>
-        </div>
-      `).join('');
-      
+          <div style="font-size: 13px; color: #004E89; font-weight: 600;">${Number(item.price * item.quantity).toLocaleString('fa-IR')} تومان</div>
+        </div>`).join('');
       const modal = document.createElement('div');
       modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;';
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
@@ -484,20 +395,150 @@
             <h3 style="font-size:18px;">📦 جزئیات سفارش</h3>
             <button onclick="this.closest('div[style*=\\'fixed\\']').remove()" style="background:#f0f0f0; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">✕</button>
           </div>
-          
           <div class="info-row"><span>کد پیگیری:</span><strong style="direction:ltr;">${order.trackingCode}</strong></div>
           <div class="info-row"><span>تاریخ:</span><strong>${order.date || '-'}</strong></div>
-          
           <h4 style="margin: 20px 0 10px; font-size: 15px;">محصولات:</h4>
           ${itemsHtml}
-          
           <div style="margin-top:20px; padding-top:15px; border-top:2px solid #f0f0f0; display:flex; justify-content:space-between;">
             <span style="font-weight:600;">جمع کل:</span>
             <strong style="color:#27ae60; font-size:18px;">${Number(order.amount).toLocaleString('fa-IR')} تومان</strong>
           </div>
-        </div>
-      `;
+        </div>`;
       document.body.appendChild(modal);
+    }
+
+    // ============================================
+    // ✏️ ویرایش پروفایل
+    // ============================================
+    function openEditModal() {
+      const modal = document.createElement('div');
+      modal.id = 'editModal';
+      modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:15px; overflow-y:auto;';
+      modal.innerHTML = `
+        <div style="background:white; border-radius:20px; padding:25px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="font-size:18px;">✏️ ویرایش اطلاعات</h3>
+            <button onclick="document.getElementById('editModal').remove()" style="background:#f0f0f0; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">✕</button>
+          </div>
+
+          <div class="edit-form-group">
+            <label>نام و نام خانوادگی</label>
+            <input type="text" id="editName" value="${user.name || ''}">
+          </div>
+
+          <div class="edit-form-group">
+            <label>شماره موبایل (غیرقابل تغییر)</label>
+            <input type="tel" id="editPhone" value="${user.phone || ''}" disabled style="background:#f0f0f0;">
+          </div>
+
+          <div class="edit-form-group">
+            <label>استان</label>
+            <select id="editProvince">
+              <option value="">— انتخاب کنید —</option>
+              <option value="آذربایجان شرقی">آذربایجان شرقی</option>
+              <option value="آذربایجان غربی">آذربایجان غربی</option>
+              <option value="اردبیل">اردبیل</option>
+              <option value="اصفهان">اصفهان</option>
+              <option value="البرز">البرز</option>
+              <option value="ایلام">ایلام</option>
+              <option value="بوشهر">بوشهر</option>
+              <option value="تهران">تهران</option>
+              <option value="چهارمحال و بختیاری">چهارمحال و بختیاری</option>
+              <option value="خراسان جنوبی">خراسان جنوبی</option>
+              <option value="خراسان رضوی">خراسان رضوی</option>
+              <option value="خراسان شمالی">خراسان شمالی</option>
+              <option value="خوزستان">خوزستان</option>
+              <option value="زنجان">زنجان</option>
+              <option value="سمنان">سمنان</option>
+              <option value="سیستان و بلوچستان">سیستان و بلوچستان</option>
+              <option value="فارس">فارس</option>
+              <option value="قزوین">قزوین</option>
+              <option value="قم">قم</option>
+              <option value="کردستان">کردستان</option>
+              <option value="کرمان">کرمان</option>
+              <option value="کرمانشاه">کرمانشاه</option>
+              <option value="کهگیلویه و بویراحمد">کهگیلویه و بویراحمد</option>
+              <option value="گلستان">گلستان</option>
+              <option value="گیلان">گیلان</option>
+              <option value="لرستان">لرستان</option>
+              <option value="مازندران">مازندران</option>
+              <option value="مرکزی">مرکزی</option>
+              <option value="هرمزگان">هرمزگان</option>
+              <option value="همدان">همدان</option>
+              <option value="یزد">یزد</option>
+            </select>
+          </div>
+
+          <div class="edit-form-group">
+            <label>شهر</label>
+            <input type="text" id="editCity" value="${user.city || ''}" placeholder="مثلاً: بانه">
+          </div>
+
+          <div class="edit-form-group">
+            <label>آدرس کامل</label>
+            <textarea id="editAddress" rows="3" placeholder="خیابان، کوچه، پلاک، واحد">${user.address || ''}</textarea>
+          </div>
+
+          <div class="edit-form-group">
+            <label>کد پستی</label>
+            <input type="text" id="editPostalCode" value="${user.postalCode || ''}" maxlength="10">
+          </div>
+
+          <button onclick="saveProfile()" id="saveBtn" class="btn-orange-full" style="margin-top:10px;">
+            💾 ذخیره تغییرات
+          </button>
+        </div>`;
+      document.body.appendChild(modal);
+      document.getElementById('editProvince').value = user.province || '';
+    }
+
+    async function saveProfile() {
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ در حال ذخیره...';
+
+      const data = {
+        name: document.getElementById('editName').value.trim(),
+        province: document.getElementById('editProvince').value,
+        city: document.getElementById('editCity').value.trim(),
+        address: document.getElementById('editAddress').value.trim(),
+        postalCode: document.getElementById('editPostalCode').value.trim()
+      };
+
+      if (!data.name) {
+        alert('نام را وارد کنید');
+        btn.disabled = false;
+        btn.textContent = '💾 ذخیره تغییرات';
+        return;
+      }
+
+      try {
+        const r = await fetch(API_URL + '/users/me', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(data)
+        });
+        const d = await r.json();
+
+        if (d.success) {
+          const newUser = { ...user, ...data };
+          localStorage.setItem('banehbaba_user', JSON.stringify(newUser));
+          alert('✅ اطلاعات ذخیره شد');
+          document.getElementById('editModal').remove();
+          location.reload();
+        } else {
+          alert('خطا: ' + (d.error || 'مشکل در ذخیره'));
+          btn.disabled = false;
+          btn.textContent = '💾 ذخیره تغییرات';
+        }
+      } catch (e) {
+        alert('خطا در ارتباط با سرور');
+        btn.disabled = false;
+        btn.textContent = '💾 ذخیره تغییرات';
+      }
     }
 
     document.getElementById('menuToggle')?.addEventListener('click', () => {
