@@ -6,102 +6,69 @@
   <title>بانه بابا | فروشگاه آنلاین</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- ============ استایل اسلایدر ============ -->
+  <style>
+    .hero-slider {
+      position: relative;
+      width: 100%;
+      height: 300px; /* ارتفاع اسلایدر - میتونید تغییر بدید */
+      overflow: hidden;
+      margin-bottom: 20px; /* فاصله از بخش‌های بعدی سایت */
+    }
+    .hero-slider .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* جلوگیری از کشیده شدن عکس */
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .hero-slider .slide.active {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ============ HEADER ============ -->
-
+  <!-- ============ هدر سایت (کدهای خودتون رو اینجا نگه دارید) ============ -->
   <header class="main-header">
-  <div class="header-container">
-    <a href="index.html" class="logo">
-      <span class="logo-icon">🏪</span>
-      <span class="logo-text">بانه بابا</span>
-    </a>
-
-    <button class="menu-toggle" id="menuToggle">☰</button>
-
-    <nav class="main-nav" id="mainNav">
-      <a href="index.html" class="nav-link">🏠 خانه</a>
-      <a href="cart.html" class="nav-link">🛒 سبد خرید</a>
-    </nav>
-
-    <div class="user-actions">
-      <button class="cart-btn" id="cartBtn">
-        🛒 <span class="cart-text">سبد خرید</span>
-        <span class="badge" id="cartBadge">۰</span>
-      </button>
-      <button class="register-btn" id="userBtn">
-        👤 <span class="register-text">ورود / ثبت‌نام</span>
-      </button>
+    <div class="header-container">
+      <!-- کدهای هدر شما اینجا قرار میگیره -->
     </div>
+  </header>
+
+  <!-- ============ اسلایدر جدید (جایگزین بنر قدیمی) ============ -->
+  <!-- کد <section class="hero"> قدیمی رو حذف کنید و این رو جاش بذارید -->
+  <div class="hero-slider">
+    <img class="slide active" src="لینک-عکس-کوهنوردی" alt="لوازم کوهنوردی و کمپینگ">
+    <img class="slide" src="لینک-عکس-لوازم-خانگی" alt="لوازم خانگی">
+    <img class="slide" src="لینک-عکس-زیبایی" alt="لوازم زیبایی و سلامت">
   </div>
-</header>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>به بانه بابا خوش آمدید 🎉</h1>
-      <p>بهترین محصولات با بهترین قیمت، ارسال رایگان به سراسر کشور</p>
-      <button class="hero-btn" onclick="scrollToProducts()">مشاهده محصولات</button>
-    </div>
-  </section>
-  <!-- ============ دسته‌بندی دایره‌ای ============ -->
-<section class="categories-section">
-  <div class="section-header">
-    <h2>📂 خرید بر اساس دسته‌بندی</h2>
-    <p>دسته مورد نظر را انتخاب کنید</p>
-  </div>
-  <div class="categories-circles" id="categoriesCircles">
-    <!-- با JS پر میشه -->
-  </div>
-</section>
-  
-  <!-- ============ محصولات ============ -->
-  <section class="products-section" id="productsSection">
-    <div class="section-header">
-      <h2>محصولات ویژه ⭐</h2>
-      <p>جدیدترین و پرطرفدارترین کالاها</p>
-    </div>
-    <div class="products-grid" id="productsGrid"></div>
-  </section>
+  <!-- ============ ادامه محتوای سایت شما ============ -->
+  <!-- بخش‌های "خرید بر اساس دسته‌بندی" و بقیه کدها اینجا قرار میگیرن -->
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="main-footer">
-    <div class="footer-content">
-      <div class="footer-col">
-        <h3>🏪 بانه بابا</h3>
-        <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
-        <p style="margin-top: 10px; font-size: 13px;">📍 کردستان، بانه، میدان چومان</p>
-        <p style="font-size: 13px;">📞 ۰۹۰۲۹۸۸۵۵۸۳</p>
-      </div>
-      <div class="footer-col">
-        <h4>لینک‌های سریع</h4>
-        <a href="user-account.html">حساب کاربری</a>
-        <a href="track.html">پیگیری سفارش</a>
-        <a href="rules.html">قوانین و مقررات</a>
-      </div>
-      <div class="footer-col">
-        <h4>خدمات مشتریان</h4>
-        <a href="contact.html">تماس با ما</a>
-        <a href="rules.html">رویه بازگشت کالا</a>
-        <a href="user-login.html">ورود / ثبت‌نام</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
-      <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
-    </div>
-  </footer>
 
-  <a href="https://wa.me/989029885583" target="_blank" class="whatsapp-float" title="تماس از طریق واتساپ">💬</a>
+  <!-- ============ کد جاوااسکریپت اسلایدر ============ -->
+  <!-- این کد رو دقیقاً قبل از بسته شدن تگ body قرار بدید -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const slides = document.querySelectorAll('.hero-slider .slide');
+      let currentSlide = 0;
+      const slideInterval = 4000; // 4000 میلی‌ثانیه معادل ۴ ثانیه است
 
-  <div class="toast" id="toast"></div>
-  <script src="script.js"></script>
-  <script src="https://moshtriyar.vercel.app/api/website-agent.js"
-    data-user-id="e33bff6f-f787-4fa2-9442-3a25c72ca703"
-    data-site="https://banehbaba.ir"
-    data-color="#2563eb"
-    data-title="پشتیبانی مشتری‌یار"
-    data-enabled="true"></script>
+      if (slides.length > 0) {
+        setInterval(() => {
+          slides[currentSlide].classList.remove('active');
+          currentSlide = (currentSlide + 1) % slides.length;
+          slides[currentSlide].classList.add('active');
+        }, slideInterval);
+      }
+    });
+  </script>
+
 </body>
 </html>
