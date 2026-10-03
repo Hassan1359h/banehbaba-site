@@ -171,6 +171,29 @@ function initCategoryFilters() {
     });
   });
 }
+renderCategoryCircles();
+function renderCategoryCircles() {
+  const container = document.getElementById('categoriesCircles');
+  if (!container) return;
+
+  const cats = [
+    { id: 'camping', name: 'لوازم کوهنوردی و کمپ', emoji: '🏔️' },
+    { id: 'home', name: 'لوازم خانگی', emoji: '🏠' },
+    { id: 'beauty', name: 'سلامت و زیبایی', emoji: '💄' },
+    { id: 'car', name: 'لوازم یدکی خودرو', emoji: '🚗' }
+  ];
+
+  container.innerHTML = cats.map(cat => {
+    const count = products.filter(p => p.category === cat.id).length;
+    return `
+      <div class="category-circle" onclick="filterByCategory('${cat.id}')">
+        <div class="category-circle-img">${cat.emoji}</div>
+        <div class="category-circle-name">${cat.name}</div>
+        <div class="category-circle-count">${count.toLocaleString('fa-IR')} محصول</div>
+      </div>
+    `;
+  }).join('');
+}
 
 function scrollToProducts() {
   document.getElementById('productsSection')?.scrollIntoView({ behavior: 'smooth' });
