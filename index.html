@@ -6,7 +6,7 @@
   <title>بانه بابا | فروشگاه آنلاین</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <!-- ============ استایل اسلایدر ============ -->
   <style>
     .hero-slider {
@@ -29,38 +29,62 @@
     .hero-slider .slide.active {
       opacity: 1;
     }
+
+    /* واکنش‌گرا برای موبایل */
+    @media (max-width: 768px) {
+      .hero-slider {
+        height: 300px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ============ هدر سایت ============ -->
-  <!-- ⚠️ این بخش باید کدهای هدر و منوی اصلی سایت شما باشه -->
+  <!-- ============ HEADER ============ -->
   <header class="main-header">
     <div class="header-container">
-      <!-- ⚠️ کدهای هدر و منوی خودتون رو دقیقاً از نسخه قبلی اینجا کپی کنید -->
+      <!-- ⚠️⚠️⚠️ کدهای اصلی هدر و منوی سایت خودتون رو اینجا کپی کنید ⚠️⚠️⚠️ -->
+      <!-- این بخش باید شامل لوگو، منو، سبد خرید و ... باشه -->
     </div>
   </header>
 
-  <!-- ============ اسلایدر جدید ============ -->
+  <!-- ============ اسلایدر ============ -->
   <div class="hero-slider">
-    <!-- ⚠️ آدرس عکس‌ها رو اینجا جایگزین کنید -->
-    <img class="slide active" src="آدرس-عکس-کوهنوردی" alt="لوازم کوهنوردی و کمپینگ">
-    <img class="slide" src="آدرس-عکس-لوازم-خانگی" alt="لوازم خانگی">
+    <img class="slide active" src="https://raw.githubusercontent.com/Hassan1359h/banehbaba-site/main/file_0000000047ec82108c18cb633d0d7ccf.png" alt="لوازم کوهنوردی و کمپینگ">
+    <img class="slide" src="https://raw.githubusercontent.com/Hassan1359h/banehbaba-site/main/file_00000000ab7c8246ac07ae0f78ec1872.png" alt="لوازم خانگی">
+    <!-- بعداً عکس سوم رو اینجا اضافه کنید:
     <img class="slide" src="آدرس-عکس-زیبایی" alt="لوازم زیبایی و سلامت">
+    -->
   </div>
 
-  <!-- ============ ادامه محتوای سایت شما ============ -->
-  <!-- ⚠️ این بخش هم باید کدهای بخش دسته‌بندی‌ها و بقیه محتوای سایتتون رو داشته باشه -->
+  <!-- ============ بخش دسته‌بندی‌ها ============ -->
+  <!-- ⚠️⚠️⚠️ کدهای بخش "خرید بر اساس دسته‌بندی" سایت خودتون رو اینجا کپی کنید ⚠️⚠️⚠️ -->
+  <section class="categories">
+    <h2>🛒 خرید بر اساس دسته‌بندی</h2>
+    <p>دسته مورد نظر را انتخاب کنید</p>
+    <!-- کدهای کارت‌های دسته‌بندی (لوازم یدکی خودرو، سلامت و زیبایی، لوازم خانگی، کوهنوردی و کمپینگ) -->
+  </section>
 
+  <!-- ============ بخش محصولات ویژه ============ -->
+  <!-- ⚠️⚠️⚠️ کدهای بخش "محصولات ویژه" سایت خودتون رو اینجا کپی کنید ⚠️⚠️⚠️ -->
+  <section class="featured-products">
+    <!-- کدهای محصولات ویژه -->
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <!-- ⚠️⚠️⚠️ کدهای فوتر سایت خودتون رو اینجا کپی کنید ⚠️⚠️⚠️ -->
+  <footer class="main-footer">
+    <!-- اطلاعات فوتر -->
+  </footer>
 
   <!-- ============ کد جاوااسکریپت اسلایدر ============ -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const slides = document.querySelectorAll('.hero-slider .slide');
       let currentSlide = 0;
-      const slideInterval = 4000;
+      const slideInterval = 4000; // ۴ ثانیه
 
-      if (slides.length > 0) {
+      if (slides.length > 1) {
         setInterval(() => {
           slides[currentSlide].classList.remove('active');
           currentSlide = (currentSlide + 1) % slides.length;
