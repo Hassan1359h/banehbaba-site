@@ -12,9 +12,9 @@
     .hero-slider {
       position: relative;
       width: 100%;
-      height: 500px; /* ارتفاع اسلایدر - میتونید تغییر بدید */
+      height: 500px;
       overflow: hidden;
-      margin-bottom: 20px; /* فاصله از بخش‌های بعدی سایت */
+      margin-bottom: 20px;
     }
     .hero-slider .slide {
       position: absolute;
@@ -22,7 +22,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover; /* جلوگیری از کشیده شدن عکس */
+      object-fit: cover;
       opacity: 0;
       transition: opacity 1s ease-in-out;
     }
@@ -33,32 +33,32 @@
 </head>
 <body>
 
-  <!-- ============ هدر سایت (کدهای خودتون رو اینجا نگه دارید) ============ -->
+  <!-- ============ هدر سایت ============ -->
+  <!-- ⚠️ این بخش باید کدهای هدر و منوی اصلی سایت شما باشه -->
   <header class="main-header">
     <div class="header-container">
-      <!-- کدهای هدر شما اینجا قرار میگیره -->
+      <!-- ⚠️ کدهای هدر و منوی خودتون رو دقیقاً از نسخه قبلی اینجا کپی کنید -->
     </div>
   </header>
 
-  <!-- ============ اسلایدر جدید (جایگزین بنر قدیمی) ============ -->
-  <!-- کد <section class="hero"> قدیمی رو حذف کنید و این رو جاش بذارید -->
+  <!-- ============ اسلایدر جدید ============ -->
   <div class="hero-slider">
-    <img class="slide active" src="لینک-عکس-کوهنوردی" alt="لوازم کوهنوردی و کمپینگ">
-    <img class="slide" src="لینک-عکس-لوازم-خانگی" alt="لوازم خانگی">
-    <img class="slide" src="لینک-عکس-زیبایی" alt="لوازم زیبایی و سلامت">
+    <!-- ⚠️ آدرس عکس‌ها رو اینجا جایگزین کنید -->
+    <img class="slide active" src="آدرس-عکس-کوهنوردی" alt="لوازم کوهنوردی و کمپینگ">
+    <img class="slide" src="آدرس-عکس-لوازم-خانگی" alt="لوازم خانگی">
+    <img class="slide" src="آدرس-عکس-زیبایی" alt="لوازم زیبایی و سلامت">
   </div>
 
   <!-- ============ ادامه محتوای سایت شما ============ -->
-  <!-- بخش‌های "خرید بر اساس دسته‌بندی" و بقیه کدها اینجا قرار میگیرن -->
+  <!-- ⚠️ این بخش هم باید کدهای بخش دسته‌بندی‌ها و بقیه محتوای سایتتون رو داشته باشه -->
 
 
   <!-- ============ کد جاوااسکریپت اسلایدر ============ -->
-  <!-- این کد رو دقیقاً قبل از بسته شدن تگ body قرار بدید -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const slides = document.querySelectorAll('.hero-slider .slide');
       let currentSlide = 0;
-      const slideInterval = 4000; // 4000 میلی‌ثانیه معادل ۴ ثانیه است
+      const slideInterval = 4000;
 
       if (slides.length > 0) {
         setInterval(() => {
