@@ -7,304 +7,255 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- ============ استایل اسلایدر ============ -->
   <style>
-    /* ============ ریست و پایه ============ */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Vazirmatn', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      line-height: 1.6;
-    }
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
-
-    /* ============ هدر ============ */
-    .main-header {
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ff6b35;
-      white-space: nowrap;
-    }
-    .header-icons {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 22px;
-    }
-    .header-icons span { cursor: pointer; }
-
-    /* ============ اسلایدر ============ */
     .hero-slider {
       position: relative;
       width: 100%;
       height: 450px;
       overflow: hidden;
-      background: #e9ecef;
+      background-color: #f0f0f0;
+      margin-bottom: 20px;
     }
     .hero-slider .slide {
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       opacity: 0;
       transition: opacity 1s ease-in-out;
     }
-    .hero-slider .slide.active { opacity: 1; }
-
+    .hero-slider .slide.active {
+      opacity: 1;
+    }
     @media (max-width: 768px) {
-      .hero-slider { height: 260px; }
-    }
-
-    /* ============ بخش دسته‌بندی‌ها ============ */
-    .section-title {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      margin: 32px 0 8px;
-    }
-    .section-subtitle {
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-    .categories {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-    .category-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 18px 10px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-    }
-    .category-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(255,107,53,0.2);
-    }
-    .category-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 12px;
-      border-radius: 50%;
-      border: 3px solid #ff6b35;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #fff5f0;
-    }
-    .category-icon img {
-      width: 60%;
-      height: 60%;
-      object-fit: contain;
-    }
-    .category-card h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-    }
-    .category-card p {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-    }
-
-    /* ============ محصولات ویژه ============ */
-    .featured-products {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 16px 40px;
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-    .product-card {
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: transform 0.3s;
-      cursor: pointer;
-    }
-    .product-card:hover { transform: translateY(-5px); }
-    .product-card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-    .product-info {
-      padding: 12px;
-    }
-    .product-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .product-price {
-      color: #ff6b35;
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    /* ============ فوتر ============ */
-    .main-footer {
-      background: #222;
-      color: #ccc;
-      padding: 30px 16px;
-      text-align: center;
-      font-size: 14px;
-    }
-    .main-footer p { margin-bottom: 6px; }
-    .main-footer a { color: #ff6b35; }
-
-    /* ============ ریسپانسیو ============ */
-    @media (max-width: 900px) {
-      .category-grid, .product-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .hero-slider {
+        height: 280px;
       }
-    }
-    @media (max-width: 480px) {
-      .category-grid, .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .category-icon { width: 65px; height: 65px; }
-      .product-card img { height: 140px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ============ هدر ============ -->
+  <!-- ============ HEADER ============ -->
   <header class="main-header">
     <div class="header-container">
-      <a href="index.html" class="logo">بانه بابا</a>
-      <div class="header-icons">
-        <span title="سبد خرید">🛒</span>
-        <span title="حساب کاربری">👤</span>
-        <span title="منو">☰</span>
+      
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">بانه بابا</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle">☰</button>
+
+      <nav class="main-nav" id="mainNav">
+        <div class="dropdown">
+          <a href="#" class="nav-link">دسته‌بندی ▾</a>
+          <div class="dropdown-content">
+            
+            <!-- دسته ۱: لوازم کوهنوردی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏔️ لوازم کوهنوردی و کمپ ▸</a>
+              <div class="submenu">
+                <a href="#">عینک</a>
+                <a href="#">چادر کوهنوردی</a>
+                <a href="#">کیسه خواب</a>
+                <a href="#">چراغ پیشانی و روشنایی</a>
+                <a href="#">باتوم</a>
+                <a href="#">اجاق و سرشعله کمپ</a>
+                <a href="#">ابزار کوه</a>
+                <a href="#">شکار</a>
+              </div>
+            </div>
+
+            <!-- دسته ۲: لوازم خانگی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🏠 لوازم خانگی ▸</a>
+              <div class="submenu">
+                <a href="#">تلویزیون</a>
+                <a href="#">لباسشویی</a>
+                <a href="#">ظرفشویی</a>
+                <a href="#">کولر گازی</a>
+                <a href="#">سرخ کن</a>
+                <a href="#">اتو بخار</a>
+                <a href="#">آبمیوه گیری</a>
+              </div>
+            </div>
+
+            <!-- دسته ۳: سلامت و زیبایی -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">💄 سلامت و زیبایی ▸</a>
+              <div class="submenu">
+                <a href="#">سفید کننده دندان</a>
+                <a href="#">لمینت دندان</a>
+                <a href="#">پوست</a>
+                <a href="#">مو</a>
+              </div>
+            </div>
+
+            <!-- دسته ۴: لوازم یدکی خودرو -->
+            <div class="dropdown-category">
+              <a href="#" class="category-title">🚗 لوازم یدکی خودرو ▸</a>
+              <div class="submenu">
+                <a href="#">لنت</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">تماس با ما</a>
+      </nav>
+
+      <div class="user-actions">
+        <button class="cart-btn" id="cartBtn">
+          🛒 <span class="cart-text">سبد خرید</span>
+          <span class="badge" id="cartBadge">۰</span>
+        </button>
+        <button class="register-btn" id="registerBtn">
+          👤 <span class="register-text">ثبت‌نام</span>
+        </button>
       </div>
+
     </div>
   </header>
 
-  <!-- ============ اسلایدر ============ -->
+  <!-- ============ اسلایدر (جایگزین بنر قدیمی) ============ -->
   <div class="hero-slider">
     <img class="slide active" src="https://raw.githubusercontent.com/Hassan1359h/banehbaba-site/main/file_0000000047ec82108c18cb633d0d7ccf.png" alt="لوازم کوهنوردی و کمپینگ">
     <img class="slide" src="https://raw.githubusercontent.com/Hassan1359h/banehbaba-site/main/file_00000000ab7c8246ac07ae0f78ec1872.png" alt="لوازم خانگی">
-    <!-- ⚠️ برای اضافه کردن عکس سوم، خط زیر رو از کامنت خارج کنید و آدرس عکس رو بذارید:
-    <img class="slide" src="آدرس-عکس-زیبایی" alt="لوازم زیبایی و سلامت">
-    -->
+    <!-- برای اضافه کردن عکس سوم، خط زیر را از حالت کامنت خارج کنید -->
+    <!-- <img class="slide" src="آدرس-عکس-سوم" alt="لوازم زیبایی و سلامت"> -->
   </div>
 
-  <!-- ============ دسته‌بندی‌ها ============ -->
-  <section class="categories">
-    <h2 class="section-title">🛒 خرید بر اساس دسته‌بندی</h2>
-    <p class="section-subtitle">دسته مورد نظر را انتخاب کنید</p>
-    <div class="category-grid">
-      <!-- ⚠️ آیکون‌ها رو با عکس‌های خودتون جایگزین کنید -->
-      <div class="category-card">
-        <div class="category-icon">🚗</div>
-        <h3>لوازم یدکی خودرو</h3>
-        <p>۰ محصول</p>
-      </div>
-      <div class="category-card">
-        <div class="category-icon">💄</div>
-        <h3>سلامت و زیبایی</h3>
-        <p>۰ محصول</p>
-      </div>
-      <div class="category-card">
-        <div class="category-icon">🏠</div>
-        <h3>لوازم خانگی</h3>
-        <p>۰ محصول</p>
-      </div>
-      <div class="category-card">
-        <div class="category-icon">⛺</div>
-        <h3>کوهنوردی و کمپینگ</h3>
-        <p>۰ محصول</p>
-      </div>
+  <!-- ============ محصولات ============ -->
+  <section class="products-section" id="productsSection">
+    <div class="section-header">
+      <h2>محصولات ویژه ⭐</h2>
+      <p>جدیدترین و پرطرفدارترین کالاها</p>
     </div>
+    <div class="products-grid" id="productsGrid"></div>
   </section>
 
-  <!-- ============ محصولات ویژه ============ -->
-  <section class="featured-products">
-    <h2 class="section-title">⭐ محصولات ویژه</h2>
-    <p class="section-subtitle">جدیدترین و پرطرفدارترین کالاها</p>
-    <div class="product-grid">
-      <!-- ⚠️ محصولات خودتون رو اینجا اضافه کنید -->
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x180?text=Product+1" alt="محصول">
-        <div class="product-info">
-          <h4>نام محصول</h4>
-          <span class="product-price">۱,۲۰۰,۰۰۰ تومان</span>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x180?text=Product+2" alt="محصول">
-        <div class="product-info">
-          <h4>نام محصول</h4>
-          <span class="product-price">۸۵۰,۰۰۰ تومان</span>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x180?text=Product+3" alt="محصول">
-        <div class="product-info">
-          <h4>نام محصول</h4>
-          <span class="product-price">۲,۱۰۰,۰۰۰ تومان</span>
-        </div>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x180?text=Product+4" alt="محصول">
-        <div class="product-info">
-          <h4>نام محصول</h4>
-          <span class="product-price">۵۶۰,۰۰۰ تومان</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ فوتر ============ -->
+  <!-- ============ FOOTER ============ -->
   <footer class="main-footer">
-    <p>© تمامی حقوق برای <a href="index.html">بانه بابا</a> محفوظ است.</p>
-    <p>ارسال رایگان به سراسر کشور</p>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>🏪 بانه بابا</h3>
+        <p>فروشگاه آنلاین با بهترین کیفیت و قیمت</p>
+      </div>
+      <div class="footer-col">
+        <h4>لینک‌های سریع</h4>
+        <a href="#">درباره ما</a>
+        <a href="#">تماس با ما</a>
+        <a href="#">قوانین و مقررات</a>
+      </div>
+      <div class="footer-col">
+        <h4>خدمات مشتریان</h4>
+        <a href="#">پیگیری سفارش</a>
+        <a href="#">رویه بازگشت کالا</a>
+        <a href="#">سوالات متداول</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© ۱۴۰۳ بانه بابا - تمامی حقوق محفوظ است</p>
+      <p class="today-date" id="todayDate">📅 امروز: در حال بارگذاری...</p>
+    </div>
   </footer>
 
-  <!-- ============ جاوااسکریپت اسلایدر ============ -->
+  <!-- ============ MODAL ثبت‌نام ============ -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal">
+      <button class="modal-close" id="closeRegister">✕</button>
+      <h2>ثبت‌نام / ورود</h2>
+      <p class="modal-subtitle">به بانه بابا خوش آمدید</p>
+      <form id="registerForm">
+        <div class="form-group">
+          <label>نام و نام خانوادگی</label>
+          <input type="text" id="regName" placeholder="مثلاً: علی محمدی" required>
+        </div>
+        <div class="form-group">
+          <label>شماره موبایل</label>
+          <input type="tel" id="regPhone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
+        </div>
+        <div class="form-group">
+          <label>ایمیل (اختیاری)</label>
+          <input type="email" id="regEmail" placeholder="example@email.com">
+        </div>
+        <div class="form-group">
+          <label>رمز عبور</label>
+          <input type="password" id="regPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary">ثبت‌نام</button>
+      </form>
+      <p class="modal-footer-text">قبلاً ثبت‌نام کرده‌اید؟ <a href="#">ورود</a></p>
+    </div>
+  </div>
+
+  <!-- ============ MODAL سبد خرید ============ -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal cart-modal">
+      <button class="modal-close" id="closeCart">✕</button>
+      <h2>🛒 سبد خرید شما</h2>
+      <p class="modal-subtitle" id="cartDateInfo">📅 امروز: ...</p>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-summary" id="cartSummary">
+        <div class="summary-row">
+          <span>جمع کل:</span>
+          <strong id="cartTotal">۰ تومان</strong>
+        </div>
+        <button class="btn-primary" onclick="checkout()">💳 پرداخت و تکمیل خرید</button>
+      </div>
+      <div class="cart-empty" id="cartEmpty">
+        <div class="empty-icon">🛒</div>
+        <p>سبد خرید شما خالی است</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL پرداخت ============ -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal">
+      <button class="modal-close" id="closeCheckout">✕</button>
+      <h2>💳 پرداخت کارت به کارت</h2>
+      <p class="modal-subtitle">مبلغ را به کارت زیر واریز کنید</p>
+      <div class="card-info">
+        <div class="card-row">
+          <span>شماره کارت:</span>
+          <strong>۶۰۳۷ - ۹۹۷۵ - ۱۲۳۴ - ۵۶۷۸</strong>
+        </div>
+        <div class="card-row">
+          <span>به نام:</span>
+          <strong>علی محمدی</strong>
+        </div>
+        <div class="card-row">
+          <span>مبلغ قابل پرداخت:</span>
+          <strong class="price-highlight" id="checkoutAmount">۰ تومان</strong>
+        </div>
+        <div class="card-row">
+          <span>تاریخ پرداخت:</span>
+          <strong id="orderDateTime">-</strong>
+        </div>
+      </div>
+      <form id="checkoutForm">
+        <div class="form-group">
+          <label>شماره پیگیری تراکنش</label>
+          <input type="text" id="trackingCode" placeholder="شماره پیگیری را وارد کنید" required>
+        </div>
+        <button type="submit" class="btn-primary">✅ تأیید پرداخت</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  
+  <!-- ============ کد جاوااسکریپت اسلایدر ============ -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const slides = document.querySelectorAll('.hero-slider .slide');
       let currentSlide = 0;
-      const slideInterval = 4000;
+      const slideInterval = 4000; // ۴ ثانیه
 
       if (slides.length > 1) {
         setInterval(() => {
@@ -315,6 +266,7 @@
       }
     });
   </script>
-
+  
+  <script src="script.js"></script>
 </body>
 </html>
