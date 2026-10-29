@@ -17,13 +17,14 @@ body { background: linear-gradient(135deg, #004E89 0%, #001a33 100%); min-height
 .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: #333; }
 .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; font-family: inherit; direction: rtl; background: #fafafa; }
 .form-group input:focus { outline: none; border-color: #FF6B35; box-shadow: 0 0 0 3px rgba(255,107,53,0.1); background: white; }
-.login-btn { width: 100%; background: #FF6B35; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 10px; }
+.login-btn { width: 100%; background: #FF6B35; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 10px; transition: 0.3s; }
 .login-btn:hover { background: #e55a25; }
 .login-btn:disabled { background: #ccc; cursor: not-allowed; }
 .error-msg { background: #ffebee; color: #c62828; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; margin-top: 15px; display: none; }
 .error-msg.show { display: block; }
 .back-link { text-align: center; margin-top: 20px; }
 .back-link a { color: #777; text-decoration: none; font-size: 13px; }
+.back-link a:hover { color: #FF6B35; }
 </style>
 </head>
 <body>
@@ -31,8 +32,10 @@ body { background: linear-gradient(135deg, #004E89 0%, #001a33 100%); min-height
 <div class="login-logo">
 <span class="icon">🔐</span>
 <h1>پنل مدیریت بانه بابا</h1>
-<p>فقط برای مدیران مجاز</p>
+<p id="subTitle">فقط برای مدیران مجاز</p>
 </div>
+
+<!-- فرم ورود -->
 <form id="loginForm">
 <div class="form-group">
 <label>نام کاربری</label>
@@ -45,27 +48,89 @@ body { background: linear-gradient(135deg, #004E89 0%, #001a33 100%); min-height
 <button type="submit" class="login-btn" id="loginBtn">🚀 ورود به پنل</button>
 <div class="error-msg" id="errorMsg"></div>
 </form>
+
+<!-- فرم بازیابی رمز (در ابتدا مخفی است) -->
+<form id="resetForm" style="display: none;">
+<div class="form-group">
+<label>کد بازیابی (Recovery Code)</label>
+<input type="text" id="recoveryCode" placeholder="کد اختصاصی خود را وارد کنید" required>
+</div>
+<div class="form-group">
+<label>رمز عبور جدید</label>
+<input type="password" id="newPassword" placeholder="حداقل ۶ کاراکتر" required>
+</div>
+<button type="submit" class="login-btn" id="resetBtn" style="background-color: #28a745;">✅ تغییر رمز</button>
+<div class="error-msg" id="resetErrorMsg"></div>
+</form>
+
 <div class="back-link">
-<a href="index.html">← بازگشت به سایت</a>
+<a href="index.html" id="siteLink">← بازگشت به سایت</a>
+<a href="#" id="forgotLink" style="color: #FF6B35; font-weight: 500;">رمز عبور را فراموش کرده‌اید؟</a>
+<a href="#" id="backToLoginLink" style="display: none; color: #FF6B35; font-weight: 500;">← بازگشت به صفحه ورود</a>
 </div>
 </div>
+
 <script>
 const API_URL = 'https://banehbaba-backend.vercel.app/api';
+
+// المان‌های فرم ورود
 const loginForm = document.getElementById('loginForm');
 const errorMsg = document.getElementById('errorMsg');
 const loginBtn = document.getElementById('loginBtn');
 
+// المان‌های فرم بازیابی
+const resetForm = document.getElementById('resetForm');
+const resetBtn = document.getElementById('resetBtn');
+const resetErrorMsg = document.getElementById('resetErrorMsg');
+
+// المان‌های تغییر دهنده ظاهر
+const forgotLink = document.getElementById('forgotLink');
+const backToLoginLink = document.getElementById('backToLoginLink');
+const siteLink = document.getElementById('siteLink');
+const subTitle = document.getElementById('subTitle');
+
+// بررسی اینکه آیا قبلا لاگین کرده است یا خیر
 if (sessionStorage.getItem('banehbaba_admin') === 'logged_in' && sessionStorage.getItem('banehbaba_token')) {
   window.location.replace('dashboard.html');
 }
 
+// ==========================================
+// 🔄 تغییر بین فرم ورود و فرم بازیابی
+// ==========================================
+forgotLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  loginForm.style.display = 'none';
+  resetForm.style.display = 'block';
+  subTitle.textContent = 'بازیابی رمز عبور ادمین';
+  forgotLink.style.display = 'none';
+  backToLoginLink.style.display = 'inline-block';
+  siteLink.style.display = 'none';
+  resetErrorMsg.classList.remove('show');
+});
+
+backToLoginLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  resetForm.style.display = 'none';
+  loginForm.style.display = 'block';
+  subTitle.textContent = 'فقط برای مدیران مجاز';
+  backToLoginLink.style.display = 'none';
+  forgotLink.style.display = 'inline-block';
+  siteLink.style.display = 'inline-block';
+  errorMsg.classList.remove('show');
+});
+
+// ==========================================
+// 🚀 منطق ورود به پنل
+// ==========================================
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
+  
   loginBtn.disabled = true;
   loginBtn.textContent = '⏳ در حال ورود...';
   errorMsg.classList.remove('show');
+  
   try {
     const response = await fetch(API_URL + '/admin/login', {
       method: 'POST',
@@ -73,6 +138,7 @@ loginForm.addEventListener('submit', async (e) => {
       body: JSON.stringify({ username, password })
     });
     const data = await response.json();
+    
     if (response.ok && data.success && data.token) {
       sessionStorage.setItem('banehbaba_admin', 'logged_in');
       sessionStorage.setItem('banehbaba_token', data.token);
@@ -88,6 +154,53 @@ loginForm.addEventListener('submit', async (e) => {
     errorMsg.classList.add('show');
     loginBtn.disabled = false;
     loginBtn.textContent = '🚀 ورود به پنل';
+  }
+});
+
+// ==========================================
+// 🔑 منطق بازیابی رمز عبور
+// ==========================================
+resetForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const recoveryCode = document.getElementById('recoveryCode').value.trim();
+  const newPassword = document.getElementById('newPassword').value;
+  
+  resetBtn.disabled = true;
+  resetBtn.textContent = '⏳ در حال بررسی...';
+  resetErrorMsg.classList.remove('show');
+  resetErrorMsg.style.background = '#ffebee';
+  resetErrorMsg.style.color = '#c62828';
+
+  try {
+    const response = await fetch(API_URL + '/admin/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recoveryCode, newPassword })
+    });
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      // پیام موفقیت‌آمیز
+      resetErrorMsg.textContent = '✅ ' + (data.message || 'رمز عبور با موفقیت تغییر کرد.');
+      resetErrorMsg.style.background = '#e8f5e9';
+      resetErrorMsg.style.color = '#2e7d32';
+      resetErrorMsg.classList.add('show');
+      
+      // بازگشت خودکار به صفحه ورود پس از ۲ ثانیه
+      setTimeout(() => {
+        document.getElementById('password').value = ''; // پاک کردن فیلد رمز قبلی
+        backToLoginLink.click();
+      }, 2000);
+    } else {
+      resetErrorMsg.textContent = '❌ ' + (data.error || 'خطا در تغییر رمز');
+      resetErrorMsg.classList.add('show');
+    }
+  } catch (err) {
+    resetErrorMsg.textContent = '❌ خطا در ارتباط با سرور';
+    resetErrorMsg.classList.add('show');
+  } finally {
+    resetBtn.disabled = false;
+    resetBtn.textContent = '✅ تغییر رمز';
   }
 });
 </script>
